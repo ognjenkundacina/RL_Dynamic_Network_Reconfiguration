@@ -1,0 +1,366 @@
+Clear 
+Set DefaultBaseFrequency=50
+
+New circuit.TestSema basekV=110 pu=1.01 angle=0 frequency=50 phases=3
+
+New transformer.Transformer phases=3 windings=2 buses=(sourcebus, slack_MV_side) conns=(wye, wye) kvs=(110, 20) kvas=(40000, 40000) %loadloss=0 xhl=16.2 Basefreq=50
+
+New linecode.AB nphases = 3 R1 = 0.206 X1 = 0.116 C1 = 250
+New Line.Line_0  Phases=3 BaseFreq=50 Bus1=slack_MV_side   Bus2=Bus_1  LineCode=AB Length=0.2 units=km 
+New Line.Line_1  Phases=3 BaseFreq=50 Bus1=Bus_1    Bus2=Bus_2  LineCode=AB Length=0.2  units=km    
+New Line.Line_2  Phases=3 BaseFreq=50 Bus1=Bus_2    Bus2=Bus_3  LineCode=AB Length=0.2  units=km
+New Line.Line_3  Phases=3 BaseFreq=50 Bus1=Bus_3    Bus2=Bus_4  LineCode=AB Length=0.2  units=km
+New Line.Line_4  Phases=3 BaseFreq=50 Bus1=Bus_4    Bus2=Bus_5  LineCode=AB Length=0.2  units=km
+New Line.Line_5  Phases=3 BaseFreq=50 Bus1=Bus_5    Bus2=Bus_6  LineCode=AB Length=0.2  units=km
+New Line.Line_6  Phases=3 BaseFreq=50 Bus1=Bus_6    Bus2=Bus_7  LineCode=AB Length=0.2  units=km
+New Line.Line_7  Phases=3 BaseFreq=50 Bus1=Bus_7    Bus2=Bus_8  LineCode=AB Length=0.2  units=km
+New Line.Line_8  Phases=3 BaseFreq=50 Bus1=Bus_8    Bus2=Bus_9  LineCode=AB Length=0.2  units=km
+New Line.Line_9  Phases=3 BaseFreq=50 Bus1=Bus_9    Bus2=Bus_10  LineCode=AB Length=0.2  units=km
+
+New Line.Line_10  Phases=3 BaseFreq=50 Bus1=Bus_10    Bus2=Bus_11  LineCode=AB Length=0.2  units=km    
+New Line.Line_11  Phases=3 BaseFreq=50 Bus1=Bus_11    Bus2=Bus_12  LineCode=AB Length=0.2  units=km
+New Line.Line_12  Phases=3 BaseFreq=50 Bus1=Bus_12    Bus2=Bus_13  LineCode=AB Length=0.2  units=km
+New Line.Line_13  Phases=3 BaseFreq=50 Bus1=Bus_13    Bus2=Bus_14  LineCode=AB Length=0.2  units=km
+New Line.Line_14  Phases=3 BaseFreq=50 Bus1=Bus_14    Bus2=Bus_15  LineCode=AB Length=0.2  units=km
+New Line.Line_15  Phases=3 BaseFreq=50 Bus1=Bus_15    Bus2=Bus_16  LineCode=AB Length=0.2  units=km
+New Line.Line_16  Phases=3 BaseFreq=50 Bus1=Bus_16    Bus2=Bus_17  LineCode=AB Length=0.2  units=km
+New Line.Line_17  Phases=3 BaseFreq=50 Bus1=Bus_17    Bus2=Bus_18  LineCode=AB Length=0.2  units=km
+New Line.Line_18  Phases=3 BaseFreq=50 Bus1=Bus_18    Bus2=Bus_19  LineCode=AB Length=0.2  units=km
+New Line.Line_19  Phases=3 BaseFreq=50 Bus1=Bus_19    Bus2=Bus_20  LineCode=AB Length=0.2  units=km
+
+New Line.Line_20  Phases=3 BaseFreq=50 Bus1=Bus_20    Bus2=Bus_21  LineCode=AB Length=0.2  units=km    
+New Line.Line_21  Phases=3 BaseFreq=50 Bus1=Bus_21    Bus2=Bus_22  LineCode=AB Length=0.2  units=km
+New Line.Line_22  Phases=3 BaseFreq=50 Bus1=Bus_22    Bus2=Bus_23  LineCode=AB Length=0.2  units=km
+New Line.Line_23  Phases=3 BaseFreq=50 Bus1=Bus_23    Bus2=Bus_24  LineCode=AB Length=0.2  units=km
+New Line.Line_24  Phases=3 BaseFreq=50 Bus1=Bus_24    Bus2=Bus_25  LineCode=AB Length=0.2  units=km
+New Line.Line_25  Phases=3 BaseFreq=50 Bus1=Bus_25    Bus2=Bus_26  LineCode=AB Length=0.2  units=km
+New Line.Line_26  Phases=3 BaseFreq=50 Bus1=Bus_26    Bus2=Bus_27  LineCode=AB Length=0.2  units=km
+New Line.Line_27  Phases=3 BaseFreq=50 Bus1=Bus_27    Bus2=Bus_28  LineCode=AB Length=0.2  units=km
+New Line.Line_28  Phases=3 BaseFreq=50 Bus1=Bus_28    Bus2=Bus_29  LineCode=AB Length=0.2  units=km
+New Line.Line_29  Phases=3 BaseFreq=50 Bus1=Bus_29    Bus2=Bus_30  LineCode=AB Length=0.2  units=km
+
+New Line.Line_30  Phases=3 BaseFreq=50 Bus1=Bus_30    Bus2=Bus_31  LineCode=AB Length=0.2  units=km    
+New Line.Line_31  Phases=3 BaseFreq=50 Bus1=Bus_31    Bus2=Bus_32  LineCode=AB Length=0.2  units=km
+New Line.Line_32  Phases=3 BaseFreq=50 Bus1=Bus_32    Bus2=Bus_33  LineCode=AB Length=0.2  units=km
+New Line.Line_33  Phases=3 BaseFreq=50 Bus1=Bus_33    Bus2=Bus_34  LineCode=AB Length=0.2  units=km
+New Line.Line_34  Phases=3 BaseFreq=50 Bus1=Bus_34    Bus2=Bus_35  LineCode=AB Length=0.2  units=km
+New Line.Line_35  Phases=3 BaseFreq=50 Bus1=Bus_35    Bus2=Bus_36  LineCode=AB Length=0.2  units=km
+New Line.Line_36  Phases=3 BaseFreq=50 Bus1=Bus_36    Bus2=Bus_37  LineCode=AB Length=0.2  units=km
+New Line.Line_37  Phases=3 BaseFreq=50 Bus1=Bus_37    Bus2=Bus_38  LineCode=AB Length=0.2  units=km
+New Line.Line_38  Phases=3 BaseFreq=50 Bus1=Bus_38    Bus2=Bus_39  LineCode=AB Length=0.2  units=km
+New Line.Line_39  Phases=3 BaseFreq=50 Bus1=Bus_39    Bus2=Bus_40  LineCode=AB Length=0.2  units=km
+
+New Line.Line_40  Phases=3 BaseFreq=50 Bus1=Bus_40    Bus2=Bus_41  LineCode=AB Length=0.2  units=km    
+New Line.Line_41  Phases=3 BaseFreq=50 Bus1=Bus_41    Bus2=Bus_42  LineCode=AB Length=0.2  units=km
+New Line.Line_42  Phases=3 BaseFreq=50 Bus1=Bus_42    Bus2=Bus_43  LineCode=AB Length=0.2  units=km
+New Line.Line_43  Phases=3 BaseFreq=50 Bus1=Bus_43    Bus2=Bus_44  LineCode=AB Length=0.2  units=km
+New Line.Line_44  Phases=3 BaseFreq=50 Bus1=Bus_44    Bus2=Bus_45  LineCode=AB Length=0.2  units=km
+New Line.Line_45  Phases=3 BaseFreq=50 Bus1=Bus_45    Bus2=Bus_46  LineCode=AB Length=0.2  units=km
+New Line.Line_46  Phases=3 BaseFreq=50 Bus1=Bus_46    Bus2=Bus_47  LineCode=AB Length=0.2  units=km
+New Line.Line_47  Phases=3 BaseFreq=50 Bus1=Bus_47    Bus2=Bus_48  LineCode=AB Length=0.2  units=km
+New Line.Line_48  Phases=3 BaseFreq=50 Bus1=Bus_48    Bus2=Bus_49  LineCode=AB Length=0.2  units=km
+New Line.Line_49  Phases=3 BaseFreq=50 Bus1=Bus_49    Bus2=Bus_50  LineCode=AB Length=0.2  units=km
+
+New Line.Line_50  Phases=3 BaseFreq=50 Bus1=Bus_50    Bus2=Bus_51  LineCode=AB Length=0.2  units=km    
+New Line.Line_51  Phases=3 BaseFreq=50 Bus1=Bus_51    Bus2=Bus_52  LineCode=AB Length=0.2  units=km
+New Line.Line_52  Phases=3 BaseFreq=50 Bus1=Bus_52    Bus2=Bus_53  LineCode=AB Length=0.2  units=km
+New Line.Line_53  Phases=3 BaseFreq=50 Bus1=Bus_53    Bus2=Bus_54  LineCode=AB Length=0.2  units=km
+New Line.Line_54  Phases=3 BaseFreq=50 Bus1=Bus_54    Bus2=Bus_55  LineCode=AB Length=0.2  units=km
+New Line.Line_55  Phases=3 BaseFreq=50 Bus1=Bus_55    Bus2=Bus_56  LineCode=AB Length=0.2  units=km
+New Line.Line_56  Phases=3 BaseFreq=50 Bus1=Bus_56    Bus2=Bus_57  LineCode=AB Length=0.2  units=km
+New Line.Line_57  Phases=3 BaseFreq=50 Bus1=Bus_57    Bus2=Bus_58  LineCode=AB Length=0.2  units=km
+New Line.Line_58  Phases=3 BaseFreq=50 Bus1=Bus_58    Bus2=Bus_59  LineCode=AB Length=0.2  units=km
+New Line.Line_59  Phases=3 BaseFreq=50 Bus1=Bus_59    Bus2=Bus_60  LineCode=AB Length=0.2  units=km
+
+New Line.Line_60  Phases=3 BaseFreq=50 Bus1=Bus_60    Bus2=Bus_61  LineCode=AB Length=0.2  units=km    
+New Line.Line_61  Phases=3 BaseFreq=50 Bus1=Bus_61    Bus2=Bus_62  LineCode=AB Length=0.2  units=km
+New Line.Line_62  Phases=3 BaseFreq=50 Bus1=Bus_62    Bus2=Bus_63  LineCode=AB Length=0.2  units=km
+New Line.Line_63  Phases=3 BaseFreq=50 Bus1=Bus_63    Bus2=Bus_64  LineCode=AB Length=0.2  units=km
+New Line.Line_64  Phases=3 BaseFreq=50 Bus1=Bus_64    Bus2=Bus_65  LineCode=AB Length=0.2  units=km
+New Line.Line_65  Phases=3 BaseFreq=50 Bus1=Bus_65    Bus2=Bus_66  LineCode=AB Length=0.2  units=km
+New Line.Line_66  Phases=3 BaseFreq=50 Bus1=Bus_66    Bus2=Bus_67  LineCode=AB Length=0.2  units=km
+New Line.Line_67  Phases=3 BaseFreq=50 Bus1=Bus_67    Bus2=Bus_68  LineCode=AB Length=0.2  units=km
+New Line.Line_68  Phases=3 BaseFreq=50 Bus1=Bus_68    Bus2=Bus_69  LineCode=AB Length=0.2  units=km
+New Line.Line_69  Phases=3 BaseFreq=50 Bus1=Bus_69    Bus2=Bus_70  LineCode=AB Length=0.2  units=km
+
+New Line.Line_70  Phases=3 BaseFreq=50 Bus1=Bus_70    Bus2=Bus_71  LineCode=AB Length=0.2  units=km    
+New Line.Line_71  Phases=3 BaseFreq=50 Bus1=Bus_71    Bus2=Bus_72  LineCode=AB Length=0.2  units=km
+New Line.Line_72  Phases=3 BaseFreq=50 Bus1=Bus_72    Bus2=Bus_73  LineCode=AB Length=0.2  units=km
+New Line.Line_73  Phases=3 BaseFreq=50 Bus1=Bus_73    Bus2=Bus_74  LineCode=AB Length=0.2  units=km
+New Line.Line_74  Phases=3 BaseFreq=50 Bus1=Bus_74    Bus2=Bus_75  LineCode=AB Length=0.2  units=km
+New Line.Line_75  Phases=3 BaseFreq=50 Bus1=Bus_75    Bus2=Bus_76  LineCode=AB Length=0.2  units=km
+New Line.Line_76  Phases=3 BaseFreq=50 Bus1=Bus_76    Bus2=Bus_77  LineCode=AB Length=0.2  units=km
+New Line.Line_77  Phases=3 BaseFreq=50 Bus1=Bus_77    Bus2=Bus_78  LineCode=AB Length=0.2  units=km
+New Line.Line_78  Phases=3 BaseFreq=50 Bus1=Bus_78    Bus2=Bus_79  LineCode=AB Length=0.2  units=km
+New Line.Line_79  Phases=3 BaseFreq=50 Bus1=Bus_79    Bus2=Bus_80  LineCode=AB Length=0.2  units=km
+
+New Line.Line_80  Phases=3 BaseFreq=50 Bus1=Bus_80    Bus2=Bus_81  LineCode=AB Length=0.2  units=km    
+New Line.Line_81  Phases=3 BaseFreq=50 Bus1=Bus_81    Bus2=Bus_82  LineCode=AB Length=0.2  units=km
+New Line.Line_82  Phases=3 BaseFreq=50 Bus1=Bus_82    Bus2=Bus_83  LineCode=AB Length=0.2  units=km
+New Line.Line_83  Phases=3 BaseFreq=50 Bus1=Bus_83    Bus2=Bus_84  LineCode=AB Length=0.2  units=km
+New Line.Line_84  Phases=3 BaseFreq=50 Bus1=Bus_84    Bus2=Bus_85  LineCode=AB Length=0.2  units=km
+New Line.Line_85  Phases=3 BaseFreq=50 Bus1=Bus_85    Bus2=Bus_86  LineCode=AB Length=0.2  units=km
+New Line.Line_86  Phases=3 BaseFreq=50 Bus1=Bus_86    Bus2=Bus_87  LineCode=AB Length=0.2  units=km
+New Line.Line_87  Phases=3 BaseFreq=50 Bus1=Bus_87    Bus2=Bus_88  LineCode=AB Length=0.2  units=km
+New Line.Line_88  Phases=3 BaseFreq=50 Bus1=Bus_88    Bus2=Bus_89  LineCode=AB Length=0.2  units=km
+New Line.Line_89  Phases=3 BaseFreq=50 Bus1=Bus_89    Bus2=Bus_90  LineCode=AB Length=0.2  units=km
+
+New Line.Line_90  Phases=3 BaseFreq=50 Bus1=Bus_90    Bus2=Bus_91  LineCode=AB Length=0.2  units=km    
+New Line.Line_91  Phases=3 BaseFreq=50 Bus1=Bus_91    Bus2=Bus_92  LineCode=AB Length=0.2  units=km
+New Line.Line_92  Phases=3 BaseFreq=50 Bus1=Bus_92    Bus2=Bus_93  LineCode=AB Length=0.2  units=km
+New Line.Line_93  Phases=3 BaseFreq=50 Bus1=Bus_93    Bus2=Bus_94  LineCode=AB Length=0.2  units=km
+New Line.Line_94  Phases=3 BaseFreq=50 Bus1=Bus_94    Bus2=Bus_95  LineCode=AB Length=0.2  units=km
+New Line.Line_95  Phases=3 BaseFreq=50 Bus1=Bus_95    Bus2=Bus_96  LineCode=AB Length=0.2  units=km
+New Line.Line_96  Phases=3 BaseFreq=50 Bus1=Bus_96    Bus2=Bus_97  LineCode=AB Length=0.2  units=km
+New Line.Line_97  Phases=3 BaseFreq=50 Bus1=Bus_97    Bus2=Bus_98  LineCode=AB Length=0.2  units=km
+New Line.Line_98  Phases=3 BaseFreq=50 Bus1=Bus_98    Bus2=Bus_99  LineCode=AB Length=0.2  units=km
+New Line.Line_99  Phases=3 BaseFreq=50 Bus1=Bus_99    Bus2=Bus_100  LineCode=AB Length=0.2  units=km
+
+New transformer.ServiceTransformer_1 phases=3 windings=2 buses=(Bus_1, LVBus_1) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_2 phases=3 windings=2 buses=(Bus_2, LVBus_2) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_3 phases=3 windings=2 buses=(Bus_3, LVBus_3) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_4 phases=3 windings=2 buses=(Bus_4, LVBus_4) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_5 phases=3 windings=2 buses=(Bus_5, LVBus_5) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_6 phases=3 windings=2 buses=(Bus_6, LVBus_6) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_7 phases=3 windings=2 buses=(Bus_7, LVBus_7) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_8 phases=3 windings=2 buses=(Bus_8, LVBus_8) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_9 phases=3 windings=2 buses=(Bus_9, LVBus_9) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_10 phases=3 windings=2 buses=(Bus_10, LVBus_10) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_11 phases=3 windings=2 buses=(Bus_11, LVBus_11) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_12 phases=3 windings=2 buses=(Bus_12, LVBus_12) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_13 phases=3 windings=2 buses=(Bus_13, LVBus_13) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_14 phases=3 windings=2 buses=(Bus_14, LVBus_14) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_15 phases=3 windings=2 buses=(Bus_15, LVBus_15) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_16 phases=3 windings=2 buses=(Bus_16, LVBus_16) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_17 phases=3 windings=2 buses=(Bus_17, LVBus_17) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_18 phases=3 windings=2 buses=(Bus_18, LVBus_18) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_19 phases=3 windings=2 buses=(Bus_19, LVBus_19) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_20 phases=3 windings=2 buses=(Bus_20, LVBus_20) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_21 phases=3 windings=2 buses=(Bus_21, LVBus_21) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_22 phases=3 windings=2 buses=(Bus_22, LVBus_22) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_23 phases=3 windings=2 buses=(Bus_23, LVBus_23) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_24 phases=3 windings=2 buses=(Bus_24, LVBus_24) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_25 phases=3 windings=2 buses=(Bus_25, LVBus_25) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_26 phases=3 windings=2 buses=(Bus_26, LVBus_26) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_27 phases=3 windings=2 buses=(Bus_27, LVBus_27) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_28 phases=3 windings=2 buses=(Bus_28, LVBus_28) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_29 phases=3 windings=2 buses=(Bus_29, LVBus_29) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_30 phases=3 windings=2 buses=(Bus_30, LVBus_30) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_31 phases=3 windings=2 buses=(Bus_31, LVBus_31) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_32 phases=3 windings=2 buses=(Bus_32, LVBus_32) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_33 phases=3 windings=2 buses=(Bus_33, LVBus_33) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_34 phases=3 windings=2 buses=(Bus_34, LVBus_34) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_35 phases=3 windings=2 buses=(Bus_35, LVBus_35) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_36 phases=3 windings=2 buses=(Bus_36, LVBus_36) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_37 phases=3 windings=2 buses=(Bus_37, LVBus_37) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_38 phases=3 windings=2 buses=(Bus_38, LVBus_38) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_39 phases=3 windings=2 buses=(Bus_39, LVBus_39) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_40 phases=3 windings=2 buses=(Bus_40, LVBus_40) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_41 phases=3 windings=2 buses=(Bus_41, LVBus_41) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_42 phases=3 windings=2 buses=(Bus_42, LVBus_42) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_43 phases=3 windings=2 buses=(Bus_43, LVBus_43) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_44 phases=3 windings=2 buses=(Bus_44, LVBus_44) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_45 phases=3 windings=2 buses=(Bus_45, LVBus_45) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_46 phases=3 windings=2 buses=(Bus_46, LVBus_46) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_47 phases=3 windings=2 buses=(Bus_47, LVBus_47) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_48 phases=3 windings=2 buses=(Bus_48, LVBus_48) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_49 phases=3 windings=2 buses=(Bus_49, LVBus_49) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_50 phases=3 windings=2 buses=(Bus_50, LVBus_50) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_51 phases=3 windings=2 buses=(Bus_51, LVBus_51) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_52 phases=3 windings=2 buses=(Bus_52, LVBus_52) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_53 phases=3 windings=2 buses=(Bus_53, LVBus_53) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_54 phases=3 windings=2 buses=(Bus_54, LVBus_54) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_55 phases=3 windings=2 buses=(Bus_55, LVBus_55) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_56 phases=3 windings=2 buses=(Bus_56, LVBus_56) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_57 phases=3 windings=2 buses=(Bus_57, LVBus_57) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_58 phases=3 windings=2 buses=(Bus_58, LVBus_58) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_59 phases=3 windings=2 buses=(Bus_59, LVBus_59) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_60 phases=3 windings=2 buses=(Bus_60, LVBus_60) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_61 phases=3 windings=2 buses=(Bus_61, LVBus_61) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_62 phases=3 windings=2 buses=(Bus_62, LVBus_62) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_63 phases=3 windings=2 buses=(Bus_63, LVBus_63) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_64 phases=3 windings=2 buses=(Bus_64, LVBus_64) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_65 phases=3 windings=2 buses=(Bus_65, LVBus_65) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_66 phases=3 windings=2 buses=(Bus_66, LVBus_66) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_67 phases=3 windings=2 buses=(Bus_67, LVBus_67) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_68 phases=3 windings=2 buses=(Bus_68, LVBus_68) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_69 phases=3 windings=2 buses=(Bus_69, LVBus_69) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_70 phases=3 windings=2 buses=(Bus_70, LVBus_70) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_71 phases=3 windings=2 buses=(Bus_71, LVBus_71) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_72 phases=3 windings=2 buses=(Bus_72, LVBus_72) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_73 phases=3 windings=2 buses=(Bus_73, LVBus_73) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_74 phases=3 windings=2 buses=(Bus_74, LVBus_74) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_75 phases=3 windings=2 buses=(Bus_75, LVBus_75) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_76 phases=3 windings=2 buses=(Bus_76, LVBus_76) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_77 phases=3 windings=2 buses=(Bus_77, LVBus_77) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_78 phases=3 windings=2 buses=(Bus_78, LVBus_78) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_79 phases=3 windings=2 buses=(Bus_79, LVBus_79) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_80 phases=3 windings=2 buses=(Bus_80, LVBus_80) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_81 phases=3 windings=2 buses=(Bus_81, LVBus_81) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_82 phases=3 windings=2 buses=(Bus_82, LVBus_82) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_83 phases=3 windings=2 buses=(Bus_83, LVBus_83) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_84 phases=3 windings=2 buses=(Bus_84, LVBus_84) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_85 phases=3 windings=2 buses=(Bus_85, LVBus_85) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_86 phases=3 windings=2 buses=(Bus_86, LVBus_86) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_87 phases=3 windings=2 buses=(Bus_87, LVBus_87) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_88 phases=3 windings=2 buses=(Bus_88, LVBus_88) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_89 phases=3 windings=2 buses=(Bus_89, LVBus_89) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_90 phases=3 windings=2 buses=(Bus_90, LVBus_90) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_91 phases=3 windings=2 buses=(Bus_91, LVBus_91) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_92 phases=3 windings=2 buses=(Bus_92, LVBus_92) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_93 phases=3 windings=2 buses=(Bus_93, LVBus_93) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_94 phases=3 windings=2 buses=(Bus_94, LVBus_94) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_95 phases=3 windings=2 buses=(Bus_95, LVBus_95) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_96 phases=3 windings=2 buses=(Bus_96, LVBus_96) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_97 phases=3 windings=2 buses=(Bus_97, LVBus_97) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_98 phases=3 windings=2 buses=(Bus_98, LVBus_98) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_99 phases=3 windings=2 buses=(Bus_99, LVBus_99) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+New transformer.ServiceTransformer_100 phases=3 windings=2 buses=(Bus_100, LVBus_100) conns=(wye, wye) kvs=(20, 0.4) kvas=(1000, 1000) %loadloss=0 xhl=0.2 Basefreq=50
+
+New Load.Load_1 Bus1=LVBus_1 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_2 Bus1=LVBus_2 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_3 Bus1=LVBus_3 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_4 Bus1=LVBus_4 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_5 Bus1=LVBus_5 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_6 Bus1=LVBus_6 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_7 Bus1=LVBus_7 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_8 Bus1=LVBus_8 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_9 Bus1=LVBus_9 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_10 Bus1=LVBus_10 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_11 Bus1=LVBus_11 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_12 Bus1=LVBus_12 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_13 Bus1=LVBus_13 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_14 Bus1=LVBus_14 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_15 Bus1=LVBus_15 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_16 Bus1=LVBus_16 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_17 Bus1=LVBus_17 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_18 Bus1=LVBus_18 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_19 Bus1=LVBus_19 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_20 Bus1=LVBus_20 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_21 Bus1=LVBus_21 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_22 Bus1=LVBus_22 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_23 Bus1=LVBus_23 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_24 Bus1=LVBus_24 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_25 Bus1=LVBus_25 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_26 Bus1=LVBus_26 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_27 Bus1=LVBus_27 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_28 Bus1=LVBus_28 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_29 Bus1=LVBus_29 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_30 Bus1=LVBus_30 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_31 Bus1=LVBus_31 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_32 Bus1=LVBus_32 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_33 Bus1=LVBus_33 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_34 Bus1=LVBus_34 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_35 Bus1=LVBus_35 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_36 Bus1=LVBus_36 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_37 Bus1=LVBus_37 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_38 Bus1=LVBus_38 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_39 Bus1=LVBus_39 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_40 Bus1=LVBus_40 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_41 Bus1=LVBus_41 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_42 Bus1=LVBus_42 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_43 Bus1=LVBus_43 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_44 Bus1=LVBus_44 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_45 Bus1=LVBus_45 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_46 Bus1=LVBus_46 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_47 Bus1=LVBus_47 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_48 Bus1=LVBus_48 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_49 Bus1=LVBus_49 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_50 Bus1=LVBus_50 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_51 Bus1=LVBus_51 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_52 Bus1=LVBus_52 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_53 Bus1=LVBus_53 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_54 Bus1=LVBus_54 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_55 Bus1=LVBus_55 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_56 Bus1=LVBus_56 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_57 Bus1=LVBus_57 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_58 Bus1=LVBus_58 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_59 Bus1=LVBus_59 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_60 Bus1=LVBus_60 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_61 Bus1=LVBus_61 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_62 Bus1=LVBus_62 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_63 Bus1=LVBus_63 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_64 Bus1=LVBus_64 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_65 Bus1=LVBus_65 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_66 Bus1=LVBus_66 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_67 Bus1=LVBus_67 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_68 Bus1=LVBus_68 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_69 Bus1=LVBus_69 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_70 Bus1=LVBus_70 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_71 Bus1=LVBus_71 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_72 Bus1=LVBus_72 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_73 Bus1=LVBus_73 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_74 Bus1=LVBus_74 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_75 Bus1=LVBus_75 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_76 Bus1=LVBus_76 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_77 Bus1=LVBus_77 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_78 Bus1=LVBus_78 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_79 Bus1=LVBus_79 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_80 Bus1=LVBus_80 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_81 Bus1=LVBus_81 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_82 Bus1=LVBus_82 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_83 Bus1=LVBus_83 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_84 Bus1=LVBus_84 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_85 Bus1=LVBus_85 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_86 Bus1=LVBus_86 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_87 Bus1=LVBus_87 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_88 Bus1=LVBus_88 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_89 Bus1=LVBus_89 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_90 Bus1=LVBus_90 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_91 Bus1=LVBus_91 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_92 Bus1=LVBus_92 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_93 Bus1=LVBus_93 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_94 Bus1=LVBus_94 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_95 Bus1=LVBus_95 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_96 Bus1=LVBus_96 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_97 Bus1=LVBus_97 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_98 Bus1=LVBus_98 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_99 Bus1=LVBus_99 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+New Load.Load_100 Bus1=LVBus_100 Phases=3 Model=1 kV=0.4 kW=140 kvar=50
+
+New Capacitor.CapSwitch1 Bus1=Bus_13 phases=3 kVAR=125 kV=20 Basefreq=50
+
+New Capacitor.CapSwitch2 Bus1=Bus_39 phases=3 kVAR=80 kV=20 Basefreq=50
+
+New Capacitor.CapSwitch3 Bus1=Bus_85 phases=3 kVAR=125 kV=20 Basefreq=50
+
+New Capacitor.CapSwitch4 Bus1=Bus_28 phases=3 kVAR=3000 kV=20 Basefreq=50
+
+New Capacitor.CapSwitch5 Bus1=Bus_59 phases=3 kVAR=250 kV=20 Basefreq=50
+
+New Capacitor.CapSwitch6 Bus1=Bus_70 phases=3 kVAR=800 kV=20 Basefreq=50
+
+New Capacitor.CapSwitch7 Bus1=Bus_48 phases=3 kVAR=250 kV=20 Basefreq=50
+
+New Capacitor.CapSwitch8 Bus1=Bus_95 phases=3 kVAR=250 kV=20 Basefreq=50
+
+Set VoltageBases = [110, 20, 0.4]    ! ARRAY OF VOLTAGES IN KV
+calcv
+Solve
+
+! New Line.CapSwitch1  Phases=3 Bus1=Bus_13   Bus2=Bus_Cap1  Switch=y  r1=1e-4 r0=1e-4 x1=0.000 x0=0.000 c1=0.000 c0=0.000
+! New Capacitor.Cap1 Bus1=Bus_Cap1 phases=3 kVAR=125 kV=20
+
+! New Line.CapSwitch2  Phases=3 Bus1=Bus_39   Bus2=Bus_Cap2  Switch=y  r1=1e-4 r0=1e-4 x1=0.000 x0=0.000 c1=0.000 c0=0.000
+! New Capacitor.Cap2 Bus1=Bus_Cap2 phases=3 kVAR=80 kV=20
+
+! New Line.CapSwitch3  Phases=3 Bus1=Bus_85   Bus2=Bus_Cap3  Switch=y  r1=1e-4 r0=1e-4 x1=0.000 x0=0.000 c1=0.000 c0=0.000
+! New Capacitor.Cap3 Bus1=Bus_Cap3 phases=3 kVAR=125 kV=20
+
+! New Line.CapSwitch4  Phases=3 Bus1=Bus_28   Bus2=Bus_Cap4  Switch=y  r1=1e-4 r0=1e-4 x1=0.000 x0=0.000 c1=0.000 c0=0.000
+! New Capacitor.Cap4 Bus1=Bus_Cap4 phases=3 kVAR=3000 kV=20
+
+! New Line.CapSwitch5  Phases=3 Bus1=Bus_59   Bus2=Bus_Cap5  Switch=y  r1=1e-4 r0=1e-4 x1=0.000 x0=0.000 c1=0.000 c0=0.000
+! New Capacitor.Cap5 Bus1=Bus_Cap5 phases=3 kVAR=250 kV=20
+
+! New Line.CapSwitch6  Phases=3 Bus1=Bus_70   Bus2=Bus_Cap6  Switch=y  r1=1e-4 r0=1e-4 x1=0.000 x0=0.000 c1=0.000 c0=0.000
+! New Capacitor.Cap6 Bus1=Bus_Cap6 phases=3 kVAR=800 kV=20
+
+! New Line.CapSwitch7  Phases=3 Bus1=Bus_48   Bus2=Bus_Cap7  Switch=y  r1=1e-4 r0=1e-4 x1=0.000 x0=0.000 c1=0.000 c0=0.000
+! New Capacitor.Cap7 Bus1=Bus_Cap7 phases=3 kVAR=250 kV=20
+
+! New Line.CapSwitch8  Phases=3 Bus1=Bus_95   Bus2=Bus_Cap8  Switch=y  r1=1e-4 r0=1e-4 x1=0.000 x0=0.000 c1=0.000 c0=0.000
+! New Capacitor.Cap8 Bus1=Bus_Cap8 phases=3 kVAR=250 kV=20
+! calcv
+! Solve
+
