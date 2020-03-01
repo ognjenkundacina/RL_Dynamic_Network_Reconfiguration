@@ -10,6 +10,8 @@ import torch.optim as optim
 import torch.nn.functional as F
 import torchvision.transforms as T
 
+from config import *
+
 Transition = namedtuple('Transition',
                         ('state', 'action', 'next_state', 'reward'))
 
@@ -103,7 +105,7 @@ class DeepQLearningAgent:
         
         total_episode_rewards = []
         for i_episode in range(n_episodes):
-            if (i_episode % 1000 == 0):
+            if (i_episode % 1 == 0):
                 print("=========Episode: ", i_episode)
 
             #if (i_episode == int(0.1 * n_episodes)):
@@ -129,9 +131,9 @@ class DeepQLearningAgent:
 
             while not done:
                 action = self.get_action(state, epsilon = self.epsilon)
-                #print("Toogle capacitor: ", action + 1)    
-                if (action > self.n_actions - 1):
-                    print("agent.train: action > self.n_actions - 1")
+                #print("Action: ", action)    
+                if (action > self.n_actions):
+                    print("agent.train: action > self.n_actions")
                 next_state, reward, done = self.environment.step(action)
                 total_episode_reward += reward
 
@@ -167,7 +169,7 @@ class DeepQLearningAgent:
         plt.xlabel('Episode number') 
         plt.ylabel('Total episode reward') 
         plt.savefig("total_episode_rewards.png")
-        #plt.show()
+        plt.show()
 
 
     def test(self, df_test):
@@ -192,21 +194,15 @@ class DeepQLearningAgent:
 
             while not done:
                 action = self.get_action(state, epsilon = 0.0)
-                print("Toogle capacitor: ", self.environment.capacitor_names_by_index[action]) 
-                if (action > self.n_actions - 1):
-                    print ("agent.test: action > self.n_actions - 1")
+                if action == 0:
+                    print("Finished sequence for the current timestep")
+                else:
+                    print("Toogle switch: ", self.environment.switch_names_by_index[action]) 
+                
+                if (action > self.n_actions):
+                    print ("Warning: agent.test: action > self.n_actions")
                 
                 next_state, reward, done = self.environment.step(action)
-
-                if done: #posljednja akcija nije donosila benefit, pa je ukidamo
-                    print ('Last action was reverted')
-                    next_state = self.environment.revert_action(action)
-                    reward = 0
-                    done = False
-                    
-                if (self.environment.i_step == self.environment.n_actions):
-                    print('LOSSES: ', self.environment.current_losses)
-                    break
                     
                 total_episode_reward += reward
                 state = torch.tensor([next_state], dtype=torch.float)

@@ -3,7 +3,7 @@ from opendssdirect.utils import Iterator
 
 class ODSSNetworkManagement:
     def __init__(self):
-        dss.run_command('Redirect power_algorithms/Test_scheme.dss')
+        dss.run_command('Redirect power_algorithms/IEEE123_scheme/Run_IEEE123Bus.DSS')
         self.nominal_load_kW = {}
         self.nominal_load_kVAr = {}
         self.__save_nominal_load_powers() #remember nominal load values so that load scaling feature can use them
@@ -15,6 +15,17 @@ class ODSSNetworkManagement:
             kVAr = dss.Loads.kvar()
             self.nominal_load_kW.update( {loadName() : kW} )
             self.nominal_load_kVAr.update( {loadName() : kVAr} )
+
+
+    def get_all_switch_names(self):
+        switch_names = []
+        for line_name in dss.Lines.AllNames():
+            if ('sw' in line_name):
+                switch_names.append(line_name)
+        return switch_names
+
+    def toogle_switch_status(self, switch_name):
+        return
 
     def toogle_capacitor_status(self, capSwitchName):
         dss.Capacitors.Name(capSwitchName)

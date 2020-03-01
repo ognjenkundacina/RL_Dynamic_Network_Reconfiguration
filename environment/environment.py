@@ -1,11 +1,11 @@
 import gym
 from gym import spaces
 import random
-import numpy as np 
-#from power_algorithms.power_flow import PowerFlow
+import numpy as np
 from power_algorithms.odss_power_flow import ODSSPowerFlow
-#import power_algorithms.network_management as nm
 import power_algorithms.odss_network_management as nm
+from config import *
+import copy
 
 class Environment(gym.Env):
     
@@ -18,22 +18,34 @@ class Environment(gym.Env):
         self.power_flow = ODSSPowerFlow()
         self.power_flow.calculate_power_flow() #potrebno zbog odredjivanja state_space_dims
 
-        self.state_space_dims = len(self.power_flow.get_bus_voltages()) + len(self.power_flow.get_capacitor_calculated_q())
-        self.n_actions = len(self.network_manager.get_all_capacitors())
+        self.state_space_dims = len(self.power_flow.get_bus_voltages()) + 1
+        ####self.n_actions = 1 + len(self.network_manager.get_all_switch_names())
+        self.n_actions = 1 + len(self.network_manager.get_all_capacitors())
         self.n_consumers = self.network_manager.get_load_count()
-        self.i_step = 0
-        self.current_losses = 0.0
+        self.timestep = 0
+        self.switching_action_cost = 0.1
+        self.zero_action_name = 'Zero action index - go in the next timestep'
 
-        self.capacitor_names = self.network_manager.get_all_capacitor_switch_names()
-        self.action_indices = [i for i in range(self.n_actions)] #todo ovo bi mogao biti dictionary, ako bismo tap changere koristili, ili diskretizovane setpointe generatora
-        self.capacitor_names_by_index = dict(zip(self.action_indices, self.capacitor_names))
+        ####self.switch_names = self.network_manager.get_all_switch_names()
+        ##### action_index = 0 = kraj sekvence za aktuelni interva
+        ##### action_index != 0 = indeks prekidaca, pri cemo indeksiranje pocinje od 1
+        ####self.action_indices = [i for i in range(self.n_actions + 1)]
+        ####self.switch_indices = [i for i in range(1, self.n_actions + 1)]
+        ####self.switch_names_by_index = dict(zip(self.switch_indices, self.switch_names))
+
+        self.switch_names = self.network_manager.get_all_capacitor_switch_names()
+        # action_index = 0 = kraj sekvence za aktuelni interva
+        # action_index != 0 = indeks prekidaca, pri cemo indeksiranje pocinje od 1
+        self.action_indices = [i for i in range(self.n_actions + 1)]
+        self.switch_indices = [i for i in range(1, self.n_actions + 1)]
+        self.switch_names_by_index = dict(zip(self.switch_indices, self.switch_names))
         
     def _update_state(self):
         self.power_flow.calculate_power_flow()
 
         bus_voltages_dict = self.power_flow.get_bus_voltages()
         self.state = list(bus_voltages_dict.values())
-        self.state += list(self.power_flow.get_capacitor_calculated_q().values())
+        self.state.append(self.timestep / NUM_TIMESTEPS * 1.0)
         #line_rated_powers_dict = self.power_flow.get_line_rated_powers()
         #self.state = list(line_rated_powers_dict.values())
 
@@ -42,38 +54,58 @@ class Environment(gym.Env):
 
         return self.state
 
+    def _reset_available_actions_for_next_timestep(self):
+        #ovdje je potrebno postaviti available actions na sljedecu vriejdnost:
+        #all_actions - forbidden_actions
+        #forbidden_actions - prekidaci koji su vec tri puta iskoristeni u okviru epizode
+        self.available_actions = copy.deepcopy(self.switch_names_by_index) #deep copy
+        self.available_actions[0] = self.zero_action_name #dodaje key value pair u dictionary
+        for switch_index in self.switch_operations_by_index:
+            if self.switch_operations_by_index[switch_index] > 3:
+                #print('Forbidden action: ', switch_index)
+                self.available_actions.pop(switch_index)
+
+    def _add_or_remove_zero_from_available_actions(self):
+        if self._is_configuration_radial():
+            if not (0 in self.available_actions): #provjerava da key nije u dictionariju
+                self.available_actions[0] = self.zero_action_name
+                #cak je dobro staviti lazni switch name za ovu akciju, to ce nam biti dobar test
+                #ako nismo dobro rukvoali ovom akcijom poslacemo je u openDSS koji ce dati gresku
+        else:
+            if 0 in self.available_actions():
+                self.available_actions.pop(0)
+
+    def _is_configuration_radial(self):
+        #todo nekako preko opendss skontati
+        #ako ne moze, onda napraviti neki dictionary sa svim kombinacjama switcheva koje daju radijalnu konfiguraciju
+        #i iscupati iz njega je li trenutna radijalna
+        return True
+
     #action: 0..n_actions
     def step(self, action):
-        self.network_manager.toogle_capacitor_status(self.available_actions[action])
-        self.available_actions.pop(action)
+        if action==0:
+            self.timestep += 1
+            self._reset_available_actions_for_next_timestep()
+        else:
+            self.network_manager.toogle_switch_status(self.available_actions[action])
+            self.switch_operations_by_index[action] += 1
+            self.available_actions.pop(action)
+            self._add_or_remove_zero_from_available_actions()
         
         next_state = self._update_state()
 
         reward = self.calculate_reward(action)
 
-        self.i_step += 1
-
-        done = (self.i_step == self.n_actions)
-
-        if (reward < 0.0):
-            done = True  #todo staviti odradjivanje vrijednosti za done u jednu liniju
+        done = (self.timestep == NUM_TIMESTEPS)
 
         return next_state, reward, done
-    
-    #only for test set
-    def revert_action(self, action):
-        self.network_manager.toogle_capacitor_status(self.capacitor_names_by_index[action])
-        next_state = self._update_state()
-        self.current_losses = self.power_flow.get_losses()
-        return next_state
-
 
     def calculate_reward(self, action):
-        new_losses = self.power_flow.get_losses()
-        losses_decrease = self.current_losses - new_losses
-        reward = losses_decrease * 1000
-        self.current_losses = new_losses
-        #ObjectiveFunctions
+        reward = 0
+        if action == 0:
+            reward -= self.power_flow.get_losses() / 1000.0
+        else:
+            reward -= self.switching_action_cost
 
         return reward
 
@@ -84,11 +116,14 @@ class Environment(gym.Env):
         self.power_flow.calculate_power_flow()
         bus_voltages_dict = self.power_flow.get_bus_voltages()
         self.state = list(bus_voltages_dict.values())
-        self.state += list(self.power_flow.get_capacitor_calculated_q().values())
+        self.state.append(self.timestep / NUM_TIMESTEPS * 1.0)
         #line_rated_powers_dict = self.power_flow.get_line_rated_powers()
         #self.state = list(line_rated_powers_dict.values())
-        self.current_losses = self.power_flow.get_losses()
-        self.i_step = 0
-        self.available_actions = dict(zip(self.action_indices, self.capacitor_names))
+        self.timestep = 0
+        self.available_actions = copy.deepcopy(self.switch_names_by_index) #deep copy
+        self.available_actions[0] = self.zero_action_name
+
+        initial_switch_operations = [0 for i in range(self.n_actions)]
+        self.switch_operations_by_index = dict(zip(self.switch_indices, initial_switch_operations))
 
         return self.state
