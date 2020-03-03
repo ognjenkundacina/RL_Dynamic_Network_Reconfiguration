@@ -22,18 +22,19 @@ def split_dataset(df, split_index):
     return df_train, df_test
 
 def main():
-    test_power_flow()
-
+    #test_power_flow()
+    
+    df = load_dataset()
+    df_train, df_test = split_dataset(df, 998)
 
     #environment should'n have the entire dataset as an input parameter, but train and test methods
-    #environment = Environment()
+    environment = Environment()
 
-    '''
     print('=====================agent=====================')
     agent = DeepQLearningAgent(environment)
 
-    for i in range (10):
-        n_episodes = 1000
+    for i in range (1):
+        n_episodes = 200
         print('agent training started')
         t1 = time.time()
         agent.train(df_train, n_episodes)
@@ -41,7 +42,6 @@ def main():
         print ('agent training finished in', t2-t1)
 
         agent.test(df_test)
-    '''
-
+    
 if __name__ == '__main__':
     main()

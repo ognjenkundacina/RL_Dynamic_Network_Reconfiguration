@@ -3,7 +3,7 @@ from opendssdirect.utils import Iterator
 
 class ODSSNetworkManagement:
     def __init__(self):
-        dss.run_command('Redirect power_algorithms/Test_scheme.dss')
+        dss.run_command('Redirect power_algorithms/IEEE123_scheme/Run_IEEE123Bus.DSS')
         self.nominal_load_kW = {}
         self.nominal_load_kVAr = {}
         self.__save_nominal_load_powers() #remember nominal load values so that load scaling feature can use them
@@ -15,6 +15,31 @@ class ODSSNetworkManagement:
             kVAr = dss.Loads.kvar()
             self.nominal_load_kW.update( {loadName() : kW} )
             self.nominal_load_kVAr.update( {loadName() : kVAr} )
+
+
+    def get_all_switch_names(self):
+        switch_names = []
+        for line_name in dss.Lines.AllNames():
+            if ('sw' in line_name):
+                switch_names.append('Line.' + line_name)
+        return switch_names
+
+    def close_switch(self, switch_name):
+        dss.Circuit.SetActiveElement(switch_name)
+        #prvi argument: terminal = 0
+        #drugi argument: phases = 0 #all phases
+        dss.CktElement.Close(0, 0)
+
+    def open_switch(self, switch_name):
+        dss.Circuit.SetActiveElement(switch_name)
+        dss.CktElement.Open(0, 0)
+
+    def toogle_switch_status(self, switch_name):
+        dss.Circuit.SetActiveElement(switch_name)
+        if dss.CktElement.IsOpen(0, 0):
+            dss.CktElement.Close(0, 0)
+        else:
+            dss.CktElement.Open(0, 0)
 
     def toogle_capacitor_status(self, capSwitchName):
         dss.Capacitors.Name(capSwitchName)
