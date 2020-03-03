@@ -3,6 +3,7 @@ from opendssdirect.utils import Iterator
 import math
 import random
 import pandas
+from config import *
 
 class ODSSPowerFlow:
     def calculate_power_flow(self):
@@ -68,17 +69,83 @@ class ODSSPowerFlow:
         return capacitor_q_injected
 
     def create_data_set(self):
-        n_capacitors = dss.Capacitors.Count()
         n_consumers = dss.Loads.Count()
 
-        columns = [i for i in range(n_consumers + n_capacitors)]
-        index = [i for i in range(1000)]
+        columns = [i for i in range(NUM_TIMESTEPS * 3)]
+        index = [i for i in range(2)]
         df = pandas.DataFrame(index=index, columns=columns)
         df = df.fillna(0)
         for index, row in df.iterrows():
-            for i in range(n_consumers):
-                df.loc[index, i] = random.random()
-            for i in range(n_consumers, n_consumers + n_capacitors):
-                df.loc[index, i] = random.choice([True, False])
-
+            df.loc[index, 0] = 0.667
+            df.loc[index, 1] = 0.334
+            df.loc[index, 2] = 0.221
+            df.loc[index, 3] = 0.622
+            df.loc[index, 4] = 0.311
+            df.loc[index, 5] = 0.221
+            df.loc[index, 6] = 0.544
+            df.loc[index, 7] = 0.272
+            df.loc[index, 8] = 0.221
+            df.loc[index, 9] = 0.444
+            df.loc[index, 10] = 0.222
+            df.loc[index, 11] = 0.221
+            df.loc[index, 12] = 0.422
+            df.loc[index, 13] = 0.211
+            df.loc[index, 14] = 0.221
+            df.loc[index, 15] = 0.511
+            df.loc[index, 16] = 0.255
+            df.loc[index, 17] = 0.221
+            df.loc[index, 18] = 0.644
+            df.loc[index, 19] = 0.322
+            df.loc[index, 20] = 1.000
+            df.loc[index, 21] = 0.711
+            df.loc[index, 22] = 0.355
+            df.loc[index, 23] = 1.000
+            df.loc[index, 24] = 0.778
+            df.loc[index, 25] = 0.389
+            df.loc[index, 26] = 1.000
+            df.loc[index, 27] = 0.778
+            df.loc[index, 28] = 0.389
+            df.loc[index, 29] = 0.447
+            df.loc[index, 30] = 0.767
+            df.loc[index, 31] = 0.767
+            df.loc[index, 32] = 1.000
+            df.loc[index, 33] = 0.722
+            df.loc[index, 34] = 0.722
+            df.loc[index, 35] = 1.000
+            df.loc[index, 36] = 0.689
+            df.loc[index, 37] = 0.689
+            df.loc[index, 38] = 1.000
+            df.loc[index, 39] = 0.689
+            df.loc[index, 40] = 0.689
+            df.loc[index, 41] = 1.000
+            df.loc[index, 42] = 0.667
+            df.loc[index, 43] = 0.334
+            df.loc[index, 44] = 1.000
+            df.loc[index, 45] = 0.767
+            df.loc[index, 46] = 0.911
+            df.loc[index, 47] = 1.000
+            df.loc[index, 48] = 0.889
+            df.loc[index, 49] = 1.000
+            df.loc[index, 50] = 0.221
+            df.loc[index, 51] = 0.933
+            df.loc[index, 52] = 0.811
+            df.loc[index, 53] = 0.221
+            df.loc[index, 54] = 1.000
+            df.loc[index, 55] = 0.811
+            df.loc[index, 56] = 0.221
+            df.loc[index, 57] = 0.911
+            df.loc[index, 58] = 0.705
+            df.loc[index, 59] = 0.221
+            df.loc[index, 60] = 0.867
+            df.loc[index, 61] = 0.433
+            df.loc[index, 62] = 0.221
+            df.loc[index, 63] = 0.778
+            df.loc[index, 64] = 0.389
+            df.loc[index, 65] = 0.221
+            df.loc[index, 66] = 0.711
+            df.loc[index, 67] = 0.355
+            df.loc[index, 68] = 0.221
+            df.loc[index, 69] = 0.667
+            df.loc[index, 70] = 0.334
+            df.loc[index, 71] = 0.221
         df.to_csv('data.csv')

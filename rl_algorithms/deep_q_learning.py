@@ -121,10 +121,11 @@ class DeepQLearningAgent:
             row_list = df_row.values.tolist()
             row_list = row_list[0]
 
-            consumption_percents = row_list[1:self.environment.n_consumers + 1]
-            capacitor_statuses = row_list[self.environment.n_consumers + 1:]
+            #daily_consumption_percents_per_feeder ima 72 clana. Za svaki od 24 trenutka idu 3 scaling faktora, za svaki od feedera
+            #i to prva tri clana liste odgovaraju prvom trenutku, pa sljedeca tri drugom...
+            daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
 
-            state = self.environment.reset(consumption_percents, capacitor_statuses)
+            state = self.environment.reset(daily_consumption_percents_per_feeder)
 
             state = torch.tensor([state], dtype=torch.float)
             total_episode_reward = 0 
@@ -181,10 +182,11 @@ class DeepQLearningAgent:
             row_list = row.values.tolist()
             #row_list = row_list[0] nije potrebno jer row nije stra struktura kao df frame u train metodi
 
-            consumption_percents = row_list[1:self.environment.n_consumers + 1]
-            capacitor_statuses = row_list[self.environment.n_consumers + 1:]
+            #daily_consumption_percents_per_feeder ima 72 clana. Za svaki od 24 trenutka idu 3 scaling faktora, za svaki od feedera
+            #i to prva tri clana liste odgovaraju prvom trenutku, pa sljedeca tri drugom...
+            daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
 
-            state = self.environment.reset(consumption_percents, capacitor_statuses)
+            state = self.environment.reset(daily_consumption_percents_per_feeder)
             print ('Initial losses: ', self.environment.power_flow.get_losses())
 
             state = torch.tensor([state], dtype=torch.float)

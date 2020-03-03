@@ -97,6 +97,11 @@ class ODSSNetworkManagement:
     def get_load_count(self):
         return dss.Loads.Count()
 
+    def is_system_radial(self):
+        dss.Circuit.SetActiveElement('circuit.NRsema')
+        print(dss.Topology.NumIsolatedLoads())
+        print(dss.Topology.NumLoops())
+
     def print_loads(self):
         for loadName in Iterator(dss.Loads, 'Name'):
             kW = dss.Loads.kW()

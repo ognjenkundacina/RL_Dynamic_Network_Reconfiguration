@@ -20,7 +20,6 @@ class Environment(gym.Env):
 
         self.state_space_dims = len(self.power_flow.get_bus_voltages()) + 1
         self.n_actions = 1 + len(self.network_manager.get_all_switch_names())
-        ####self.n_actions = 1 + len(self.network_manager.get_all_capacitors())
         self.n_consumers = self.network_manager.get_load_count()
         self.timestep = 0
         self.switching_action_cost = 0.0000001
@@ -39,8 +38,6 @@ class Environment(gym.Env):
         bus_voltages_dict = self.power_flow.get_bus_voltages()
         self.state = list(bus_voltages_dict.values())
         self.state.append(self.timestep / NUM_TIMESTEPS * 1.0)
-        #line_rated_powers_dict = self.power_flow.get_line_rated_powers()
-        #self.state = list(line_rated_powers_dict.values())
 
         if (len(self.state) != self.state_space_dims):
             print('Environment: len(self.state) != self.state_space_dims')
@@ -69,15 +66,27 @@ class Environment(gym.Env):
                 self.available_actions.pop(0)
 
     def _is_configuration_radial(self):
-        #todo nekako preko opendss skontati
-        #ako ne moze, onda napraviti neki dictionary sa svim kombinacjama switcheva koje daju radijalnu konfiguraciju
-        #i iscupati iz njega je li trenutna radijalna
+        #precondition: power flow is executed on new topology
+        
         return True
+
+    def _are_all_cosumers_fed(self):
+        #precondition: power flow is executed on new topology
+        retval = True
+        bus_voltages_dict = self.power_flow.get_bus_voltages()
+        for voltage in bus_voltages_dict.values():
+            if abs(voltage) < 0.01:
+                retval = False
+                break
+        return retval
+
+
 
     #action: 0..n_actions
     def step(self, action):
         if action==0:
             self.timestep += 1
+            self.set_load_scaling_for_timestep()
             self._reset_available_actions_for_next_timestep()
         else:
             self.network_manager.toogle_switch_status(self.available_actions[action])
@@ -102,17 +111,17 @@ class Environment(gym.Env):
 
         return reward
 
-    def reset(self, consumption_percents, capacitor_statuses):
-        self.network_manager.set_load_scaling(consumption_percents)
-        self.network_manager.set_capacitors_initial_status(capacitor_statuses)
-        
+    def reset(self, daily_consumption_percents_per_feeder):
+        self.timestep = 0
+
+        #self.consumption_percents_per_feeder je lista koja sadrzi 24 liste koje za trenutka sadrze 3 scaling faktora, po jedan za svaki do feedera
+        self.consumption_percents_per_feeder = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
+        self.set_load_scaling_for_timestep()
         self.power_flow.calculate_power_flow()
         bus_voltages_dict = self.power_flow.get_bus_voltages()
         self.state = list(bus_voltages_dict.values())
         self.state.append(self.timestep / NUM_TIMESTEPS * 1.0)
-        #line_rated_powers_dict = self.power_flow.get_line_rated_powers()
-        #self.state = list(line_rated_powers_dict.values())
-        self.timestep = 0
+        
         self.available_actions = copy.deepcopy(self.switch_names_by_index) #deep copy
         self.available_actions[0] = self.zero_action_name
 
@@ -120,3 +129,43 @@ class Environment(gym.Env):
         self.switch_operations_by_index = dict(zip(self.switch_indices, initial_switch_operations))
 
         return self.state
+
+    def distribute_feeder_consumptions(self, current_consumption_percents_per_feeder):
+        current_consumption_percents_per_node = [0.0 for i in range(self.n_consumers)]
+        current_consumption_percents_per_node[0] = current_consumption_percents_per_feeder[0]
+        current_consumption_percents_per_node[1] = current_consumption_percents_per_feeder[0]
+        current_consumption_percents_per_node[2] = current_consumption_percents_per_feeder[0]
+        current_consumption_percents_per_node[3] = current_consumption_percents_per_feeder[0]
+        current_consumption_percents_per_node[4] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[5] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[6] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[7] = current_consumption_percents_per_feeder[2]
+        current_consumption_percents_per_node[8] = current_consumption_percents_per_feeder[2]
+        current_consumption_percents_per_node[9] = current_consumption_percents_per_feeder[2]
+        current_consumption_percents_per_node[10] = current_consumption_percents_per_feeder[2]
+        current_consumption_percents_per_node[11] = current_consumption_percents_per_feeder[0]
+        current_consumption_percents_per_node[12] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[13] = current_consumption_percents_per_feeder[0]
+        return current_consumption_percents_per_node
+
+    def set_load_scaling_for_timestep(self):
+        if (self.timestep == NUM_TIMESTEPS):
+            return
+        if (self.timestep > NUM_TIMESTEPS):  
+            print('WARNING: environment.py; set_load_scaling_for_timestep; self.timestep greater than expected')  
+        current_consumption_percents_per_feeder = self.consumption_percents_per_feeder[self.timestep]
+        current_consumption_percents_per_node = self.distribute_feeder_consumptions(current_consumption_percents_per_feeder)
+        self.network_manager.set_load_scaling(current_consumption_percents_per_node)
+
+    def test_environment(self):
+        print(self.network_manager.is_system_radial())
+        self.network_manager.open_switch('Line.Sw4')
+        print(self.network_manager.is_system_radial())
+        print(self._are_all_cosumers_fed())
+        print('===========CREATE LOOPS=============')
+        self.network_manager.close_switch('Line.Sw4')
+        self.network_manager.close_switch('Line.Sw14')
+        print(self.network_manager.is_system_radial())
+        #self.network_manager.close_switch('Line.Sw14')
+        #self.power_flow.calculate_power_flow()
+        #print(self.power_flow.get_bus_voltages())

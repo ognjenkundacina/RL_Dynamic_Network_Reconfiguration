@@ -25,16 +25,17 @@ def main():
     #test_power_flow()
     
     df = load_dataset()
-    df_train, df_test = split_dataset(df, 998)
+    df_train, df_test = split_dataset(df, 0)
 
     #environment should'n have the entire dataset as an input parameter, but train and test methods
     environment = Environment()
+    #environment.test_environment()
 
     print('=====================agent=====================')
     agent = DeepQLearningAgent(environment)
 
     for i in range (1):
-        n_episodes = 200
+        n_episodes = 2
         print('agent training started')
         t1 = time.time()
         agent.train(df_train, n_episodes)
