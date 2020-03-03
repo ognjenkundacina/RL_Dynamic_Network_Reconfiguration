@@ -3,7 +3,7 @@ from opendssdirect.utils import Iterator
 
 class ODSSNetworkManagement:
     def __init__(self):
-        dss.run_command('Redirect power_algorithms/IEEE123_scheme/Run_IEEE123Bus.DSS')
+        dss.run_command('Redirect power_algorithms/NRsema.dss')
         self.nominal_load_kW = {}
         self.nominal_load_kVAr = {}
         self.__save_nominal_load_powers() #remember nominal load values so that load scaling feature can use them
