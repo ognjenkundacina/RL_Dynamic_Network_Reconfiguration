@@ -19,21 +19,14 @@ class Environment(gym.Env):
         self.power_flow.calculate_power_flow() #potrebno zbog odredjivanja state_space_dims
 
         self.state_space_dims = len(self.power_flow.get_bus_voltages()) + 1
-        ####self.n_actions = 1 + len(self.network_manager.get_all_switch_names())
-        self.n_actions = 1 + len(self.network_manager.get_all_capacitors())
+        self.n_actions = 1 + len(self.network_manager.get_all_switch_names())
+        ####self.n_actions = 1 + len(self.network_manager.get_all_capacitors())
         self.n_consumers = self.network_manager.get_load_count()
         self.timestep = 0
-        self.switching_action_cost = 0.1
+        self.switching_action_cost = 0.0000001
         self.zero_action_name = 'Zero action index - go in the next timestep'
 
-        ####self.switch_names = self.network_manager.get_all_switch_names()
-        ##### action_index = 0 = kraj sekvence za aktuelni interva
-        ##### action_index != 0 = indeks prekidaca, pri cemo indeksiranje pocinje od 1
-        ####self.action_indices = [i for i in range(self.n_actions + 1)]
-        ####self.switch_indices = [i for i in range(1, self.n_actions + 1)]
-        ####self.switch_names_by_index = dict(zip(self.switch_indices, self.switch_names))
-
-        self.switch_names = self.network_manager.get_all_capacitor_switch_names()
+        self.switch_names = self.network_manager.get_all_switch_names()
         # action_index = 0 = kraj sekvence za aktuelni interva
         # action_index != 0 = indeks prekidaca, pri cemo indeksiranje pocinje od 1
         self.action_indices = [i for i in range(self.n_actions + 1)]

@@ -23,7 +23,7 @@ def split_dataset(df, split_index):
 
 def main():
     #test_power_flow()
-
+    
     df = load_dataset()
     df_train, df_test = split_dataset(df, 998)
 
@@ -42,6 +42,6 @@ def main():
         print ('agent training finished in', t2-t1)
 
         agent.test(df_test)
-
+    
 if __name__ == '__main__':
     main()

@@ -131,7 +131,6 @@ class DeepQLearningAgent:
 
             while not done:
                 action = self.get_action(state, epsilon = self.epsilon)
-                #print("Action: ", action)    
                 if (action > self.n_actions):
                     print("agent.train: action > self.n_actions")
                 next_state, reward, done = self.environment.step(action)
@@ -151,8 +150,8 @@ class DeepQLearningAgent:
             
             total_episode_rewards.append(total_episode_reward)
 
-            #if (i_episode % 10 == 0):
-                #print ("total_episode_reward: ", total_episode_reward)
+            if (i_episode % 10 == 0):
+                print ("total_episode_reward: ", total_episode_reward)
 
             if (i_episode % 100 == 0):
                 torch.save(self.policy_net.state_dict(), "policy_net")

@@ -21,11 +21,25 @@ class ODSSNetworkManagement:
         switch_names = []
         for line_name in dss.Lines.AllNames():
             if ('sw' in line_name):
-                switch_names.append(line_name)
+                switch_names.append('Line.' + line_name)
         return switch_names
 
+    def close_switch(self, switch_name):
+        dss.Circuit.SetActiveElement(switch_name)
+        #prvi argument: terminal = 0
+        #drugi argument: phases = 0 #all phases
+        dss.CktElement.Close(0, 0)
+
+    def open_switch(self, switch_name):
+        dss.Circuit.SetActiveElement(switch_name)
+        dss.CktElement.Open(0, 0)
+
     def toogle_switch_status(self, switch_name):
-        return
+        dss.Circuit.SetActiveElement(switch_name)
+        if dss.CktElement.IsOpen(0, 0):
+            dss.CktElement.Close(0, 0)
+        else:
+            dss.CktElement.Open(0, 0)
 
     def toogle_capacitor_status(self, capSwitchName):
         dss.Capacitors.Name(capSwitchName)
