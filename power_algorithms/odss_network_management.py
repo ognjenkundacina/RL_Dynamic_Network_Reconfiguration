@@ -98,9 +98,12 @@ class ODSSNetworkManagement:
         return dss.Loads.Count()
 
     def is_system_radial(self):
-        dss.Circuit.SetActiveElement('circuit.NRsema')
-        print(dss.Topology.NumIsolatedLoads())
-        print(dss.Topology.NumLoops())
+        dss.Text.Command('CalcVoltageBases')
+        return dss.Topology.NumLoops() == 0
+
+    def are_all_cosumers_fed(self):
+        dss.Text.Command('CalcVoltageBases')
+        return dss.Topology.NumIsolatedLoads() == 0
 
     def print_loads(self):
         for loadName in Iterator(dss.Loads, 'Name'):

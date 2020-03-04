@@ -29,13 +29,12 @@ def main():
 
     #environment should'n have the entire dataset as an input parameter, but train and test methods
     environment = Environment()
-    #environment.test_environment()
 
     print('=====================agent=====================')
     agent = DeepQLearningAgent(environment)
 
     for i in range (1):
-        n_episodes = 2
+        n_episodes = 15
         print('agent training started')
         t1 = time.time()
         agent.train(df_train, n_episodes)

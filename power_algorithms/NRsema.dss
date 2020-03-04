@@ -44,18 +44,15 @@ New Load.Load_14 Bus1=Bus_14 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
 ! NORMALLY CLOSED SWITCHES
 
 New Line.Sw1    phases=3  Bus1=Bus_0   Bus2=Bus_15    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
-New Line.Sw5    phases=3  Bus1=Bus_0   Bus2=Bus_16    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
-New Line.Sw8    phases=3  Bus1=Bus_0   Bus2=Bus_17    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
-
 New Line.Sw2    phases=3  Bus1=Bus_1   Bus2=Bus_18    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
-New Line.Sw6    phases=3  Bus1=Bus_5   Bus2=Bus_19    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
-New Line.Sw9    phases=3  Bus1=Bus_8   Bus2=Bus_20    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
-
 New Line.Sw3    phases=3  Bus1=Bus_2   Bus2=Bus_21    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
-New Line.Sw7    phases=3  Bus1=Bus_6   Bus2=Bus_22    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
-New Line.Sw10    phases=3  Bus1=Bus_9   Bus2=Bus_23    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
-
 New Line.Sw4    phases=3  Bus1=Bus_3   Bus2=Bus_24    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw5    phases=3  Bus1=Bus_0   Bus2=Bus_16    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw6    phases=3  Bus1=Bus_5   Bus2=Bus_19    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw7    phases=3  Bus1=Bus_6   Bus2=Bus_22    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw8    phases=3  Bus1=Bus_0   Bus2=Bus_17    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw9    phases=3  Bus1=Bus_8   Bus2=Bus_20    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw10    phases=3  Bus1=Bus_9   Bus2=Bus_23    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
 New Line.Sw11    phases=3  Bus1=Bus_10   Bus2=Bus_25    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
 
 

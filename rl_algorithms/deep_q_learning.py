@@ -132,6 +132,7 @@ class DeepQLearningAgent:
 
             while not done:
                 action = self.get_action(state, epsilon = self.epsilon)
+                #print('action', action)
                 if (action > self.n_actions):
                     print("agent.train: action > self.n_actions")
                 next_state, reward, done = self.environment.step(action)

@@ -28,8 +28,8 @@ class Environment(gym.Env):
         self.switch_names = self.network_manager.get_all_switch_names()
         # action_index = 0 = kraj sekvence za aktuelni interva
         # action_index != 0 = indeks prekidaca, pri cemo indeksiranje pocinje od 1
-        self.action_indices = [i for i in range(self.n_actions + 1)]
-        self.switch_indices = [i for i in range(1, self.n_actions + 1)]
+        self.action_indices = [i for i in range(self.n_actions )]
+        self.switch_indices = [i for i in range(1, self.n_actions)]
         self.switch_names_by_index = dict(zip(self.switch_indices, self.switch_names))
         
     def _update_state(self):
@@ -45,42 +45,49 @@ class Environment(gym.Env):
         return self.state
 
     def _reset_available_actions_for_next_timestep(self):
+        self.action_idx_used_in_thisstep = []
+
+        
         #ovdje je potrebno postaviti available actions na sljedecu vriejdnost:
         #all_actions - forbidden_actions
-        #forbidden_actions - prekidaci koji su vec tri puta iskoristeni u okviru epizode
+        #forbidden_actions - prekidaci koji su vec sto puta iskoristeni u okviru epizode
         self.available_actions = copy.deepcopy(self.switch_names_by_index) #deep copy
         self.available_actions[0] = self.zero_action_name #dodaje key value pair u dictionary
+        self._update_available_actions()
         for switch_index in self.switch_operations_by_index:
-            if self.switch_operations_by_index[switch_index] > 3:
+            if self.switch_operations_by_index[switch_index] > 100:
                 #print('Forbidden action: ', switch_index)
                 self.available_actions.pop(switch_index)
 
-    def _add_or_remove_zero_from_available_actions(self):
-        if self._is_configuration_radial():
-            if not (0 in self.available_actions): #provjerava da key nije u dictionariju
-                self.available_actions[0] = self.zero_action_name
-                #cak je dobro staviti lazni switch name za ovu akciju, to ce nam biti dobar test
-                #ako nismo dobro rukvoali ovom akcijom poslacemo je u openDSS koji ce dati gresku
+    def _update_available_actions(self):
+        self.available_actions = {}
+        if self.network_manager.is_system_radial():
+            self._enable_meshing_actions_only()
+            self.available_actions[0] = self.zero_action_name
+            #cak je dobro staviti lazni switch name za ovu akciju, to ce nam biti dobar test
+            #ako nismo dobro rukvoali ovom akcijom poslacemo je u openDSS koji ce dati gresku
         else:
-            if 0 in self.available_actions():
-                self.available_actions.pop(0)
-
-    def _is_configuration_radial(self):
-        #precondition: power flow is executed on new topology
-        
-        return True
-
-    def _are_all_cosumers_fed(self):
-        #precondition: power flow is executed on new topology
-        retval = True
-        bus_voltages_dict = self.power_flow.get_bus_voltages()
-        for voltage in bus_voltages_dict.values():
-            if abs(voltage) < 0.01:
-                retval = False
-                break
-        return retval
+            self._enable_radializing_actions_only()
+            #ako je mreza upetljana, onda ne zelimo da akcija 0 (tj zavrsetak trenutka) bude available
 
 
+    def _enable_meshing_actions_only(self):
+        available_actions_keys = [item for item in self.switch_indices if item not in self.action_idx_used_in_thisstep]
+        for action_index in available_actions_keys:
+            switch_name = self.switch_names_by_index[action_index]
+            self.network_manager.toogle_switch_status(switch_name)
+            if not self.network_manager.is_system_radial():
+                self.available_actions[action_index] = switch_name
+            self.network_manager.toogle_switch_status(switch_name) #vrati stanje kakvo je bilo
+
+    def _enable_radializing_actions_only(self):
+        available_actions_keys = [item for item in self.switch_indices if item not in self.action_idx_used_in_thisstep]
+        for action_index in available_actions_keys:
+            switch_name = self.switch_names_by_index[action_index]
+            self.network_manager.toogle_switch_status(switch_name)
+            if self.network_manager.is_system_radial():
+                self.available_actions[action_index] = switch_name
+            self.network_manager.toogle_switch_status(switch_name) #vrati stanje kakvo je bilo
 
     #action: 0..n_actions
     def step(self, action):
@@ -90,9 +97,9 @@ class Environment(gym.Env):
             self._reset_available_actions_for_next_timestep()
         else:
             self.network_manager.toogle_switch_status(self.available_actions[action])
+            self.action_idx_used_in_thisstep.append(action)
             self.switch_operations_by_index[action] += 1
-            self.available_actions.pop(action)
-            self._add_or_remove_zero_from_available_actions()
+            self._update_available_actions()
         
         next_state = self._update_state()
 
@@ -122,10 +129,13 @@ class Environment(gym.Env):
         self.state = list(bus_voltages_dict.values())
         self.state.append(self.timestep / NUM_TIMESTEPS * 1.0)
         
+        #inicijalizacija available actions
+        self.action_idx_used_in_thisstep = []
         self.available_actions = copy.deepcopy(self.switch_names_by_index) #deep copy
         self.available_actions[0] = self.zero_action_name
+        self._update_available_actions()
 
-        initial_switch_operations = [0 for i in range(self.n_actions)]
+        initial_switch_operations = [0 for i in range(self.n_actions - 1)]
         self.switch_operations_by_index = dict(zip(self.switch_indices, initial_switch_operations))
 
         return self.state
@@ -159,13 +169,16 @@ class Environment(gym.Env):
 
     def test_environment(self):
         print(self.network_manager.is_system_radial())
+        print(self.network_manager.are_all_cosumers_fed())
+        print('===========Open switch=============')
         self.network_manager.open_switch('Line.Sw4')
         print(self.network_manager.is_system_radial())
-        print(self._are_all_cosumers_fed())
+        print(self.network_manager.are_all_cosumers_fed())
         print('===========CREATE LOOPS=============')
         self.network_manager.close_switch('Line.Sw4')
         self.network_manager.close_switch('Line.Sw14')
         print(self.network_manager.is_system_radial())
+        print(self.network_manager.are_all_cosumers_fed())
         #self.network_manager.close_switch('Line.Sw14')
         #self.power_flow.calculate_power_flow()
         #print(self.power_flow.get_bus_voltages())
