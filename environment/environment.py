@@ -117,8 +117,8 @@ class Environment(gym.Env):
         else:
             reward -= self.switching_action_cost
 
-        #zbog numerickih pogodnost je potrebno skalirati nagradu tako da joj moduo bude oko 1.0
-        reward /= 1000.0
+        #zbog numerickih pogodnost je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
+        reward /= 500.0
         return reward
 
     def reset(self, daily_consumption_percents_per_feeder):
