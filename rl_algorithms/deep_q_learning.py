@@ -152,11 +152,12 @@ class DeepQLearningAgent:
             
             total_episode_rewards.append(total_episode_reward)
 
-            if (i_episode % 10 == 0):
+            if (i_episode % 1 == 0):
                 print ("total_episode_reward: ", total_episode_reward)
 
             if (i_episode % 100 == 0):
                 torch.save(self.policy_net.state_dict(), "policy_net")
+                time.sleep(60)
 
             if i_episode % self.target_update == 0:
                 self.target_net.load_state_dict(self.policy_net.state_dict())

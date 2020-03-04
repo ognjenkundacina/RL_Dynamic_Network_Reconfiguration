@@ -22,7 +22,7 @@ class Environment(gym.Env):
         self.n_actions = 1 + len(self.network_manager.get_all_switch_names())
         self.n_consumers = self.network_manager.get_load_count()
         self.timestep = 0
-        self.switching_action_cost = 0.0000001
+        self.switching_action_cost = 1.0
         self.zero_action_name = 'Zero action index - go in the next timestep'
 
         self.switch_names = self.network_manager.get_all_switch_names()
@@ -112,10 +112,13 @@ class Environment(gym.Env):
     def calculate_reward(self, action):
         reward = 0
         if action == 0:
-            reward -= self.power_flow.get_losses() / 1000.0
+            #self.power_flow.get_losses() daje gubitke u kW, pa odmah imamo i kWh
+            reward -= self.power_flow.get_losses() * 0.065625
         else:
             reward -= self.switching_action_cost
 
+        #zbog numerickih pogodnost je potrebno skalirati nagradu tako da joj moduo bude oko 1.0
+        reward /= 1000.0
         return reward
 
     def reset(self, daily_consumption_percents_per_feeder):
