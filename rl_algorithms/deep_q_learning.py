@@ -61,7 +61,7 @@ class DeepQLearningAgent:
         self.batch_size = 256
         self.gamma = 0.99
         self.target_update = 10
-        self.memory = ReplayMemory(1000000)
+        self.memory = ReplayMemory(500000)
 
         self.state_space_dims = environment.state_space_dims
         self.n_actions = environment.n_actions
@@ -102,6 +102,7 @@ class DeepQLearningAgent:
             return action
 
     def train(self, df_train, n_episodes):
+        #self.policy_net.load_state_dict(torch.load("policy_net"))
         
         total_episode_rewards = []
         for i_episode in range(n_episodes):
