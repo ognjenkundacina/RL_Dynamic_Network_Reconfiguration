@@ -61,7 +61,7 @@ class DeepQLearningAgent:
         self.batch_size = 256
         self.gamma = 0.99
         self.target_update = 10
-        self.memory = ReplayMemory(500000)
+        self.memory = ReplayMemory(300000)
 
         self.state_space_dims = environment.state_space_dims
         self.n_actions = environment.n_actions
@@ -114,7 +114,7 @@ class DeepQLearningAgent:
             #if (i_episode == int(0.5 * n_episodes)):
                 #self.epsilon = 0.1
 
-            if (i_episode % 400 == 399):
+            if (i_episode % 1500 == 1499):
                 time.sleep(60)
 
             done = False
@@ -127,6 +127,7 @@ class DeepQLearningAgent:
             daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
 
             state = self.environment.reset(daily_consumption_percents_per_feeder)
+            #print ('Initial losses: ', self.environment.power_flow.get_losses())
 
             state = torch.tensor([state], dtype=torch.float)
             total_episode_reward = 0 
@@ -137,6 +138,7 @@ class DeepQLearningAgent:
                 if (action > self.n_actions):
                     print("agent.train: action > self.n_actions")
                 next_state, reward, done = self.environment.step(action)
+                #print ('Current losses: ', self.environment.power_flow.get_losses())
                 total_episode_reward += reward
 
                 reward = torch.tensor([reward], dtype=torch.float)
@@ -189,7 +191,7 @@ class DeepQLearningAgent:
             daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
 
             state = self.environment.reset(daily_consumption_percents_per_feeder)
-            print ('Initial losses: ', self.environment.power_flow.get_losses())
+            #print ('Initial losses: ', self.environment.power_flow.get_losses())
 
             state = torch.tensor([state], dtype=torch.float)
             done = False
@@ -206,6 +208,7 @@ class DeepQLearningAgent:
                     print ("Warning: agent.test: action > self.n_actions")
                 
                 next_state, reward, done = self.environment.step(action)
+                print ('Current losses: ', self.environment.power_flow.get_losses())
                     
                 total_episode_reward += reward
                 state = torch.tensor([next_state], dtype=torch.float)

@@ -76,7 +76,7 @@ class Environment(gym.Env):
         for action_index in available_actions_keys:
             switch_name = self.switch_names_by_index[action_index]
             self.network_manager.toogle_switch_status(switch_name)
-            if not self.network_manager.is_system_radial():
+            if (not self.network_manager.is_system_radial()) and self.network_manager.are_all_cosumers_fed():
                 self.available_actions[action_index] = switch_name
             self.network_manager.toogle_switch_status(switch_name) #vrati stanje kakvo je bilo
 
@@ -85,7 +85,7 @@ class Environment(gym.Env):
         for action_index in available_actions_keys:
             switch_name = self.switch_names_by_index[action_index]
             self.network_manager.toogle_switch_status(switch_name)
-            if self.network_manager.is_system_radial():
+            if self.network_manager.is_system_radial() and self.network_manager.are_all_cosumers_fed():
                 self.available_actions[action_index] = switch_name
             self.network_manager.toogle_switch_status(switch_name) #vrati stanje kakvo je bilo
 
@@ -116,13 +116,15 @@ class Environment(gym.Env):
             reward -= self.power_flow.get_losses() * 0.065625
         else:
             reward -= self.switching_action_cost
+            #reward = 0
 
         #zbog numerickih pogodnost je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
-        reward /= 500.0
+        reward /= 50.0
         return reward
 
     def reset(self, daily_consumption_percents_per_feeder):
         self.timestep = 0
+        self.network_manager = nm.ODSSNetworkManagement()
 
         #self.consumption_percents_per_feeder je lista koja sadrzi 24 liste koje za trenutka sadrze 3 scaling faktora, po jedan za svaki do feedera
         self.consumption_percents_per_feeder = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
