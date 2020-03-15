@@ -24,6 +24,18 @@ class ODSSNetworkManagement:
                 switch_names.append('Line.' + line_name)
         return switch_names
 
+    def get_all_switch_statuses_as_double(self):
+        sw_statuses = []
+        for line_name in dss.Lines.AllNames():
+            if ('sw' in line_name):
+                switch_name = 'Line.' + line_name
+                dss.Circuit.SetActiveElement(switch_name)
+                if (dss.CktElement.IsOpen(0, 0)):
+                    sw_statuses.append(0.0)
+                else:
+                    sw_statuses.append(1.0)
+        return sw_statuses
+
     def close_switch(self, switch_name):
         dss.Circuit.SetActiveElement(switch_name)
         #prvi argument: terminal = 0

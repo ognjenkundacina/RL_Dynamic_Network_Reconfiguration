@@ -33,12 +33,39 @@ class ODSSPowerFlow:
     def get_network_injected_q(self):
         return dss.Circuit.TotalPower()[1]
 
+    def get_switches_apparent_power(self):
+        line_name_with_apparent_power = {}
+
+        numOfLines = dss.Lines.Count()
+        dss.Lines.First()
+        for i in range(0, numOfLines):
+            line_name = dss.CktElement.Name()
+            if ('sw' in line_name):
+                linePowers = dss.CktElement.Powers()
+                firstTerminalPowers = linePowers[:len(linePowers)//2]
+                p = sum(firstTerminalPowers[0::2])
+                q = sum(firstTerminalPowers[1::2])
+                s = math.sqrt(pow(p, 2) + pow(q, 2))
+                #print(p)
+                #print(q)
+                #print(s)
+                #print(dss.CktElement.Name())
+                line_name_with_apparent_power.update( { line_name : s } )
+            dss.Lines.Next() #ovo mora u svakoj iteraciji da se izvrsi
+            
+        return line_name_with_apparent_power
+
     def get_lines_apparent_power(self):
         line_name_with_apparent_power = {}
 
         numOfLines = dss.Lines.Count()
         dss.Lines.First()
         for i in range(0, numOfLines):
+            line_name = dss.CktElement.Name()
+            if ('sw' in line_name):
+                dss.Lines.Next()
+                continue
+
             linePowers = dss.CktElement.Powers()
             firstTerminalPowers = linePowers[:len(linePowers)//2]
             p = sum(firstTerminalPowers[0::2])
@@ -48,8 +75,8 @@ class ODSSPowerFlow:
             #print(q)
             #print(s)
             #print(dss.CktElement.Name())
-            line_name_with_apparent_power.update( { dss.CktElement.Name() : s } )
-            dss.Lines.Next()
+            line_name_with_apparent_power.update( { line_name : s } )
+            dss.Lines.Next() #ovo mora u svakoj iteraciji da se izvrsi
             
         return line_name_with_apparent_power
 

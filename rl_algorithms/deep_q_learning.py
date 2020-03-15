@@ -40,17 +40,22 @@ class ReplayMemory(object):
 class DQN(nn.Module):
     def __init__(self, input_size, output_size):
         super(DQN, self).__init__()
-        self.fc1 = nn.Linear(input_size, 100)
-        self.fc2 = nn.Linear(100, 100)
-        self.fc3 = nn.Linear(100, 100)
-        self.fc3_bn = nn.BatchNorm1d(100)
-        self.fc4 = nn.Linear(100, output_size)
+        self.fc1 = nn.Linear(input_size, 128)
+        self.fc2 = nn.Linear(128, 64)
+        self.fc3 = nn.Linear(64, 64)
+        #self.fc3_bn = nn.BatchNorm1d(256)
+        self.fc4 = nn.Linear(64, 64)
+        self.fc5 = nn.Linear(64, 64)
+        self.fc6 = nn.Linear(64, output_size)
 
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3_bn(self.fc3(x)))
-        return self.fc4(x)
+        x = F.relu(self.fc3(x))
+        #x = F.relu(self.fc3_bn(self.fc3(x)))
+        x = F.relu(self.fc4(x))
+        x = F.relu(self.fc5(x))
+        return self.fc6(x)
 
 
 class DeepQLearningAgent:
@@ -58,7 +63,7 @@ class DeepQLearningAgent:
     def __init__(self, environment):
         self.environment = environment
         self.epsilon = 0.2
-        self.batch_size = 256
+        self.batch_size = 128
         self.gamma = 0.99
         self.target_update = 10
         self.memory = ReplayMemory(300000)
@@ -109,12 +114,8 @@ class DeepQLearningAgent:
             if (i_episode % 100 == 0):
                 print("=========Episode: ", i_episode)
 
-            #if (i_episode == int(0.1 * n_episodes)):
-                #self.epsilon = 0.3
-            #if (i_episode == int(0.5 * n_episodes)):
-                #self.epsilon = 0.1
 
-            if (i_episode % 1500 == 1499):
+            if (i_episode % 2500 == 2499):
                 time.sleep(60)
 
             done = False
@@ -158,7 +159,7 @@ class DeepQLearningAgent:
             if (i_episode % 100 == 0):
                 print ("total_episode_reward: ", total_episode_reward)
 
-            if (i_episode % 1000 == 0):
+            if (i_episode % 1000 == 999):
                 torch.save(self.policy_net.state_dict(), "policy_net")
 
             if i_episode % self.target_update == 0:

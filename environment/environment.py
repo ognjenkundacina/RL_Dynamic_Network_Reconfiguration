@@ -18,12 +18,14 @@ class Environment(gym.Env):
         self.power_flow = ODSSPowerFlow()
         self.power_flow.calculate_power_flow() #potrebno zbog odredjivanja state_space_dims
 
-        self.state_space_dims = len(self.power_flow.get_bus_voltages()) + 1
+        ####self.state_space_dims = len(self.power_flow.get_switches_apparent_power()) + 1 + len(self.network_manager.get_all_switch_statuses_as_double())
+        self.state_space_dims = len(self.power_flow.get_switches_apparent_power()) + 1
         self.n_actions = 1 + len(self.network_manager.get_all_switch_names())
         self.n_consumers = self.network_manager.get_load_count()
         self.timestep = 0
         self.switching_action_cost = 1.0
         self.zero_action_name = 'Zero action index - go in the next timestep'
+        self.base_power = 4000
 
         self.switch_names = self.network_manager.get_all_switch_names()
         # action_index = 0 = kraj sekvence za aktuelni interva
@@ -35,9 +37,11 @@ class Environment(gym.Env):
     def _update_state(self):
         self.power_flow.calculate_power_flow()
 
-        bus_voltages_dict = self.power_flow.get_bus_voltages()
-        self.state = list(bus_voltages_dict.values())
+        self.state = []
+        switch_s_dict = self.power_flow.get_switches_apparent_power()
+        self.state += [val / self.base_power for val in list(switch_s_dict.values())]
         self.state.append(self.timestep / NUM_TIMESTEPS * 1.0)
+        ####self.state += self.network_manager.get_all_switch_statuses_as_double()
 
         if (len(self.state) != self.state_space_dims):
             print('Environment: len(self.state) != self.state_space_dims')
@@ -113,13 +117,15 @@ class Environment(gym.Env):
         reward = 0
         if action == 0:
             #self.power_flow.get_losses() daje gubitke u kW, pa odmah imamo i kWh
-            reward -= self.power_flow.get_losses() * 0.065625
+            #reward -= self.power_flow.get_losses() * 0.065625
+            
+            reward -= 5 ** (self.power_flow.get_losses() * 0.065625 / 20.0)
         else:
-            reward -= self.switching_action_cost
-            #reward = 0
+            #reward -= self.switching_action_cost
+            reward = 0
 
         #zbog numerickih pogodnost je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
-        reward /= 50.0
+        #reward /= 20.0
         return reward
 
     def reset(self, daily_consumption_percents_per_feeder):
@@ -130,9 +136,11 @@ class Environment(gym.Env):
         self.consumption_percents_per_feeder = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
         self.set_load_scaling_for_timestep()
         self.power_flow.calculate_power_flow()
-        bus_voltages_dict = self.power_flow.get_bus_voltages()
-        self.state = list(bus_voltages_dict.values())
+        self.state = []
+        switch_s_dict = self.power_flow.get_switches_apparent_power()
+        self.state += [val / self.base_power for val in list(switch_s_dict.values())]
         self.state.append(self.timestep / NUM_TIMESTEPS * 1.0)
+        ####self.state += self.network_manager.get_all_switch_statuses_as_double()
         
         #inicijalizacija available actions
         self.action_idx_used_in_thisstep = []
