@@ -34,7 +34,7 @@ def main():
     agent = DeepQLearningAgent(environment)
 
     for i in range (1):
-        n_episodes = 99
+        n_episodes = 1
         print('agent training started')
         t1 = time.time()
         agent.train(df_train, n_episodes)

@@ -111,12 +111,11 @@ class DeepQLearningAgent:
         
         total_episode_rewards = []
         for i_episode in range(n_episodes):
-            if (i_episode % 100 == 0):
+            if (i_episode % 1 == 0):
                 print("=========Episode: ", i_episode)
 
-
-            if (i_episode % 2500 == 2499):
-                time.sleep(60)
+            #if (i_episode % 2500 == 2499):
+                #time.sleep(60)
 
             done = False
             df_row = df_train.sample(n=1)
@@ -156,7 +155,7 @@ class DeepQLearningAgent:
             
             total_episode_rewards.append(total_episode_reward)
 
-            if (i_episode % 100 == 0):
+            if (i_episode % 1 == 0):
                 print ("total_episode_reward: ", total_episode_reward)
 
             if (i_episode % 1000 == 999):

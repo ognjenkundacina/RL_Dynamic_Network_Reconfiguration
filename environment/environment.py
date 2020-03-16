@@ -18,92 +18,60 @@ class Environment(gym.Env):
         self.power_flow = ODSSPowerFlow()
         self.power_flow.calculate_power_flow() #potrebno zbog odredjivanja state_space_dims
 
-        ####self.state_space_dims = len(self.power_flow.get_switches_apparent_power()) + 1 + len(self.network_manager.get_all_switch_statuses_as_double())
         self.state_space_dims = len(self.power_flow.get_switches_apparent_power()) + 1
-        self.n_actions = 1 + len(self.network_manager.get_all_switch_names())
+
+        self.radial_switch_combinations = {
+            0 : [12, 13, 14],
+            1 : [11, 13, 14],
+            2 : [10, 13, 14]
+        }
+
+        self.n_actions = len(self.radial_switch_combinations)
         self.n_consumers = self.network_manager.get_load_count()
         self.timestep = 0
         self.switching_action_cost = 1.0
-        self.zero_action_name = 'Zero action index - go in the next timestep'
         self.base_power = 4000
 
         self.switch_names = self.network_manager.get_all_switch_names()
-        # action_index = 0 = kraj sekvence za aktuelni interva
-        # action_index != 0 = indeks prekidaca, pri cemo indeksiranje pocinje od 1
-        self.action_indices = [i for i in range(self.n_actions )]
-        self.switch_indices = [i for i in range(1, self.n_actions)]
+        self.n_switches = len(self.network_manager.get_all_switch_names())
+        # indeks prekidaca, pri cemo indeksiranje pocinje od 1
+        self.switch_indices = [i for i in range(1, self.n_switches + 1)]
         self.switch_names_by_index = dict(zip(self.switch_indices, self.switch_names))
         
     def _update_state(self):
+        #self._update_available_actions() #todo implement
         self.power_flow.calculate_power_flow()
 
         self.state = []
         switch_s_dict = self.power_flow.get_switches_apparent_power()
         self.state += [val / self.base_power for val in list(switch_s_dict.values())]
         self.state.append(self.timestep / NUM_TIMESTEPS * 1.0)
-        ####self.state += self.network_manager.get_all_switch_statuses_as_double()
 
         if (len(self.state) != self.state_space_dims):
             print('Environment: len(self.state) != self.state_space_dims')
 
         return self.state
 
-    def _reset_available_actions_for_next_timestep(self):
-        self.action_idx_used_in_thisstep = []
-
-        
-        #ovdje je potrebno postaviti available actions na sljedecu vriejdnost:
-        #all_actions - forbidden_actions
-        #forbidden_actions - prekidaci koji su vec sto puta iskoristeni u okviru epizode
-        self.available_actions = copy.deepcopy(self.switch_names_by_index) #deep copy
-        self.available_actions[0] = self.zero_action_name #dodaje key value pair u dictionary
-        self._update_available_actions()
-        for switch_index in self.switch_operations_by_index:
-            if self.switch_operations_by_index[switch_index] > 100:
-                #print('Forbidden action: ', switch_index)
-                self.available_actions.pop(switch_index)
 
     def _update_available_actions(self):
-        self.available_actions = {}
-        if self.network_manager.is_system_radial():
-            self._enable_meshing_actions_only()
-            self.available_actions[0] = self.zero_action_name
-            #cak je dobro staviti lazni switch name za ovu akciju, to ce nam biti dobar test
-            #ako nismo dobro rukvoali ovom akcijom poslacemo je u openDSS koji ce dati gresku
-        else:
-            self._enable_radializing_actions_only()
-            #ako je mreza upetljana, onda ne zelimo da akcija 0 (tj zavrsetak trenutka) bude available
+        #mozda kasnije da dodamo da ne dozvoljavamo akcije koje ce neki prekidac angazovati vise 
+        #od tri puta
+        #koristiti self.switch_operations_by_index
+        #self.available_actions.pop(switch_index)
+        pass
 
+    def _update_switch_statuses(action):
+        #koristiti:
+        #self.network_manager.toogle_switch_status(self.switch_index))
+        pass
 
-    def _enable_meshing_actions_only(self):
-        available_actions_keys = [item for item in self.switch_indices if item not in self.action_idx_used_in_thisstep]
-        for action_index in available_actions_keys:
-            switch_name = self.switch_names_by_index[action_index]
-            self.network_manager.toogle_switch_status(switch_name)
-            if (not self.network_manager.is_system_radial()) and self.network_manager.are_all_cosumers_fed():
-                self.available_actions[action_index] = switch_name
-            self.network_manager.toogle_switch_status(switch_name) #vrati stanje kakvo je bilo
-
-    def _enable_radializing_actions_only(self):
-        available_actions_keys = [item for item in self.switch_indices if item not in self.action_idx_used_in_thisstep]
-        for action_index in available_actions_keys:
-            switch_name = self.switch_names_by_index[action_index]
-            self.network_manager.toogle_switch_status(switch_name)
-            if self.network_manager.is_system_radial() and self.network_manager.are_all_cosumers_fed():
-                self.available_actions[action_index] = switch_name
-            self.network_manager.toogle_switch_status(switch_name) #vrati stanje kakvo je bilo
 
     #action: 0..n_actions
     def step(self, action):
-        if action==0:
-            self.timestep += 1
-            self.set_load_scaling_for_timestep()
-            self._reset_available_actions_for_next_timestep()
-        else:
-            self.network_manager.toogle_switch_status(self.available_actions[action])
-            self.action_idx_used_in_thisstep.append(action)
-            self.switch_operations_by_index[action] += 1
-            self._update_available_actions()
+        self.timestep += 1
+        self.set_load_scaling_for_timestep()
+            
+        #self.switch_operations_by_index[toogled_switch_index] += 1
         
         next_state = self._update_state()
 
@@ -115,14 +83,12 @@ class Environment(gym.Env):
 
     def calculate_reward(self, action):
         reward = 0
-        if action == 0:
-            #self.power_flow.get_losses() daje gubitke u kW, pa odmah imamo i kWh
-            #reward -= self.power_flow.get_losses() * 0.065625
+        #self.power_flow.get_losses() daje gubitke u kW, pa odmah imamo i kWh
+        #reward -= self.power_flow.get_losses() * 0.065625
             
-            reward -= 5 ** (self.power_flow.get_losses() * 0.065625 / 20.0)
-        else:
-            #reward -= self.switching_action_cost
-            reward = 0
+        reward -= 5 ** (self.power_flow.get_losses() * 0.065625 / 20.0)
+            
+        #reward -= self.switching_action_cost * self.num_of_switching_actions
 
         #zbog numerickih pogodnost je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
         #reward /= 20.0
@@ -140,15 +106,12 @@ class Environment(gym.Env):
         switch_s_dict = self.power_flow.get_switches_apparent_power()
         self.state += [val / self.base_power for val in list(switch_s_dict.values())]
         self.state.append(self.timestep / NUM_TIMESTEPS * 1.0)
-        ####self.state += self.network_manager.get_all_switch_statuses_as_double()
         
         #inicijalizacija available actions
         self.action_idx_used_in_thisstep = []
-        self.available_actions = copy.deepcopy(self.switch_names_by_index) #deep copy
-        self.available_actions[0] = self.zero_action_name
-        self._update_available_actions()
+        self.available_actions = copy.deepcopy(self.radial_switch_combinations) #deep copy
 
-        initial_switch_operations = [0 for i in range(self.n_actions - 1)]
+        initial_switch_operations = [0 for i in range(self.n_switches )]
         self.switch_operations_by_index = dict(zip(self.switch_indices, initial_switch_operations))
 
         return self.state
