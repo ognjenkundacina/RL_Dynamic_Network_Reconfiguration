@@ -29,7 +29,7 @@ def main():
 
     #environment should'n have the entire dataset as an input parameter, but train and test methods
     environment = Environment()
-
+    environment.find_all_radial_configurations()
     print('=====================agent=====================')
     agent = DeepQLearningAgent(environment)
 

@@ -158,3 +158,180 @@ class Environment(gym.Env):
         #self.network_manager.close_switch('Line.Sw14')
         #self.power_flow.calculate_power_flow()
         #print(self.power_flow.get_bus_voltages())
+    
+    def find_all_radial_configurations(self):
+        Dict = {}
+        brojac = 0
+        br = 0
+        brojac2 = 0
+        for a in range (2):
+            if (a == 0):
+                self.network_manager.close_switch('Line.Sw1')
+            else:
+                self.network_manager.open_switch('Line.Sw1')
+            for b in range(2):
+                if (b == 0):
+                    self.network_manager.close_switch('Line.Sw2')
+                else:
+                    self.network_manager.open_switch('Line.Sw2')
+                for c in range(2):
+                    if (c == 0):
+                        self.network_manager.close_switch('Line.Sw3')
+                    else:
+                        self.network_manager.open_switch('Line.Sw3')
+                    for d in range(2):
+                        if (d == 0):
+                            self.network_manager.close_switch('Line.Sw4')
+                        else:
+                            self.network_manager.open_switch('Line.Sw4')
+                        for e in range(2):
+                            if (e == 0):
+                                self.network_manager.close_switch('Line.Sw5')
+                            else:
+                                self.network_manager.open_switch('Line.Sw5')
+                            for f in range(2):
+                                if (f == 0):
+                                    self.network_manager.close_switch('Line.Sw6')
+                                else:
+                                    self.network_manager.open_switch('Line.Sw6')
+                                for g in range(2):
+                                    if (g == 0):
+                                        self.network_manager.close_switch('Line.Sw7')
+                                    else:
+                                        self.network_manager.open_switch('Line.Sw7')
+                                    for h in range(2):
+                                        if (h == 0):
+                                            self.network_manager.close_switch('Line.Sw8')
+                                        else:
+                                            self.network_manager.open_switch('Line.Sw8')
+                                        for i in range(2):
+                                            if (i == 0):
+                                                self.network_manager.close_switch('Line.Sw9')
+                                            else:
+                                                self.network_manager.open_switch('Line.Sw9')
+                                            for j in range(2):
+                                                if (j == 0):
+                                                    self.network_manager.close_switch('Line.Sw10')
+                                                else:
+                                                    self.network_manager.open_switch('Line.Sw10')
+                                                for k in range(2):
+                                                    if (k == 0):
+                                                        self.network_manager.close_switch('Line.Sw11')
+                                                    else:
+                                                        self.network_manager.open_switch('Line.Sw11')
+                                                    for l in range(2):
+                                                        if (l == 0):
+                                                            self.network_manager.close_switch('Line.Sw12')
+                                                        else:
+                                                            self.network_manager.open_switch('Line.Sw12')
+                                                        for m in range(2):
+                                                            if (m == 0):
+                                                                self.network_manager.close_switch('Line.Sw13')
+                                                            else:
+                                                                self.network_manager.open_switch('Line.Sw13')
+                                                            for n in range(2):
+                                                                if (n == 0):
+                                                                    self.network_manager.close_switch('Line.Sw14')
+                                                                else:
+                                                                    self.network_manager.open_switch('Line.Sw14')
+
+                                                                if (a == 1):
+                                                                    brojac = brojac + 1
+
+                                                                if (b == 1):
+                                                                    brojac = brojac + 1
+
+                                                                if (c == 1):
+                                                                    brojac = brojac + 1
+
+                                                                if (d == 1):
+                                                                    brojac = brojac + 1
+
+                                                                if (e == 1):
+                                                                    brojac = brojac + 1
+
+                                                                if (f == 1):
+                                                                    brojac = brojac + 1
+
+                                                                if (g == 1):
+                                                                    brojac = brojac + 1
+
+                                                                if (h == 1):
+                                                                    brojac = brojac + 1
+
+                                                                if (i == 1):
+                                                                    brojac = brojac + 1
+
+                                                                if (j == 1):
+                                                                    brojac = brojac + 1
+
+                                                                if (k == 1):
+                                                                    brojac = brojac + 1
+
+                                                                if (l == 1):
+                                                                    brojac = brojac + 1
+
+                                                                if (m == 1):
+                                                                    brojac = brojac + 1
+
+                                                                if (n == 1):
+                                                                    brojac = brojac + 1
+                                                                
+                                                                if (brojac != 3):
+                                                                    brojac = 0
+                                                                    continue
+                                                                else:
+                                                                    self.power_flow.calculate_power_flow()
+                                                                    if (self.network_manager.is_system_radial() and self.network_manager.are_all_cosumers_fed()):
+                                                                        #print(a,b,c,d,e,f,g,h,i,j,k,l,m,n)
+                                                                        #br = br + 1
+                                                                        key = br
+                                                                        Dict.setdefault(key, [])
+                                                                        if (a == 1):
+                                                                            Dict[key].append(1)
+
+                                                                        if (b == 1):
+                                                                            Dict[key].append(2)
+
+                                                                        if (c == 1):
+                                                                            Dict[key].append(3)
+
+                                                                        if (d == 1):
+                                                                            Dict[key].append(4)
+
+                                                                        if (e == 1):
+                                                                            Dict[key].append(5)
+
+                                                                        if (f == 1):
+                                                                            Dict[key].append(6)
+
+                                                                        if (g == 1):
+                                                                            Dict[key].append(7)
+
+                                                                        if (h == 1):
+                                                                            Dict[key].append(8)
+
+                                                                        if (i == 1):
+                                                                            Dict[key].append(9)
+
+                                                                        if (j == 1):
+                                                                            Dict[key].append(10)
+
+                                                                        if (k == 1):
+                                                                            Dict[key].append(11)
+
+                                                                        if (l == 1):
+                                                                            Dict[key].append(12)
+
+                                                                        if (m == 1):
+                                                                            Dict[key].append(13)
+
+                                                                        if (n == 1):
+                                                                            Dict[key].append(14)
+                                                                        
+                                                                        br = br + 1
+                                                                
+                                                                        
+        print(Dict)
+        
+    
