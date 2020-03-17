@@ -281,6 +281,7 @@ class Environment(gym.Env):
                                                                     brojac = 0
                                                                     continue
                                                                 else:
+                                                                    brojac = 0
                                                                     self.power_flow.calculate_power_flow()
                                                                     if (self.network_manager.is_system_radial() and self.network_manager.are_all_cosumers_fed()):
                                                                         #print(a,b,c,d,e,f,g,h,i,j,k,l,m,n)
