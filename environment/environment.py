@@ -3,6 +3,7 @@ from gym import spaces
 import random
 import numpy as np
 from power_algorithms.odss_power_flow import ODSSPowerFlow
+from power_algorithms.odss_network_management import ODSSNetworkManagement
 import power_algorithms.odss_network_management as nm
 from config import *
 import copy
@@ -161,6 +162,7 @@ class Environment(gym.Env):
         #self.network_manager.close_switch('Line.Sw14')
         #self.power_flow.calculate_power_flow()
         #print(self.power_flow.get_bus_voltages())
+    
     
     def find_all_radial_configurations(self):
         Dict = {}
@@ -340,5 +342,104 @@ class Environment(gym.Env):
         with open('file.txt', 'w') as file:
             file.write(json.dumps(Dict))
         file.close()
+        print(len(Dict))
+
+    def closing_all_switches(self):
+        network_manager = ODSSNetworkManagement()
+        power_flow = ODSSPowerFlow()
+        self.network_manager.close_switch('Line.Sw1')
+        self.network_manager.close_switch('Line.Sw2')
+        self.network_manager.close_switch('Line.Sw3')
+        self.network_manager.close_switch('Line.Sw4')
+        self.network_manager.close_switch('Line.Sw5')
+        self.network_manager.close_switch('Line.Sw6')
+        self.network_manager.close_switch('Line.Sw7')
+        self.network_manager.close_switch('Line.Sw8')
+        self.network_manager.close_switch('Line.Sw9')
+        self.network_manager.close_switch('Line.Sw10')
+        self.network_manager.close_switch('Line.Sw11')
+        self.network_manager.close_switch('Line.Sw12')
+        self.network_manager.close_switch('Line.Sw13')
+        self.network_manager.close_switch('Line.Sw14')
         
-    
+    def finding_optimal_states(self):
+
+        self.closing_all_switches()
+        minLossesFinal = 0
+        currentLosses = 0
+        f = open("dvadesetcetvrti_trenutak.txt", "a")
+        for j in self.radial_switch_combinations:
+
+            a, b, c = self.radial_switch_combinations[j]
+
+            if (a == 1 or b == 1 or c == 1):
+                self.network_manager.open_switch('Line.Sw1')
+
+            if (a == 2 or b == 2 or c == 2):
+                self.network_manager.open_switch('Line.Sw2')
+                                                                           
+            if (a == 3 or b == 3 or c == 3):
+                self.network_manager.open_switch('Line.Sw3')
+                                                                           
+            if (a == 4 or b == 4 or c == 4):
+                self.network_manager.open_switch('Line.Sw4')
+                                                                           
+            if (a == 5 or b == 5 or c == 5):
+                self.network_manager.open_switch('Line.Sw5')
+                                                                           
+            if (a == 6 or b == 6 or c == 6):
+                self.network_manager.open_switch('Line.Sw6')
+                                                                           
+            if (a == 7 or b == 7 or c == 7):
+                self.network_manager.open_switch('Line.Sw7')
+                                                                            
+            if (a == 8 or b == 8 or c == 8):
+                self.network_manager.open_switch('Line.Sw8')
+                                                                            
+            if (a == 9 or b == 9 or c == 9):
+                self.network_manager.open_switch('Line.Sw9')
+                                                                            
+            if (a == 10 or b == 10 or c == 10):
+                self.network_manager.open_switch('Line.Sw10')
+                                                                            
+            if (a == 11 or b == 11 or c == 11):
+                self.network_manager.open_switch('Line.Sw11')
+                                                                            
+            if (a == 12 or b == 12 or c == 12):
+                self.network_manager.open_switch('Line.Sw12')
+                                                                            
+            if (a == 13 or b == 13 or c == 13):
+                self.network_manager.open_switch('Line.Sw13')
+                                                                           
+            if (a == 14 or b == 14 or c == 14):
+                self.network_manager.open_switch('Line.Sw14')
+
+            a = 0
+            b = 0
+            c = 0
+            self.power_flow.calculate_power_flow()
+            #print(self.power_flow.get_losses())
+
+            currentLosses = self.power_flow.get_losses()
+            if (j == 0):
+                minLossesFinal = self.power_flow.get_losses()
+                currentLosses = self.power_flow.get_losses()
+
+            if(currentLosses < minLossesFinal):
+                minLossesFinal = currentLosses
+
+            #print(self.radial_switch_combinations[j])
+            f.write(json.dumps(self.power_flow.get_losses()))
+            f.write("\n")
+            f.write(json.dumps(self.radial_switch_combinations[j]))
+            f.write("\n")
+            f.write("---------------------------------------------\n\n")
+            self.closing_all_switches()
+            if(j == 185):
+                f.write("Minimum losses for current step: ")
+                f.write(json.dumps(minLossesFinal))
+            
+        #print(len(Dict))
+        f.close()
+        #print(j)
+                                                                            
