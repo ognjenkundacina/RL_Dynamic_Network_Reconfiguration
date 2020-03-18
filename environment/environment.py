@@ -96,7 +96,21 @@ class Environment(gym.Env):
         return reward
 
     def get_number_of_switch_manipulations(self, current_open_switches, new_open_switches):
-        pass
+        num_of_switch_manipulations = 6
+        a, b, c = current_open_switches
+        d, e, f = new_open_switches
+
+        if (a == d or a == e or a == f):
+            num_of_switch_manipulations = num_of_switch_manipulations - 2
+
+        if (b == d or b == e or b == f):
+            num_of_switch_manipulations = num_of_switch_manipulations - 2
+
+        if (c == d or c == e or c == f):
+            num_of_switch_manipulations = num_of_switch_manipulations - 2
+        
+        return num_of_switch_manipulations
+
 
     def reset(self, daily_consumption_percents_per_feeder):
         self.timestep = 0
