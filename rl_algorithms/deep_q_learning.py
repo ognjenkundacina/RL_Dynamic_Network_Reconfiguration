@@ -40,21 +40,21 @@ class ReplayMemory(object):
 class DQN(nn.Module):
     def __init__(self, input_size, output_size):
         super(DQN, self).__init__()
-        self.fc1 = nn.Linear(input_size, 128)
-        self.fc2 = nn.Linear(128, 64)
-        self.fc3 = nn.Linear(64, 64)
-        #self.fc3_bn = nn.BatchNorm1d(256)
-        self.fc4 = nn.Linear(64, 64)
-        self.fc5 = nn.Linear(64, 64)
-        self.fc6 = nn.Linear(64, output_size)
+        self.fc1 = nn.Linear(input_size, 256)
+        self.fc2 = nn.Linear(256, 256)
+        self.fc3 = nn.Linear(256, 256)
+        self.fc3_bn = nn.BatchNorm1d(256)
+        self.fc4 = nn.Linear(256, 256)
+        #self.fc5 = nn.Linear(64, 64)
+        self.fc6 = nn.Linear(256, output_size)
 
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = F.relu(self.fc3(x))
-        #x = F.relu(self.fc3_bn(self.fc3(x)))
+        x = F.relu(self.fc3_bn(self.fc3(x)))
         x = F.relu(self.fc4(x))
-        x = F.relu(self.fc5(x))
+        #x = F.relu(self.fc5(x))
         return self.fc6(x)
 
 
@@ -108,11 +108,15 @@ class DeepQLearningAgent:
 
     def train(self, df_train, n_episodes):
         #self.policy_net.load_state_dict(torch.load("policy_net"))
+        self.epsilon = 0.999
         
         total_episode_rewards = []
         for i_episode in range(n_episodes):
-            if (i_episode % 1 == 0):
+            if (i_episode % 100 == 0):
                 print("=========Episode: ", i_episode)
+
+            if i_episode == 500:
+                self.epsilon = 0.2
 
             #if (i_episode % 2500 == 2499):
                 #time.sleep(60)
@@ -155,7 +159,7 @@ class DeepQLearningAgent:
             
             total_episode_rewards.append(total_episode_reward)
 
-            if (i_episode % 1 == 0):
+            if (i_episode % 100 == 0):
                 print ("total_episode_reward: ", total_episode_reward)
 
             if (i_episode % 1000 == 999):
@@ -199,10 +203,7 @@ class DeepQLearningAgent:
 
             while not done:
                 action = self.get_action(state, epsilon = 0.0)
-                if action == 0:
-                    print("Finished sequence for the current timestep")
-                else:
-                    print("Toogle switch: ", self.environment.switch_names_by_index[action]) 
+                print("Open switches: ", radial_switch_combinations[action]) 
                 
                 if (action > self.n_actions):
                     print ("Warning: agent.test: action > self.n_actions")
