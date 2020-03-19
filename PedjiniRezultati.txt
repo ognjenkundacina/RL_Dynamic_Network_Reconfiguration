@@ -1,0 +1,130 @@
+ Sat:            1
+ Ukupna potrosnja za tekuci sat:    4355.400    
+ Zatvara se           17
+ Otvara se            4
+ Gubici snage za tekuci sat:    116.5736    
+ -------------------------------------------
+ 
+ Sat:            2
+ Ukupna potrosnja za tekuci sat:    4102.000    
+ Gubici snage za tekuci sat:    103.1254    
+ -------------------------------------------
+ 
+ Sat:            3
+ Ukupna potrosnja za tekuci sat:    3665.200    
+ Gubici snage za tekuci sat:    81.74637    
+ -------------------------------------------
+ 
+ Sat:            4
+ Ukupna potrosnja za tekuci sat:    3105.200    
+ Gubici snage za tekuci sat:    57.80831    
+ -------------------------------------------
+ 
+ Sat:            5
+ Ukupna potrosnja za tekuci sat:    2982.000    
+ Gubici snage za tekuci sat:    53.06524    
+ -------------------------------------------
+ 
+ Sat:            6
+ Ukupna potrosnja za tekuci sat:    3479.000    
+ Gubici snage za tekuci sat:    73.38860    
+ -------------------------------------------
+ 
+ Sat:            7
+ Ukupna potrosnja za tekuci sat:    6406.399    
+ Zatvara se            4
+ Otvara se           17
+ Gubici snage za tekuci sat:    236.7420    
+ -------------------------------------------
+ 
+ Sat:            8
+ Ukupna potrosnja za tekuci sat:    6780.200    
+ Gubici snage za tekuci sat:    264.6671    
+ -------------------------------------------
+ 
+ Sat:            9
+ Ukupna potrosnja za tekuci sat:    7156.801    
+ Gubici snage za tekuci sat:    295.3150    
+ -------------------------------------------
+ 
+ Sat:           10
+ Ukupna potrosnja za tekuci sat:    5608.400    
+ Zatvara se           17
+ Otvara se            4
+ Gubici snage za tekuci sat:    196.1775    
+ -------------------------------------------
+ 
+ Sat:           11
+ Ukupna potrosnja za tekuci sat:    8169.000    
+ Zatvara se            4
+ Otvara se           17
+ Gubici snage za tekuci sat:    334.4781    
+ -------------------------------------------
+ 
+ Sat:           12
+ Ukupna potrosnja za tekuci sat:    7854.000    
+ Gubici snage za tekuci sat:    308.9725    
+ -------------------------------------------
+ 
+ Sat:           13
+ Ukupna potrosnja za tekuci sat:    7623.000    
+ Gubici snage za tekuci sat:    291.2137    
+ -------------------------------------------
+ 
+ Sat:           14
+ Ukupna potrosnja za tekuci sat:    7623.000    
+ Gubici snage za tekuci sat:    291.2137    
+ -------------------------------------------
+ 
+ Sat:           15
+ Ukupna potrosnja za tekuci sat:    6536.601    
+ Gubici snage za tekuci sat:    246.0769    
+ -------------------------------------------
+ 
+ Sat:           16
+ Ukupna potrosnja za tekuci sat:    8572.200    
+ Gubici snage za tekuci sat:    358.4432    
+ -------------------------------------------
+ 
+ Sat:           17
+ Ukupna potrosnja za tekuci sat:    7152.600    
+ Zatvara se           17
+ Otvara se            4
+ Gubici snage za tekuci sat:    274.2522    
+ -------------------------------------------
+ 
+ Sat:           18
+ Ukupna potrosnja za tekuci sat:    6808.200    
+ Gubici snage za tekuci sat:    256.0323    
+ -------------------------------------------
+ 
+ Sat:           19
+ Ukupna potrosnja za tekuci sat:    7089.600    
+ Gubici snage za tekuci sat:    281.1396    
+ -------------------------------------------
+ 
+ Sat:           20
+ Ukupna potrosnja za tekuci sat:    6419.000    
+ Gubici snage za tekuci sat:    232.1339    
+ -------------------------------------------
+ 
+ Sat:           21
+ Ukupna potrosnja za tekuci sat:    5472.600    
+ Gubici snage za tekuci sat:    185.6697    
+ -------------------------------------------
+ 
+ Sat:           22
+ Ukupna potrosnja za tekuci sat:    4975.600    
+ Gubici snage za tekuci sat:    153.0036    
+ -------------------------------------------
+ 
+ Sat:           23
+ Ukupna potrosnja za tekuci sat:    4599.000    
+ Gubici snage za tekuci sat:    130.3816    
+ -------------------------------------------
+ 
+ Sat:           24
+ Ukupna potrosnja za tekuci sat:    4355.400    
+ Gubici snage za tekuci sat:    116.5736    
+ -------------------------------------------
+ 
