@@ -157,8 +157,9 @@ class Environment(gym.Env):
             return
         if (self.timestep > NUM_TIMESTEPS):  
             print('WARNING: environment.py; set_load_scaling_for_timestep; self.timestep greater than expected')  
+        #current_consumption_percents_per_feeder = self.consumption_percents_per_feeder[self.timestep]
         current_consumption_percents_per_feeder = self.consumption_percents_per_feeder[self.timestep]
-        current_consumption_percents_per_node = self.distribute_feeder_consumptions(current_consumption_percents_per_feeder)
+        current_consumption_percents_per_node = 0.7 * self.distribute_feeder_consumptions(current_consumption_percents_per_feeder)
         self.network_manager.set_load_scaling(current_consumption_percents_per_node)
 
     def test_environment(self):
@@ -176,7 +177,7 @@ class Environment(gym.Env):
         #self.network_manager.close_switch('Line.Sw14')
         #self.power_flow.calculate_power_flow()
         #print(self.power_flow.get_bus_voltages())
-    
+        self.network_manager.set_load_scaling()
     
     def find_all_radial_configurations(self):
         Dict = {}
@@ -359,8 +360,7 @@ class Environment(gym.Env):
         print(len(Dict))
 
     def closing_all_switches(self):
-        network_manager = ODSSNetworkManagement()
-        power_flow = ODSSPowerFlow()
+
         self.network_manager.close_switch('Line.Sw1')
         self.network_manager.close_switch('Line.Sw2')
         self.network_manager.close_switch('Line.Sw3')
@@ -381,79 +381,120 @@ class Environment(gym.Env):
         self.closing_all_switches()
         minLossesFinal = 0
         currentLosses = 0
-        f = open("dvadesetcetvrti_trenutak.txt", "a")
-        for j in self.radial_switch_combinations:
+        #self.set_load_scaling_for_timestep()
+        s = 1
+        k = 0
 
-            a, b, c = self.radial_switch_combinations[j]
-
-            if (a == 1 or b == 1 or c == 1):
-                self.network_manager.open_switch('Line.Sw1')
-
-            if (a == 2 or b == 2 or c == 2):
-                self.network_manager.open_switch('Line.Sw2')
-                                                                           
-            if (a == 3 or b == 3 or c == 3):
-                self.network_manager.open_switch('Line.Sw3')
-                                                                           
-            if (a == 4 or b == 4 or c == 4):
-                self.network_manager.open_switch('Line.Sw4')
-                                                                           
-            if (a == 5 or b == 5 or c == 5):
-                self.network_manager.open_switch('Line.Sw5')
-                                                                           
-            if (a == 6 or b == 6 or c == 6):
-                self.network_manager.open_switch('Line.Sw6')
-                                                                           
-            if (a == 7 or b == 7 or c == 7):
-                self.network_manager.open_switch('Line.Sw7')
-                                                                            
-            if (a == 8 or b == 8 or c == 8):
-                self.network_manager.open_switch('Line.Sw8')
-                                                                            
-            if (a == 9 or b == 9 or c == 9):
-                self.network_manager.open_switch('Line.Sw9')
-                                                                            
-            if (a == 10 or b == 10 or c == 10):
-                self.network_manager.open_switch('Line.Sw10')
-                                                                            
-            if (a == 11 or b == 11 or c == 11):
-                self.network_manager.open_switch('Line.Sw11')
-                                                                            
-            if (a == 12 or b == 12 or c == 12):
-                self.network_manager.open_switch('Line.Sw12')
-                                                                            
-            if (a == 13 or b == 13 or c == 13):
-                self.network_manager.open_switch('Line.Sw13')
-                                                                           
-            if (a == 14 or b == 14 or c == 14):
-                self.network_manager.open_switch('Line.Sw14')
-
-            a = 0
-            b = 0
-            c = 0
-            self.power_flow.calculate_power_flow()
-            #print(self.power_flow.get_losses())
-
-            currentLosses = self.power_flow.get_losses()
-            if (j == 0):
-                minLossesFinal = self.power_flow.get_losses()
-                currentLosses = self.power_flow.get_losses()
-
-            if(currentLosses < minLossesFinal):
-                minLossesFinal = currentLosses
-
-            #print(self.radial_switch_combinations[j])
-            f.write(json.dumps(self.power_flow.get_losses()))
-            f.write("\n")
-            f.write(json.dumps(self.radial_switch_combinations[j]))
-            f.write("\n")
-            f.write("---------------------------------------------\n\n")
-            self.closing_all_switches()
-            if(j == 185):
-                f.write("Minimum losses for current step: ")
-                f.write(json.dumps(minLossesFinal))
+        for v in range(24): 
             
-        #print(len(Dict))
-        f.close()
-        #print(j)
+            file = open("loads.txt", "r")
+            f2 = open("Optimalni gubici.txt", "a")
+            scaling_factors = [0.0 for i in range(self.n_consumers)]
+            ceo_niz = file.readlines()
+            ceo_niz = [int(z) for z in ceo_niz]
+            scaling_factors[0] = ceo_niz[k] * 0.7 /1000
+            scaling_factors[1] = ceo_niz[k] * 0.7 /1000
+            scaling_factors[2] = ceo_niz[k] * 0.7 /1000
+            scaling_factors[3] = ceo_niz[k] * 0.7 /1000
+            scaling_factors[4] = ceo_niz[k+1] * 0.7 /1000
+            scaling_factors[5] = ceo_niz[k+1] * 0.7 /1000
+            scaling_factors[6] = ceo_niz[k+1] * 0.7 /1000
+            scaling_factors[7] = ceo_niz[k+2] * 0.7 /1000
+            scaling_factors[8] = ceo_niz[k+2] * 0.7 /1000
+            scaling_factors[9] = ceo_niz[k+2] * 0.7 /1000
+            scaling_factors[10] = ceo_niz[k+2] * 0.7 /1000
+            scaling_factors[11] = ceo_niz[k] * 0.7 /1000
+            scaling_factors[12] = ceo_niz[k+1] * 0.7 /1000
+            scaling_factors[13] = ceo_niz[k] * 0.7 /1000
+            #print(scaling_factors)
+            file.close()
+            self.network_manager.set_load_scaling(scaling_factors)
+
+            f = open(str(s) + ".trenutak.txt", "a")
+            for j in self.radial_switch_combinations:
+
+                a, b, c = self.radial_switch_combinations[j]
+
+                if (a == 1 or b == 1 or c == 1):
+                    self.network_manager.open_switch('Line.Sw1')
+
+                if (a == 2 or b == 2 or c == 2):
+                    self.network_manager.open_switch('Line.Sw2')
                                                                             
+                if (a == 3 or b == 3 or c == 3):
+                    self.network_manager.open_switch('Line.Sw3')
+                                                                            
+                if (a == 4 or b == 4 or c == 4):
+                    self.network_manager.open_switch('Line.Sw4')
+                                                                            
+                if (a == 5 or b == 5 or c == 5):
+                    self.network_manager.open_switch('Line.Sw5')
+                                                                            
+                if (a == 6 or b == 6 or c == 6):
+                    self.network_manager.open_switch('Line.Sw6')
+                                                                            
+                if (a == 7 or b == 7 or c == 7):
+                    self.network_manager.open_switch('Line.Sw7')
+                                                                                
+                if (a == 8 or b == 8 or c == 8):
+                    self.network_manager.open_switch('Line.Sw8')
+                                                                                
+                if (a == 9 or b == 9 or c == 9):
+                    self.network_manager.open_switch('Line.Sw9')
+                                                                                
+                if (a == 10 or b == 10 or c == 10):
+                    self.network_manager.open_switch('Line.Sw10')
+                                                                                
+                if (a == 11 or b == 11 or c == 11):
+                    self.network_manager.open_switch('Line.Sw11')
+                                                                                
+                if (a == 12 or b == 12 or c == 12):
+                    self.network_manager.open_switch('Line.Sw12')
+                                                                                
+                if (a == 13 or b == 13 or c == 13):
+                    self.network_manager.open_switch('Line.Sw13')
+                                                                            
+                if (a == 14 or b == 14 or c == 14):
+                    self.network_manager.open_switch('Line.Sw14')
+
+                a = 0
+                b = 0
+                c = 0
+                self.power_flow.calculate_power_flow()
+                #print(self.power_flow.get_losses())
+
+                currentLosses = self.power_flow.get_losses()
+                if (j == 0):
+                    aa = 0
+                    minLossesFinal = self.power_flow.get_losses()
+                    currentLosses = self.power_flow.get_losses()
+                    aa = (0 - 1) * self.power_flow.get_network_injected_p() - self.power_flow.get_losses()
+
+                if(currentLosses < minLossesFinal):
+                    minLossesFinal = currentLosses
+
+                #print(self.radial_switch_combinations[j])
+                f.write(json.dumps(self.power_flow.get_losses()))
+                f.write("\n")
+                f.write(json.dumps(self.radial_switch_combinations[j]))
+                f.write("\n")
+                f.write("---------------------------------------------\n\n")
+                    
+                self.closing_all_switches()
+                if(j == 185):
+                    f.write("Minimum losses for current step: ")
+                    f2.write(str(s) + ". trenutak: ")
+                    f2.write(json.dumps(minLossesFinal))
+                    f2.write("\n")
+                    f2.write("\n")
+                    f.write(json.dumps(minLossesFinal))
+                    f.write("\n")
+                    f.write("Total load: ")
+                    f.write(json.dumps(aa))
+            f.close()
+            s += 1
+            k += 3
+        #print(len(Dict))
+        f2.close()
+        #print(j)
+                                                                    
