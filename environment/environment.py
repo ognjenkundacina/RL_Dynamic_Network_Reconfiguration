@@ -159,7 +159,7 @@ class Environment(gym.Env):
             print('WARNING: environment.py; set_load_scaling_for_timestep; self.timestep greater than expected')  
         #current_consumption_percents_per_feeder = self.consumption_percents_per_feeder[self.timestep]
         current_consumption_percents_per_feeder = self.consumption_percents_per_feeder[self.timestep]
-        current_consumption_percents_per_node = 0.7 * self.distribute_feeder_consumptions(current_consumption_percents_per_feeder)
+        current_consumption_percents_per_node = self.distribute_feeder_consumptions(current_consumption_percents_per_feeder)
         self.network_manager.set_load_scaling(current_consumption_percents_per_node)
 
     def test_environment(self):
@@ -360,7 +360,6 @@ class Environment(gym.Env):
         print(len(Dict))
 
     def closing_all_switches(self):
-
         self.network_manager.close_switch('Line.Sw1')
         self.network_manager.close_switch('Line.Sw2')
         self.network_manager.close_switch('Line.Sw3')
@@ -377,16 +376,13 @@ class Environment(gym.Env):
         self.network_manager.close_switch('Line.Sw14')
         
     def finding_optimal_states(self):
-
         self.closing_all_switches()
         minLossesFinal = 0
         currentLosses = 0
-        #self.set_load_scaling_for_timestep()
         s = 1
         k = 0
 
         for v in range(24): 
-            
             file = open("loads.txt", "r")
             f2 = open("Optimalni gubici.txt", "a")
             scaling_factors = [0.0 for i in range(self.n_consumers)]
@@ -412,7 +408,6 @@ class Environment(gym.Env):
 
             f = open(str(s) + ".trenutak.txt", "a")
             for j in self.radial_switch_combinations:
-
                 a, b, c = self.radial_switch_combinations[j]
 
                 if (a == 1 or b == 1 or c == 1):
@@ -462,7 +457,6 @@ class Environment(gym.Env):
                 c = 0
                 self.power_flow.calculate_power_flow()
                 #print(self.power_flow.get_losses())
-
                 currentLosses = self.power_flow.get_losses()
                 if (j == 0):
                     aa = 0

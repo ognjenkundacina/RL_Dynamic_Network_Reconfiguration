@@ -29,7 +29,11 @@ def main():
 
     #environment should'n have the entire dataset as an input parameter, but train and test methods
     environment = Environment()
-    environment.get_number_of_switch_manipulations([1, 5, 6], [2, 5, 6])
+    #print(environment.get_number_of_switch_manipulations([1, 5, 6], [12, 13, 14]))
+    #environment.finding_optimal_states()
+    #test_power_flow()
+    
+    #environment.find_all_radial_configurations()
     #environment.find_all_radial_configurations()
     print('=====================agent=====================')
     agent = DeepQLearningAgent(environment)
