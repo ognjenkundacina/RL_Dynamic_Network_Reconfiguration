@@ -70,7 +70,6 @@ class Environment(gym.Env):
     #action: 0..n_actions
     def step(self, action):
         self.timestep += 1
-        self.set_load_scaling_for_timestep()
             
         #self.switch_operations_by_index[toogled_switch_index] += 1
         
@@ -79,6 +78,8 @@ class Environment(gym.Env):
         reward = self.calculate_reward(action)
 
         done = (self.timestep == NUM_TIMESTEPS)
+
+        self.set_load_scaling_for_timestep()
 
         return next_state, reward, done
 
@@ -157,7 +158,6 @@ class Environment(gym.Env):
             return
         if (self.timestep > NUM_TIMESTEPS):  
             print('WARNING: environment.py; set_load_scaling_for_timestep; self.timestep greater than expected')  
-        #current_consumption_percents_per_feeder = self.consumption_percents_per_feeder[self.timestep]
         current_consumption_percents_per_feeder = self.consumption_percents_per_feeder[self.timestep]
         current_consumption_percents_per_node = self.distribute_feeder_consumptions(current_consumption_percents_per_feeder)
         self.network_manager.set_load_scaling(current_consumption_percents_per_node)
