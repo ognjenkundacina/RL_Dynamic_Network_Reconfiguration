@@ -27,8 +27,9 @@ class Environment(gym.Env):
         self.n_actions = len(self.radial_switch_combinations)
         self.n_consumers = self.network_manager.get_load_count()
         self.timestep = 0
-        self.switching_action_cost = 1.0
+        self.switching_action_cost = 100.0
         self.base_power = 4000
+        self.previous_action = 0
 
         self.switch_names = self.network_manager.get_all_switch_names()
         self.n_switches = len(self.network_manager.get_all_switch_names())
@@ -61,29 +62,13 @@ class Environment(gym.Env):
         pass
 
     def _update_switch_statuses(self, action):
-        global previous_action
-        global new_action
-        previous_action = [0 for i in range(3)]
-        new_action = [0 for j in range(3)]
-        ii = 0
-        jj = 0
 
         for switch_index in self.switch_indices:
             if switch_index in self.radial_switch_combinations[action]:
-                if (self.network_manager.is_opened(self.switch_names_by_index[switch_index])):
-                    previous_action[ii] = switch_index
-                    ii += 1
-                self.network_manager.open_switch(self.switch_names_by_index[switch_index])
-                new_action[jj] = switch_index
-                jj += 1
+                self.network_manager.open_switch(self.switch_names_by_index[switch_index]) 
             else:
-                if (self.network_manager.is_opened(self.switch_names_by_index[switch_index])):
-                    previous_action[ii] = switch_index
-                    ii += 1
                 self.network_manager.close_switch(self.switch_names_by_index[switch_index])
         
-        #print(previous_action)
-        #print(new_action)
 
     #action: 0..n_actions
     def step(self, action):
@@ -97,6 +82,7 @@ class Environment(gym.Env):
 
         self.set_load_scaling_for_timestep()
 
+        self.previous_action = action
         return next_state, reward, done
 
     def calculate_reward(self, action):
@@ -106,22 +92,22 @@ class Environment(gym.Env):
 
         #reward -= 5 ** (self.power_flow.get_losses() * 0.065625 / 20.0)
  
-        reward -= self.switching_action_cost * self.get_number_of_switch_manipulations()
+        reward -= self.switching_action_cost * self.get_number_of_switch_manipulations(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
 
         #zbog numerickih pogodnost je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
         reward /= 20.0
         return reward
 
-    def get_number_of_switch_manipulations(self):
+    def get_number_of_switch_manipulations(self, previous_action, action):
         num_of_switch_manipulations = 6
 
-        if (previous_action[0] == new_action[0] or previous_action[0] == new_action[1] or previous_action[0] == new_action[2]):
+        if (previous_action[0] == action[0] or previous_action[0] == action[1] or previous_action[0] == action[2]):
             num_of_switch_manipulations = num_of_switch_manipulations - 2
 
-        if (previous_action[1] == new_action[0] or previous_action[1] == new_action[1] or previous_action[1] == new_action[2]):
+        if (previous_action[1] == action[0] or previous_action[1] == action[1] or previous_action[1] == action[2]):
             num_of_switch_manipulations = num_of_switch_manipulations - 2
 
-        if (previous_action[2] == new_action[0] or previous_action[2] == new_action[1] or previous_action[2] == new_action[2]):
+        if (previous_action[2] == action[0] or previous_action[2] == action[1] or previous_action[2] == action[2]):
             num_of_switch_manipulations = num_of_switch_manipulations - 2
         
         return num_of_switch_manipulations
@@ -130,6 +116,7 @@ class Environment(gym.Env):
     def reset(self, daily_consumption_percents_per_feeder):
         self.timestep = 0
         self.network_manager = nm.ODSSNetworkManagement()
+        self.previous_action = 0
 
         #self.consumption_percents_per_feeder je lista koja sadrzi 24 liste koje za trenutka sadrze 3 scaling faktora, po jedan za svaki do feedera
         self.consumption_percents_per_feeder = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
