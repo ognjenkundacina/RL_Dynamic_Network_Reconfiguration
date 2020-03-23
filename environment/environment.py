@@ -27,7 +27,7 @@ class Environment(gym.Env):
         self.n_actions = len(self.radial_switch_combinations)
         self.n_consumers = self.network_manager.get_load_count()
         self.timestep = 0
-        self.switching_action_cost = 100.0
+        self.switching_action_cost = 1.0
         self.base_power = 4000
         self.previous_action = 0
 
@@ -110,6 +110,9 @@ class Environment(gym.Env):
         if (previous_action[2] == action[0] or previous_action[2] == action[1] or previous_action[2] == action[2]):
             num_of_switch_manipulations = num_of_switch_manipulations - 2
         
+        #print(previous_action)
+        #print(action)
+        #print(num_of_switch_manipulations)
         return num_of_switch_manipulations
 
 
@@ -378,14 +381,23 @@ class Environment(gym.Env):
         
     def finding_optimal_states(self):
         self.closing_all_switches()
+        minMoneyLossesFinal = 0
+        currentMoneyLosses = 0
         minLossesFinal = 0
         currentLosses = 0
+        aa = 0
+        bb = 0
+        cc = 0
         s = 1
         k = 0
+        bestResults = {}
+        key = 0
+        bestResults.setdefault(key, [])
+        
 
         for v in range(24): 
             file = open("loads.txt", "r")
-            f2 = open("Optimalni gubici.txt", "a")
+            f2 = open("Optimalna stanja.txt", "a")
             scaling_factors = [0.0 for i in range(self.n_consumers)]
             ceo_niz = file.readlines()
             ceo_niz = [int(z) for z in ceo_niz]
@@ -453,23 +465,32 @@ class Environment(gym.Env):
                 if (a == 14 or b == 14 or c == 14):
                     self.network_manager.open_switch('Line.Sw14')
 
-                a = 0
-                b = 0
-                c = 0
                 self.power_flow.calculate_power_flow()
                 #print(self.power_flow.get_losses())
+                currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([12, 13, 14], [a, b, c]) * 0.25
                 currentLosses = self.power_flow.get_losses()
+                #bestResults[key] = self.radial_switch_combinations[j]
                 if (j == 0):
-                    aa = 0
+                    #aa = 0
                     minLossesFinal = self.power_flow.get_losses()
                     currentLosses = self.power_flow.get_losses()
-                    aa = (0 - 1) * self.power_flow.get_network_injected_p() - self.power_flow.get_losses()
+                    minMoneyLossesFinal = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([12, 13, 14], [a, b, c]) * 0.25
+                    currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([12, 13, 14], [a, b, c]) * 0.25
+                    bestResults[key] = self.radial_switch_combinations[j]
+                    
+                    #aa = (0 - 1) * self.power_flow.get_network_injected_p() - self.power_flow.get_losses()
 
-                if(currentLosses < minLossesFinal):
+                if(currentMoneyLosses < minMoneyLossesFinal):
+                    minMoneyLossesFinal = currentMoneyLosses
                     minLossesFinal = currentLosses
+                    bestResults[key] = self.radial_switch_combinations[j]
 
                 #print(self.radial_switch_combinations[j])
-                f.write(json.dumps(self.power_flow.get_losses()))
+                f.write(json.dumps(currentLosses))
+                f.write(" kW")
+                f.write("\n")
+                f.write(json.dumps(currentMoneyLosses))
+                f.write(" $")
                 f.write("\n")
                 f.write(json.dumps(self.radial_switch_combinations[j]))
                 f.write("\n")
@@ -477,16 +498,26 @@ class Environment(gym.Env):
                     
                 self.closing_all_switches()
                 if(j == 185):
-                    f.write("Minimum losses for current step: ")
+                    f.write("Minimum money losses for current step: ")
                     f2.write(str(s) + ". trenutak: ")
+                    f2.write(json.dumps(minMoneyLossesFinal))
+                    f2.write(" $, ")
                     f2.write(json.dumps(minLossesFinal))
+                    f2.write(" kW, ")
+                    f2.write(json.dumps(bestResults[key]))
                     f2.write("\n")
                     f2.write("\n")
-                    f.write(json.dumps(minLossesFinal))
+                    f.write(json.dumps(minMoneyLossesFinal))
+                    f.write(" $")
                     f.write("\n")
-                    f.write("Total load: ")
-                    f.write(json.dumps(aa))
+                    key += 1
+                    
+                    #f.write("Total load: ")
+                    #f.write(json.dumps(aa))
             f.close()
+            a = 0
+            b = 0
+            c = 0
             s += 1
             k += 3
         #print(len(Dict))
