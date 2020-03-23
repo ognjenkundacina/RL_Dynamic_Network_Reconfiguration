@@ -37,6 +37,7 @@ class Environment(gym.Env):
         self.switch_names_by_index = dict(zip(self.switch_indices, self.switch_names))
         
     def _update_state(self, action):
+        
         self._update_switch_statuses(action)
         #self._update_available_actions() #todo implement
         self.power_flow.calculate_power_flow()
@@ -60,19 +61,34 @@ class Environment(gym.Env):
         pass
 
     def _update_switch_statuses(self, action):
+        global previous_action
+        global new_action
+        previous_action = [0 for i in range(3)]
+        new_action = [0 for j in range(3)]
+        ii = 0
+        jj = 0
+
         for switch_index in self.switch_indices:
             if switch_index in self.radial_switch_combinations[action]:
+                if (self.network_manager.is_opened(self.switch_names_by_index[switch_index])):
+                    previous_action[ii] = switch_index
+                    ii += 1
                 self.network_manager.open_switch(self.switch_names_by_index[switch_index])
+                new_action[jj] = switch_index
+                jj += 1
             else:
+                if (self.network_manager.is_opened(self.switch_names_by_index[switch_index])):
+                    previous_action[ii] = switch_index
+                    ii += 1
                 self.network_manager.close_switch(self.switch_names_by_index[switch_index])
-
+        
+        #print(previous_action)
+        #print(new_action)
 
     #action: 0..n_actions
     def step(self, action):
         self.timestep += 1
-            
         #self.switch_operations_by_index[toogled_switch_index] += 1
-        
         next_state = self._update_state(action)
 
         reward = self.calculate_reward(action)
@@ -89,25 +105,23 @@ class Environment(gym.Env):
         reward -= self.power_flow.get_losses() * 0.065625
 
         #reward -= 5 ** (self.power_flow.get_losses() * 0.065625 / 20.0)
-            
-        #reward -= self.switching_action_cost * self.num_of_switching_actions
+ 
+        reward -= self.switching_action_cost * self.get_number_of_switch_manipulations()
 
         #zbog numerickih pogodnost je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
         reward /= 20.0
         return reward
 
-    def get_number_of_switch_manipulations(self, current_open_switches, new_open_switches):
+    def get_number_of_switch_manipulations(self):
         num_of_switch_manipulations = 6
-        a, b, c = current_open_switches
-        d, e, f = new_open_switches
 
-        if (a == d or a == e or a == f):
+        if (previous_action[0] == new_action[0] or previous_action[0] == new_action[1] or previous_action[0] == new_action[2]):
             num_of_switch_manipulations = num_of_switch_manipulations - 2
 
-        if (b == d or b == e or b == f):
+        if (previous_action[1] == new_action[0] or previous_action[1] == new_action[1] or previous_action[1] == new_action[2]):
             num_of_switch_manipulations = num_of_switch_manipulations - 2
 
-        if (c == d or c == e or c == f):
+        if (previous_action[2] == new_action[0] or previous_action[2] == new_action[1] or previous_action[2] == new_action[2]):
             num_of_switch_manipulations = num_of_switch_manipulations - 2
         
         return num_of_switch_manipulations

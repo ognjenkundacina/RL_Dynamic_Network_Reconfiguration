@@ -45,6 +45,10 @@ class ODSSNetworkManagement:
     def open_switch(self, switch_name):
         dss.Circuit.SetActiveElement(switch_name)
         dss.CktElement.Open(0, 0)
+    
+    def is_opened(self, switch_name):
+        dss.Circuit.SetActiveElement(switch_name)
+        return dss.CktElement.IsOpen(0, 0)
 
     def toogle_switch_status(self, switch_name):
         dss.Circuit.SetActiveElement(switch_name)
