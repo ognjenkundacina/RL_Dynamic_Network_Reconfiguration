@@ -385,36 +385,32 @@ class Environment(gym.Env):
         currentMoneyLosses = 0
         minLossesFinal = 0
         currentLosses = 0
-        aa = 0
-        bb = 0
-        cc = 0
         s = 1
         k = 0
         bestResults = {}
         key = 0
         bestResults.setdefault(key, [])
         
-
         for v in range(24): 
             file = open("loads.txt", "r")
             f2 = open("Optimalna stanja.txt", "a")
             scaling_factors = [0.0 for i in range(self.n_consumers)]
             ceo_niz = file.readlines()
             ceo_niz = [int(z) for z in ceo_niz]
-            scaling_factors[0] = ceo_niz[k] * 0.7 /1000
-            scaling_factors[1] = ceo_niz[k] * 0.7 /1000
-            scaling_factors[2] = ceo_niz[k] * 0.7 /1000
-            scaling_factors[3] = ceo_niz[k] * 0.7 /1000
-            scaling_factors[4] = ceo_niz[k+1] * 0.7 /1000
-            scaling_factors[5] = ceo_niz[k+1] * 0.7 /1000
-            scaling_factors[6] = ceo_niz[k+1] * 0.7 /1000
-            scaling_factors[7] = ceo_niz[k+2] * 0.7 /1000
-            scaling_factors[8] = ceo_niz[k+2] * 0.7 /1000
-            scaling_factors[9] = ceo_niz[k+2] * 0.7 /1000
-            scaling_factors[10] = ceo_niz[k+2] * 0.7 /1000
-            scaling_factors[11] = ceo_niz[k] * 0.7 /1000
-            scaling_factors[12] = ceo_niz[k+1] * 0.7 /1000
-            scaling_factors[13] = ceo_niz[k] * 0.7 /1000
+            scaling_factors[0] = ceo_niz[k] /1000
+            scaling_factors[1] = ceo_niz[k] /1000
+            scaling_factors[2] = ceo_niz[k] /1000
+            scaling_factors[3] = ceo_niz[k] /1000
+            scaling_factors[4] = ceo_niz[k+1] /1000
+            scaling_factors[5] = ceo_niz[k+1] /1000
+            scaling_factors[6] = ceo_niz[k+1] /1000
+            scaling_factors[7] = ceo_niz[k+2] /1000
+            scaling_factors[8] = ceo_niz[k+2] /1000
+            scaling_factors[9] = ceo_niz[k+2] /1000
+            scaling_factors[10] = ceo_niz[k+2] /1000
+            scaling_factors[11] = ceo_niz[k] /1000
+            scaling_factors[12] = ceo_niz[k+1] /1000
+            scaling_factors[13] = ceo_niz[k] /1000
             #print(scaling_factors)
             file.close()
             self.network_manager.set_load_scaling(scaling_factors)
