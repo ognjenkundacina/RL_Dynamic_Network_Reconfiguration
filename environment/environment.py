@@ -388,6 +388,10 @@ class Environment(gym.Env):
         s = 1
         k = 0
         bestResults = {}
+        os1 = 0
+        os2 = 0
+        os3 = 0
+        os1, os2, os3 = self.radial_switch_combinations[0]
         key = 0
         bestResults.setdefault(key, [])
         
@@ -463,16 +467,20 @@ class Environment(gym.Env):
 
                 self.power_flow.calculate_power_flow()
                 #print(self.power_flow.get_losses())
-                currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([12, 13, 14], [a, b, c]) * 0.25
+                currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([os1, os2, os3], [a, b, c]) * 0.25
                 currentLosses = self.power_flow.get_losses()
                 #bestResults[key] = self.radial_switch_combinations[j]
                 if (j == 0):
                     #aa = 0
+                    if(v == 0):
+                        bestResults[key] = self.radial_switch_combinations[j]
+                    else: 
+                        bestResults[key] = [os1, os2, os3]
+
                     minLossesFinal = self.power_flow.get_losses()
                     currentLosses = self.power_flow.get_losses()
-                    minMoneyLossesFinal = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([12, 13, 14], [a, b, c]) * 0.25
-                    currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([12, 13, 14], [a, b, c]) * 0.25
-                    bestResults[key] = self.radial_switch_combinations[j]
+                    minMoneyLossesFinal = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([os1, os2, os3], [a, b, c]) * 0.25
+                    currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([os1, os2, os3], [a, b, c]) * 0.25
                     
                     #aa = (0 - 1) * self.power_flow.get_network_injected_p() - self.power_flow.get_losses()
 
@@ -480,6 +488,7 @@ class Environment(gym.Env):
                     minMoneyLossesFinal = currentMoneyLosses
                     minLossesFinal = currentLosses
                     bestResults[key] = self.radial_switch_combinations[j]
+                    os1, os2, os3 = self.radial_switch_combinations[j]
 
                 #print(self.radial_switch_combinations[j])
                 f.write(json.dumps(currentLosses))
