@@ -619,7 +619,7 @@ class Environment(gym.Env):
                     self.network_manager.open_switch('Line.Sw'+str(sw1))
                     self.network_manager.open_switch('Line.Sw'+str(sw2))
                     self.network_manager.open_switch('Line.Sw'+str(sw3))
-                    self.reading_from_load_file(2)
+                    self.reading_from_load_file(6)
                     self.power_flow.calculate_power_flow()
                     totalLoss += self.power_flow.get_losses()
                     totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations(self.radial_switch_combinations[b], self.radial_switch_combinations[c]))
