@@ -395,26 +395,26 @@ class Environment(gym.Env):
         key = 0
         bestResults.setdefault(key, [])
         
-        for v in range(24): 
+        for v in range(4): 
             file = open("loads.txt", "r")
             f2 = open("Optimalna stanja.txt", "a")
             scaling_factors = [0.0 for i in range(self.n_consumers)]
             ceo_niz = file.readlines()
-            ceo_niz = [int(z) for z in ceo_niz]
-            scaling_factors[0] = ceo_niz[k] /1000
-            scaling_factors[1] = ceo_niz[k] /1000
-            scaling_factors[2] = ceo_niz[k] /1000
-            scaling_factors[3] = ceo_niz[k] /1000
-            scaling_factors[4] = ceo_niz[k+1] /1000
-            scaling_factors[5] = ceo_niz[k+1] /1000
-            scaling_factors[6] = ceo_niz[k+1] /1000
-            scaling_factors[7] = ceo_niz[k+2] /1000
-            scaling_factors[8] = ceo_niz[k+2] /1000
-            scaling_factors[9] = ceo_niz[k+2] /1000
-            scaling_factors[10] = ceo_niz[k+2] /1000
-            scaling_factors[11] = ceo_niz[k] /1000
-            scaling_factors[12] = ceo_niz[k+1] /1000
-            scaling_factors[13] = ceo_niz[k] /1000
+            ceo_niz = [float(z) for z in ceo_niz]
+            scaling_factors[0] = ceo_niz[k] 
+            scaling_factors[1] = ceo_niz[k] 
+            scaling_factors[2] = ceo_niz[k] 
+            scaling_factors[3] = ceo_niz[k] 
+            scaling_factors[4] = ceo_niz[k+1] 
+            scaling_factors[5] = ceo_niz[k+1] 
+            scaling_factors[6] = ceo_niz[k+1] 
+            scaling_factors[7] = ceo_niz[k+2] 
+            scaling_factors[8] = ceo_niz[k+2] 
+            scaling_factors[9] = ceo_niz[k+2] 
+            scaling_factors[10] = ceo_niz[k+2] 
+            scaling_factors[11] = ceo_niz[k] 
+            scaling_factors[12] = ceo_niz[k+1] 
+            scaling_factors[13] = ceo_niz[k] 
             #print(scaling_factors)
             file.close()
             self.network_manager.set_load_scaling(scaling_factors)
@@ -467,7 +467,7 @@ class Environment(gym.Env):
 
                 self.power_flow.calculate_power_flow()
                 #print(self.power_flow.get_losses())
-                currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([os1, os2, os3], [a, b, c]) * 0.25
+                currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([12, 13, 14], [a, b, c]) * 1
                 currentLosses = self.power_flow.get_losses()
                 #bestResults[key] = self.radial_switch_combinations[j]
                 if (j == 0):
@@ -479,8 +479,8 @@ class Environment(gym.Env):
 
                     minLossesFinal = self.power_flow.get_losses()
                     currentLosses = self.power_flow.get_losses()
-                    minMoneyLossesFinal = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([os1, os2, os3], [a, b, c]) * 0.25
-                    currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([os1, os2, os3], [a, b, c]) * 0.25
+                    minMoneyLossesFinal = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([12, 13, 14], [a, b, c]) * 1
+                    currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([12, 13, 14], [a, b, c]) * 1
                     
                     #aa = (0 - 1) * self.power_flow.get_network_injected_p() - self.power_flow.get_losses()
 
@@ -587,72 +587,73 @@ class Environment(gym.Env):
         for a in range(186):
             for b in range(186):
                 for c in range(186):
-                    for d in range(186):
-                        self.closing_all_switches()
-                        totalLoss = 0
-                        sw1, sw2, sw3 = self.radial_switch_combinations[a]
-                        self.network_manager.open_switch('Line.Sw'+str(sw1))
-                        self.network_manager.open_switch('Line.Sw'+str(sw2))
-                        self.network_manager.open_switch('Line.Sw'+str(sw3))
-                        self.reading_from_load_file(0)
-                        self.power_flow.calculate_power_flow()
-                        totalLoss = self.power_flow.get_losses()
-                        totalMoneyLoss = self.power_flow.get_losses() * 0.065625
+                    #for d in range(186):
+                    self.closing_all_switches()
+                    totalLoss = 0
+                    totalMoneyLoss = 0
+                    sw1, sw2, sw3 = self.radial_switch_combinations[a]
+                    self.network_manager.open_switch('Line.Sw'+str(sw1))
+                    self.network_manager.open_switch('Line.Sw'+str(sw2))
+                    self.network_manager.open_switch('Line.Sw'+str(sw3))
+                    self.reading_from_load_file(0)
+                    self.power_flow.calculate_power_flow()
+                    totalLoss = self.power_flow.get_losses()
+                    totalMoneyLoss = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations(self.radial_switch_combinations[a], [12, 13, 14])
 
-                        self.network_manager.close_switch('Line.Sw'+str(sw1))
-                        self.network_manager.close_switch('Line.Sw'+str(sw2))
-                        self.network_manager.close_switch('Line.Sw'+str(sw3))
-                        sw1, sw2, sw3 = self.radial_switch_combinations[b]
-                        self.network_manager.open_switch('Line.Sw'+str(sw1))
-                        self.network_manager.open_switch('Line.Sw'+str(sw2))
-                        self.network_manager.open_switch('Line.Sw'+str(sw3))
-                        self.reading_from_load_file(1)
-                        self.power_flow.calculate_power_flow()
-                        totalLoss += self.power_flow.get_losses()
-                        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations(self.radial_switch_combinations[a], self.radial_switch_combinations[b]))
+                    self.network_manager.close_switch('Line.Sw'+str(sw1))
+                    self.network_manager.close_switch('Line.Sw'+str(sw2))
+                    self.network_manager.close_switch('Line.Sw'+str(sw3))
+                    sw1, sw2, sw3 = self.radial_switch_combinations[b]
+                    self.network_manager.open_switch('Line.Sw'+str(sw1))
+                    self.network_manager.open_switch('Line.Sw'+str(sw2))
+                    self.network_manager.open_switch('Line.Sw'+str(sw3))
+                    self.reading_from_load_file(3)
+                    self.power_flow.calculate_power_flow()
+                    totalLoss += self.power_flow.get_losses()
+                    totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations(self.radial_switch_combinations[a], self.radial_switch_combinations[b]))
 
-                        self.network_manager.close_switch('Line.Sw'+str(sw1))
-                        self.network_manager.close_switch('Line.Sw'+str(sw2))
-                        self.network_manager.close_switch('Line.Sw'+str(sw3))
-                        sw1, sw2, sw3 = self.radial_switch_combinations[c]
-                        self.network_manager.open_switch('Line.Sw'+str(sw1))
-                        self.network_manager.open_switch('Line.Sw'+str(sw2))
-                        self.network_manager.open_switch('Line.Sw'+str(sw3))
-                        self.reading_from_load_file(2)
-                        self.power_flow.calculate_power_flow()
-                        totalLoss += self.power_flow.get_losses()
-                        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations(self.radial_switch_combinations[b], self.radial_switch_combinations[c]))
+                    self.network_manager.close_switch('Line.Sw'+str(sw1))
+                    self.network_manager.close_switch('Line.Sw'+str(sw2))
+                    self.network_manager.close_switch('Line.Sw'+str(sw3))
+                    sw1, sw2, sw3 = self.radial_switch_combinations[c]
+                    self.network_manager.open_switch('Line.Sw'+str(sw1))
+                    self.network_manager.open_switch('Line.Sw'+str(sw2))
+                    self.network_manager.open_switch('Line.Sw'+str(sw3))
+                    self.reading_from_load_file(2)
+                    self.power_flow.calculate_power_flow()
+                    totalLoss += self.power_flow.get_losses()
+                    totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations(self.radial_switch_combinations[b], self.radial_switch_combinations[c]))
 
-                        self.network_manager.close_switch('Line.Sw'+str(sw1))
-                        self.network_manager.close_switch('Line.Sw'+str(sw2))
-                        self.network_manager.close_switch('Line.Sw'+str(sw3))
-                        sw1, sw2, sw3 = self.radial_switch_combinations[d]
-                        self.network_manager.open_switch('Line.Sw'+str(sw1))
-                        self.network_manager.open_switch('Line.Sw'+str(sw2))
-                        self.network_manager.open_switch('Line.Sw'+str(sw3))
-                        self.reading_from_load_file(3)
-                        self.power_flow.calculate_power_flow()
-                        totalLoss += self.power_flow.get_losses()
-                        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations(self.radial_switch_combinations[c], self.radial_switch_combinations[d]))
+                #self.network_manager.close_switch('Line.Sw'+str(sw1))
+                #self.network_manager.close_switch('Line.Sw'+str(sw2))
+                #self.network_manager.close_switch('Line.Sw'+str(sw3))
+                #sw1, sw2, sw3 = self.radial_switch_combinations[d]
+                #self.network_manager.open_switch('Line.Sw'+str(sw1))
+                #self.network_manager.open_switch('Line.Sw'+str(sw2))
+                #self.network_manager.open_switch('Line.Sw'+str(sw3))
+                #self.reading_from_load_file(3)
+                #self.power_flow.calculate_power_flow()
+                #totalLoss += self.power_flow.get_losses()
+                #totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations(self.radial_switch_combinations[c], self.radial_switch_combinations[d]))
 
-                        if(totalMoneyLoss < totalMoneyLossFinal):
+                    if(totalMoneyLoss < totalMoneyLossFinal):
 
-                            totalMoneyLossFinal = totalMoneyLoss
-                            totalLossFinal = totalLoss
-                            swa1, swa2, swa3 = self.radial_switch_combinations[a]
-                            swb1, swb2, swb3 = self.radial_switch_combinations[b]
-                            swc1, swc2, swc3 = self.radial_switch_combinations[c]
-                            swd1, swd2, swd3 = self.radial_switch_combinations[d]
+                        totalMoneyLossFinal = totalMoneyLoss
+                        totalLossFinal = totalLoss
+                        swa1, swa2, swa3 = self.radial_switch_combinations[a]
+                        swb1, swb2, swb3 = self.radial_switch_combinations[b]
+                        swc1, swc2, swc3 = self.radial_switch_combinations[c]
+                        #swd1, swd2, swd3 = self.radial_switch_combinations[d]
                         
-                        if(brojac == 0 or brojac == 1):
-                            print(totalMoneyLoss)
-                            print(self.radial_switch_combinations[a])
-                            print(self.radial_switch_combinations[b])
-                            print(self.radial_switch_combinations[c])
-                            print(self.radial_switch_combinations[d])
-                        brojac += 1
+                #if(brojac == 0):
+                    #print(totalMoneyLoss)
+                    #print(self.radial_switch_combinations[a])
+                    #print(self.radial_switch_combinations[b])
+                    #print(self.radial_switch_combinations[c])
+                    #print(self.radial_switch_combinations[d])
+                    brojac += 1
 
-        f = open("Optimalno stanje.txt", "a")
+        f = open("Optimalno stanje2.txt", "a")
         f.write(json.dumps(totalMoneyLossFinal))
         f.write(" $")
         f.write("\n")
@@ -688,14 +689,14 @@ class Environment(gym.Env):
         f.write("]")
         f.write("\n")
 
-        f.write("4. trenutak: [")
-        f.write(json.dumps(swd1))
-        f.write(", ")
-        f.write(json.dumps(swd2))
-        f.write(", ")
-        f.write(json.dumps(swd3))
-        f.write("]")
-        f.write("\n")
+        #f.write("4. trenutak: [")
+        #f.write(json.dumps(swd1))
+        #f.write(", ")
+        #f.write(json.dumps(swd2))
+        #f.write(", ")
+        #f.write(json.dumps(swd3))
+        #f.write("]")
+        #f.write("\n")
 
                         
 
