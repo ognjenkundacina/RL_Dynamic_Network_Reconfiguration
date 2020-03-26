@@ -1,4 +1,4 @@
-NUM_TIMESTEPS = 4
+NUM_TIMESTEPS = 24
 
 radial_switch_combinations = {
     0: [12, 13, 14],

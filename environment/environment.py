@@ -27,7 +27,7 @@ class Environment(gym.Env):
         self.n_actions = len(self.radial_switch_combinations)
         self.n_consumers = self.network_manager.get_load_count()
         self.timestep = 0
-        self.switching_action_cost = 1
+        self.switching_action_cost = 1.0
         self.base_power = 4000
         self.previous_action = 0
 
@@ -152,9 +152,6 @@ class Environment(gym.Env):
         current_consumption_percents_per_node[8] = current_consumption_percents_per_feeder[2]
         current_consumption_percents_per_node[9] = current_consumption_percents_per_feeder[2]
         current_consumption_percents_per_node[10] = current_consumption_percents_per_feeder[2]
-        current_consumption_percents_per_node[11] = current_consumption_percents_per_feeder[0]
-        current_consumption_percents_per_node[12] = current_consumption_percents_per_feeder[1]
-        current_consumption_percents_per_node[13] = current_consumption_percents_per_feeder[0]
         return current_consumption_percents_per_node
 
     def set_load_scaling_for_timestep(self):
