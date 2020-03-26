@@ -1,6 +1,6 @@
 Clear 
 Set DefaultBaseFrequency=50
-New circuit.NRsema basekV=20 pu=1.01 angle=0 frequency=50 phases=3 bus1=Bus_0
+New circuit.NRsema basekV=11.547 pu=1.03 angle=0 frequency=50 phases=3 bus1=Bus_0
 
 New linecode.AB nphases = 3 R1 = 0.224 X1 = 0.109
 
@@ -25,20 +25,17 @@ New Line.Line_14  Phases=3 BaseFreq=50 Bus1=Bus_4    Bus2=Bus_14  LineCode=AB Le
 
 ! LOAD DEFINITIONS
 
-New Load.Load_1 Bus1=Bus_1 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
-New Load.Load_2 Bus1=Bus_2 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
-New Load.Load_3 Bus1=Bus_3 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
-New Load.Load_4 Bus1=Bus_4 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
-New Load.Load_5 Bus1=Bus_5 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
-New Load.Load_6 Bus1=Bus_6 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
-New Load.Load_7 Bus1=Bus_7 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
-New Load.Load_8 Bus1=Bus_8 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
-New Load.Load_9 Bus1=Bus_9 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
-New Load.Load_10 Bus1=Bus_10 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
-New Load.Load_11 Bus1=Bus_11 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
-New Load.Load_12 Bus1=Bus_12 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
-New Load.Load_13 Bus1=Bus_13 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
-New Load.Load_14 Bus1=Bus_14 Phases=3 conn=wye Model=1 kV=20 kW=1000 kvar=200
+New Load.Load_1 Bus1=Bus_1 Phases=3 conn=wye Model=1 kV=11.547 kW=1000 kvar=200
+New Load.Load_2 Bus1=Bus_2 Phases=3 conn=wye Model=1 kV=11.547 kW=1000 kvar=200
+New Load.Load_3 Bus1=Bus_3 Phases=3 conn=wye Model=1 kV=11.547 kW=1000 kvar=200
+New Load.Load_4 Bus1=Bus_4 Phases=3 conn=wye Model=1 kV=11.547 kW=1000 kvar=200
+New Load.Load_5 Bus1=Bus_5 Phases=3 conn=wye Model=1 kV=11.547 kW=1000 kvar=200
+New Load.Load_6 Bus1=Bus_6 Phases=3 conn=wye Model=1 kV=11.547 kW=1000 kvar=200
+New Load.Load_7 Bus1=Bus_7 Phases=3 conn=wye Model=1 kV=11.547 kW=1000 kvar=200
+New Load.Load_8 Bus1=Bus_8 Phases=3 conn=wye Model=1 kV=11.547 kW=1000 kvar=200
+New Load.Load_9 Bus1=Bus_9 Phases=3 conn=wye Model=1 kV=11.547 kW=1000 kvar=200
+New Load.Load_10 Bus1=Bus_10 Phases=3 conn=wye Model=1 kV=11.547 kW=1000 kvar=200
+New Load.Load_11 Bus1=Bus_11 Phases=3 conn=wye Model=1 kV=11.547 kW=1000 kvar=200
 
 
 ! NORMALLY CLOSED SWITCHES
@@ -65,4 +62,4 @@ open Line.Sw12 terminal=2
 open Line.Sw13 terminal=2
 open Line.Sw14 terminal=2
 
-Set VoltageBases = [20]    ! ARRAY OF VOLTAGES IN KV
+Set VoltageBases = [11.547]    ! ARRAY OF VOLTAGES IN KV
