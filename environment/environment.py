@@ -95,7 +95,7 @@ class Environment(gym.Env):
         reward -= self.switching_action_cost * self.get_number_of_switch_manipulations(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
 
         #zbog numerickih pogodnost je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
-        reward /= 20.0
+        reward /= 400.0
         return reward
 
     def get_number_of_switch_manipulations(self, previous_action, action):
