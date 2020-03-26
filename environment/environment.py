@@ -27,7 +27,7 @@ class Environment(gym.Env):
         self.n_actions = len(self.radial_switch_combinations)
         self.n_consumers = self.network_manager.get_load_count()
         self.timestep = 0
-        self.switching_action_cost = 1.0
+        self.switching_action_cost = 1
         self.base_power = 4000
         self.previous_action = 0
 
@@ -395,10 +395,10 @@ class Environment(gym.Env):
         key = 0
         bestResults.setdefault(key, [])
         
-        for v in range(4): 
+        for v in range(24): 
             file = open("loads.txt", "r")
-            f2 = open("Optimalna stanja.txt", "a")
-            scaling_factors = [0.0 for i in range(self.n_consumers)]
+            f2 = open("Optimalno stanje_gubici_cena 1.txt", "a")
+            scaling_factors = [0.0 for i in range(11)]
             ceo_niz = file.readlines()
             ceo_niz = [float(z) for z in ceo_niz]
             scaling_factors[0] = ceo_niz[k] 
@@ -411,10 +411,7 @@ class Environment(gym.Env):
             scaling_factors[7] = ceo_niz[k+2] 
             scaling_factors[8] = ceo_niz[k+2] 
             scaling_factors[9] = ceo_niz[k+2] 
-            scaling_factors[10] = ceo_niz[k+2] 
-            scaling_factors[11] = ceo_niz[k] 
-            scaling_factors[12] = ceo_niz[k+1] 
-            scaling_factors[13] = ceo_niz[k] 
+            scaling_factors[10] = ceo_niz[k+2]
             #print(scaling_factors)
             file.close()
             self.network_manager.set_load_scaling(scaling_factors)
@@ -467,7 +464,7 @@ class Environment(gym.Env):
 
                 self.power_flow.calculate_power_flow()
                 #print(self.power_flow.get_losses())
-                currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([12, 13, 14], [a, b, c]) * 1
+                currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([os1,os2,os3], [a, b, c]) * 1
                 currentLosses = self.power_flow.get_losses()
                 #bestResults[key] = self.radial_switch_combinations[j]
                 if (j == 0):
@@ -479,12 +476,12 @@ class Environment(gym.Env):
 
                     minLossesFinal = self.power_flow.get_losses()
                     currentLosses = self.power_flow.get_losses()
-                    minMoneyLossesFinal = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([12, 13, 14], [a, b, c]) * 1
-                    currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + self.get_number_of_switch_manipulations([12, 13, 14], [a, b, c]) * 1
+                    minMoneyLossesFinal = self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([os1,os2,os3], [a, b, c]) * 1
+                    currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([os1,os2,os3], [a, b, c]) * 1
                     
                     #aa = (0 - 1) * self.power_flow.get_network_injected_p() - self.power_flow.get_losses()
 
-                if(currentMoneyLosses < minMoneyLossesFinal):
+                if(currentLosses < minLossesFinal):
                     minMoneyLossesFinal = currentMoneyLosses
                     minLossesFinal = currentLosses
                     bestResults[key] = self.radial_switch_combinations[j]
@@ -503,16 +500,16 @@ class Environment(gym.Env):
                     
                 self.closing_all_switches()
                 if(j == 185):
-                    f.write("Minimum money losses for current step: ")
+                    f.write("Minimum losses for current step: ")
                     f2.write(str(s) + ". trenutak: ")
-                    f2.write(json.dumps(minMoneyLossesFinal))
-                    f2.write(" $, ")
                     f2.write(json.dumps(minLossesFinal))
                     f2.write(" kW, ")
+                    f2.write(json.dumps(minMoneyLossesFinal))
+                    f2.write(" $, ")
                     f2.write(json.dumps(bestResults[key]))
                     f2.write("\n")
                     f2.write("\n")
-                    f.write(json.dumps(minMoneyLossesFinal))
+                    f.write(json.dumps(minLossesFinal))
                     f.write(" $")
                     f.write("\n")
                     key += 1
@@ -543,9 +540,6 @@ class Environment(gym.Env):
         scaling_factors[8] = ceo_niz[k+2]
         scaling_factors[9] = ceo_niz[k+2]
         scaling_factors[10] = ceo_niz[k+2]
-        scaling_factors[11] = ceo_niz[k]
-        scaling_factors[12] = ceo_niz[k+1]
-        scaling_factors[13] = ceo_niz[k]
         #print(scaling_factors)
         file.close()
         self.network_manager.set_load_scaling(scaling_factors)
@@ -651,8 +645,9 @@ class Environment(gym.Env):
                     #print(self.radial_switch_combinations[b])
                     #print(self.radial_switch_combinations[c])
                     #print(self.radial_switch_combinations[d])
-                    #brojac += 1
+                        brojac += 1
 
+        #print(brojac)
         f = open("Optimalno stanje_4 trenutka_cena 1.txt", "a")
         f.write(json.dumps(totalMoneyLossFinal))
         f.write(" $")
