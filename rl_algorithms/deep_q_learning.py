@@ -129,6 +129,11 @@ class DeepQLearningAgent:
             #daily_consumption_percents_per_feeder ima 72 clana. Za svaki od 24 trenutka idu 3 scaling faktora, za svaki od feedera
             #i to prva tri clana liste odgovaraju prvom trenutku, pa sljedeca tri drugom...
             daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
+            
+            for zz in range(72):
+                daily_consumption_percents_per_feeder[zz] += (-0.3) * random.random() + 0.15   #dodaje random broj u opsegu [-0.15, 0.15]
+                if daily_consumption_percents_per_feeder[zz] < 0.0:
+                    daily_consumption_percents_per_feeder[zz] = 0
 
             state = self.environment.reset(daily_consumption_percents_per_feeder)
             #print ('Initial losses: ', self.environment.power_flow.get_losses())
