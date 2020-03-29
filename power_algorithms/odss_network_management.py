@@ -106,8 +106,8 @@ class ODSSNetworkManagement:
         index = 0
         for loadName in Iterator(dss.Loads, 'Name'):
             dss.Loads.Name(loadName())
-            dss.Loads.kW(self.nominal_load_kW[loadName()] * scaling_factors[index] * 0.7)
-            dss.Loads.kvar(self.nominal_load_kVAr[loadName()] * scaling_factors[index] * 0.7)
+            dss.Loads.kW(self.nominal_load_kW[loadName()] * scaling_factors[index])
+            dss.Loads.kvar(self.nominal_load_kVAr[loadName()] * scaling_factors[index])
             index = index + 1
             
     def get_load_count(self):
