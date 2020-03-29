@@ -2,6 +2,7 @@ import gym
 from gym import spaces
 import random
 import numpy as np
+import matplotlib.pyplot as plt
 from power_algorithms.odss_power_flow import ODSSPowerFlow
 from power_algorithms.odss_network_management import ODSSNetworkManagement
 import power_algorithms.odss_network_management as nm
@@ -690,6 +691,347 @@ class Environment(gym.Env):
         f.write("]")
         f.write("\n")
 
+
+    def checking_results(self):
+
+        self.closing_all_switches()
+        totalMoneyLoss = 0
+        totalLossFinal = 0
+        totalLoss = 0
+        totalMoneyLossFinal = 10000
+        sw1 = 0
+        sw2 = 0
+        sw3 = 0
+
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(0)
+        self.power_flow.calculate_power_flow()
+        #totalLoss = self.power_flow.get_losses()
+        totalMoneyLoss = self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [12, 13, 14])
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(3)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [4, 12, 13]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(6)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [4, 12, 13]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(9)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [4, 12, 13]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(12)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [4, 12, 13]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(15)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [4, 12, 13]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [13, 12, 14]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(18)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([13, 12, 14], [4, 12, 13]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [13, 12, 14]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(21)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([13, 12, 14], [13, 12, 14]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [13, 12, 14]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(24)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([13, 12, 14], [13, 12, 14]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [12, 13, 14]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(27)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([13, 12, 14], [12, 13, 14]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [12, 13, 14]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(30)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([13, 12, 14], [12, 13, 14]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [12, 13, 14]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(33)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([12, 13, 14], [12, 13, 14]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [12, 13, 14]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(36)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([12, 13, 14], [12, 13, 14]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [12, 13, 14]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(39)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([12, 13, 14], [12, 13, 14]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [12, 13, 14]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(42)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([12, 13, 14], [12, 13, 14]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [12, 13, 14]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(45)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([12, 13, 14], [12, 13, 14]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(48)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [12, 13, 14]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(51)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [4, 12, 13]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(54)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [4, 12, 13]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(57)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [4, 12, 13]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(60)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [4, 12, 13]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(63)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [4, 12, 13]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(66)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [4, 12, 13]))
+
+        self.network_manager.close_switch('Line.Sw'+str(sw1))
+        self.network_manager.close_switch('Line.Sw'+str(sw2))
+        self.network_manager.close_switch('Line.Sw'+str(sw3))
+        sw1, sw2, sw3 = [4, 12, 13]
+        self.network_manager.open_switch('Line.Sw'+str(sw1))
+        self.network_manager.open_switch('Line.Sw'+str(sw2))
+        self.network_manager.open_switch('Line.Sw'+str(sw3))
+        self.reading_from_load_file(69)
+        self.power_flow.calculate_power_flow()
+        #totalLoss += self.power_flow.get_losses()
+        totalMoneyLoss += (self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([4, 12, 13], [4, 12, 13]))
+
+
+        f = open("Provera.txt", "a")
+        f.write("DRDN konfiguracija: ")
+        f.write(json.dumps(totalMoneyLoss))
+        f.write(" $")
+        f.write("\n")
+        f.close()
+
+    def crtanje_krivih(self):
+
+        f = open("DaylyCurve1.txt", "r")
+        ceo_niz = f.readlines()
+        ceo_niz = [float(z) for z in ceo_niz]
+
+        x_axis = [1 + j for j in range(24)]
+        y_axis = ceo_niz
+        plt.axis([1, 24 , 0, 1.2])
+        line_middle, = plt.plot(x_axis, y_axis, label = 'initial curve')
+
+        for kk in range (24):
+            ceo_niz[kk] += 0.15
+        
+        y_axis1 = ceo_niz
+        
+        line_up, = plt.plot(x_axis, y_axis1, label = '+ 0.15')
+
+        for kkk in range (24):
+            ceo_niz[kkk] -= 0.3
+        
+        y_axis2 = ceo_niz
+        
+        line_down, = plt.plot(x_axis, y_axis2, label = '- 0.15')
+        plt.legend(handles = [line_middle, line_up, line_down])
+        plt.grid(True)
+        plt.xticks(x_axis)
+        f.close()
+        plt.title('Dayly curves for consumers on feeder 1')
+        plt.xlabel('Hour [h]') 
+        plt.ylabel('Load [MW]') 
+        plt.savefig("daylycurve1.png")
+        plt.show()
+
+
+        
                         
 
                                                                     
