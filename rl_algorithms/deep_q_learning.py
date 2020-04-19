@@ -66,7 +66,7 @@ class DeepQLearningAgent:
         self.batch_size = 128
         self.gamma = 0.99
         self.target_update = 10
-        self.memory = ReplayMemory(300000)
+        self.memory = ReplayMemory(1000000)
 
         self.state_space_dims = environment.state_space_dims
         self.n_actions = environment.n_actions
@@ -108,18 +108,41 @@ class DeepQLearningAgent:
 
     def train(self, df_train, n_episodes):
         #self.policy_net.load_state_dict(torch.load("policy_net"))
-        self.epsilon = 0.999
+        self.epsilon = 0.99
+        self.reward_moving_average = 0
+
+        a = 0.99
+        b = 0.2
+        n = 100000
+        n_end = (int)(0.8 * n)
+        k = 1.234375E-10
+        l = 0.00001975
+        #print(n_end)
+        #delta = (a - b) / n_end
+        #print(delta)
         
         total_episode_rewards = []
         for i_episode in range(n_episodes):
             if (i_episode % 100 == 0):
                 print("=========Episode: ", i_episode)
 
-            if i_episode == 500:
+            #if i_episode == 500:
+                #self.epsilon = 0.2
+
+            if (i_episode < n_end):
+                self.epsilon = k * (i_episode * i_episode) - l * i_episode + a
+            
+            if (i_episode == n_end):
                 self.epsilon = 0.2
 
-            #if (i_episode % 2500 == 2499):
-                #time.sleep(60)
+            #if (i_episode == 3000):
+                #self.epsilon = 0.5
+
+            #if (i_episode == 6000):
+                #self.epsilon = 0.2
+
+            if (i_episode % 2500 == 2499):
+                time.sleep(60)
 
             done = False
             df_row = df_train.sample(n=1)
@@ -130,8 +153,9 @@ class DeepQLearningAgent:
             #i to prva tri clana liste odgovaraju prvom trenutku, pa sljedeca tri drugom...
             daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
             
+            #x = random.choice((-1, 1))
             for zz in range(72):
-                daily_consumption_percents_per_feeder[zz] += (-0.3) * random.random() + 0.15   #dodaje random broj u opsegu [-0.15, 0.15]
+                daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
                 if daily_consumption_percents_per_feeder[zz] < 0.0:
                     daily_consumption_percents_per_feeder[zz] = 0
 
@@ -139,7 +163,7 @@ class DeepQLearningAgent:
             #print ('Initial losses: ', self.environment.power_flow.get_losses())
 
             state = torch.tensor([state], dtype=torch.float)
-            total_episode_reward = 0 
+            total_episode_reward = 0
 
             while not done:
                 action = self.get_action(state, epsilon = self.epsilon)
@@ -162,7 +186,12 @@ class DeepQLearningAgent:
 
                 self.optimize_model()
             
-            total_episode_rewards.append(total_episode_reward)
+            if (i_episode == 0):
+                self.reward_moving_average = total_episode_reward
+            else:
+                self.reward_moving_average = 0.99 * self.reward_moving_average + 0.01 * total_episode_reward
+            #total_episode_rewards.append(total_episode_reward)
+            total_episode_rewards.append(self.reward_moving_average)
 
             if (i_episode % 100 == 0):
                 print ("total_episode_reward: ", total_episode_reward)
@@ -180,8 +209,8 @@ class DeepQLearningAgent:
         x_axis = [1 + j for j in range(len(total_episode_rewards))]
         plt.plot(x_axis, total_episode_rewards)
         plt.xlabel('Episode number') 
-        plt.ylabel('Total episode reward') 
-        plt.savefig("total_episode_rewards.png")
+        plt.ylabel('Moving average reward') 
+        plt.savefig("total_episode_rewards_Gaus_kf.png")
         plt.show()
 
 
