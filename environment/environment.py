@@ -81,7 +81,7 @@ class Environment(gym.Env):
                 if (switch_index == prev_action[0] or switch_index == prev_action[1] or switch_index == prev_action[2]):
                     self.used_switches[switch_index - 1] += 1
         
-        print(prev_action)
+        #print(prev_action)
     #action: 0..n_actions
     def step(self, action):
         self.timestep += 1
@@ -127,13 +127,13 @@ class Environment(gym.Env):
                 #number_of_repeats = 0
         #if (nastavi == False):
             #reward -= 10
-        print(self.used_switches)
-        for i in range (14):
+        #print(self.used_switches)
+        for i in range (self.n_switches):
             if (self.used_switches[i] > 6):
-                reward -= 3
+                reward -= 1000
                 break
         #zbog numerickih pogodnost je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
-        reward /= 1000.0
+        reward /= 10000.0
         return reward
 
     def get_number_of_switch_manipulations(self, previous_action, action):
@@ -160,7 +160,7 @@ class Environment(gym.Env):
         self.previous_action = 0
 
         #self.used_switches.clear()
-        for i in range (14):
+        for i in range (self.n_switches):
             self.used_switches[i] = 0
 
         #self.consumption_percents_per_feeder je lista koja sadrzi 24 liste koje za trenutka sadrze 3 scaling faktora, po jedan za svaki do feedera
