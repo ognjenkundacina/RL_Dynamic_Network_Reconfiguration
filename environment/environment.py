@@ -964,6 +964,25 @@ class Environment(gym.Env):
 
     
 
+    def execution_time(self):
+
+        sw1, sw2, sw3 = self.radial_switch_combinations[0]
+        k = 0
+        for i in range (528):
+
+            self.network_manager.close_switch('Line.Sw'+str(sw1))
+            self.network_manager.close_switch('Line.Sw'+str(sw2))
+            self.network_manager.close_switch('Line.Sw'+str(sw3))
+            sw1, sw2, sw3 = self.radial_switch_combinations[k]
+            self.network_manager.open_switch('Line.Sw'+str(sw1))
+            self.network_manager.open_switch('Line.Sw'+str(sw2))
+            self.network_manager.open_switch('Line.Sw'+str(sw3))
+
+            self.reading_from_load_file(0)
+            self.power_flow.calculate_power_flow()
+            k += 1
+            if (k == 185):
+                k = 0
 
         
                         
