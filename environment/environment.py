@@ -32,6 +32,7 @@ class Environment(gym.Env):
         self.switching_action_cost = 1.0
         self.base_power = 4000
         self.previous_action = 0
+        self.switching_operation_constraint = 2
 
         #self.used_switches = []
         self.used_switches = [0 for i in range (14)]
@@ -45,7 +46,7 @@ class Environment(gym.Env):
     def _update_state(self, action):
         
         self._update_switch_statuses(action)
-        #self._update_available_actions() #todo implement
+        self._update_available_actions(action) #todo implement
         self.power_flow.calculate_power_flow()
 
         self.state = []
@@ -59,12 +60,32 @@ class Environment(gym.Env):
         return self.state
 
 
-    def _update_available_actions(self):
-        #mozda kasnije da dodamo da ne dozvoljavamo akcije koje ce neki prekidac angazovati vise 
-        #od tri puta
-        #koristiti self.switch_operations_by_index
-        #self.available_actions.pop(switch_index)
-        pass
+    def _update_available_actions(self, action):
+        current_open_switches = self.radial_switch_combinations[action] #ova akcija je vec odradjena
+        #zabranjujemo akcije za koje ce se prekoraciti broj switcheva
+        #self.switching_operation_constraint
+
+        remove_from_available_actions_list = []
+        for potential_action in self.available_actions.keys():
+            for switch_index in self.switch_indices:
+                if switch_index in self.radial_switch_combinations[potential_action]:
+                    if (switch_index != current_open_switches[0] and switch_index != current_open_switches[1] and switch_index != current_open_switches[2]):
+                        if self.used_switches[switch_index-1] == self.switching_operation_constraint: #vec je na ogranicenju, ne zelimo da prekoracimo
+                            if not potential_action in remove_from_available_actions_list:
+                                remove_from_available_actions_list.append(potential_action)
+                else:
+                    if (switch_index == current_open_switches[0] or switch_index == current_open_switches[1] or switch_index == current_open_switches[2]):
+                        if self.used_switches[switch_index-1] == self.switching_operation_constraint:
+                            if not potential_action in remove_from_available_actions_list:
+                                remove_from_available_actions_list.append(potential_action)
+
+        #print(action)
+        #print('self.used_switches: ',self.used_switches)
+        #print('remove_from_available_actions_list: ',remove_from_available_actions_list)
+        #for action_key in remove_from_available_actions_list:
+            #self.available_actions.pop(action_key)
+        #print('self.available_actions: ',self.available_actions)
+        #print('====================================================================================================')
 
     def _update_switch_statuses(self, action):
 
@@ -72,12 +93,10 @@ class Environment(gym.Env):
         for switch_index in self.switch_indices:
             if switch_index in self.radial_switch_combinations[action]:
                 self.network_manager.open_switch(self.switch_names_by_index[switch_index])
-                #self.used_switches.append(switch_index)
                 if (switch_index != prev_action[0] and switch_index != prev_action[1] and switch_index != prev_action[2]):
                     self.used_switches[switch_index - 1] += 1
             else:
                 self.network_manager.close_switch(self.switch_names_by_index[switch_index])
-                #self.used_switches.append(switch_index)
                 if (switch_index == prev_action[0] or switch_index == prev_action[1] or switch_index == prev_action[2]):
                     self.used_switches[switch_index - 1] += 1
         
@@ -99,41 +118,13 @@ class Environment(gym.Env):
 
     def calculate_reward(self, action):
         reward = 0
-        #nastavi = True
-        #k = 0
-        #number_of_repeats = 0
         #self.power_flow.get_losses() daje gubitke u kW, pa odmah imamo i kWh
         reward -= self.power_flow.get_losses() * 0.065625
-
-        #reward -= 5 ** (self.power_flow.get_losses() * 0.065625 / 20.0)
  
         reward -= self.switching_action_cost * self.get_number_of_switch_manipulations(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
 
-        #if (len(self.used_switches) != 0): 
-            #while (nastavi):
-                #print(self.used_switches)
-                #print(len(self.used_switches))
-                #print(k)
-                #current_switch = self.used_switches[k]
-                #for i in range (len(self.used_switches)):
-                    #if (current_switch == self.used_switches[i]):
-                        #number_of_repeats += 1
-                        #if (number_of_repeats > 3):
-                            #nastavi = False
-                            #break
-                #if ((k + 1) == len(self.used_switches)):
-                    #break
-                #k += 1
-                #number_of_repeats = 0
-        #if (nastavi == False):
-            #reward -= 10
-        #print(self.used_switches)
-        for i in range (self.n_switches):
-            if (self.used_switches[i] > 6):
-                reward -= 1000
-                break
         #zbog numerickih pogodnost je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
-        reward /= 10000.0
+        reward /= 1000.0
         return reward
 
     def get_number_of_switch_manipulations(self, previous_action, action):
@@ -148,9 +139,6 @@ class Environment(gym.Env):
         if (previous_action[2] == action[0] or previous_action[2] == action[1] or previous_action[2] == action[2]):
             num_of_switch_manipulations = num_of_switch_manipulations - 2
         
-        #print(previous_action)
-        #print(action)
-        #print(num_of_switch_manipulations)
         return num_of_switch_manipulations
 
 
