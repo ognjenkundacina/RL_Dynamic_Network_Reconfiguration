@@ -129,7 +129,7 @@ class Environment(gym.Env):
             #reward -= 10
         #print(self.used_switches)
         for i in range (self.n_switches):
-            if (self.used_switches[i] > 6):
+            if (self.used_switches[i] > 3):
                 reward -= 1000
                 break
         #zbog numerickih pogodnost je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
@@ -571,7 +571,7 @@ class Environment(gym.Env):
     
 
     def reading_from_load_file(self, k):
-        file = open("thirdEx.txt", "r")
+        file = open("loads.txt", "r")
         scaling_factors = [0.0 for i in range(self.n_consumers)]
         ceo_niz = file.readlines()
         ceo_niz = [float(z) for z in ceo_niz]
@@ -973,6 +973,27 @@ class Environment(gym.Env):
         f.write(json.dumps(totalMoneyLoss))
         f.write("\n")
         f.close()
+
+    def execution_time(self):
+
+        sw1, sw2, sw3 = self.radial_switch_combinations[0]
+        k = 0
+        for i in range (528):
+
+            self.network_manager.close_switch('Line.Sw'+str(sw1))
+            self.network_manager.close_switch('Line.Sw'+str(sw2))
+            self.network_manager.close_switch('Line.Sw'+str(sw3))
+            sw1, sw2, sw3 = self.radial_switch_combinations[k]
+            self.network_manager.open_switch('Line.Sw'+str(sw1))
+            self.network_manager.open_switch('Line.Sw'+str(sw2))
+            self.network_manager.open_switch('Line.Sw'+str(sw3))
+
+            self.reading_from_load_file(0)
+            self.power_flow.calculate_power_flow()
+            k += 1
+            if (k == 185):
+                k = 0
+
 
         
                         
