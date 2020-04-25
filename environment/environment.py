@@ -62,28 +62,44 @@ class Environment(gym.Env):
 
     def _update_available_actions(self, action):
         current_open_switches = self.radial_switch_combinations[action] #ova akcija je vec odradjena
+        #print("current open switches", current_open_switches)
+        #print("used switches list: ", self.used_switches)
         #zabranjujemo akcije za koje ce se prekoraciti broj switcheva
         #self.switching_operation_constraint
 
         remove_from_available_actions_list = []
+        #print("remove_from_available_actions_list", remove_from_available_actions_list)
         for potential_action in self.available_actions.keys():
             for switch_index in self.switch_indices:
                 if switch_index in self.radial_switch_combinations[potential_action]:
                     if (switch_index != current_open_switches[0] and switch_index != current_open_switches[1] and switch_index != current_open_switches[2]):
+                        #print("checking switch number ", switch_index)
+                        #print("used: ", self.used_switches[switch_index-1])
                         if self.used_switches[switch_index-1] == self.switching_operation_constraint: #vec je na ogranicenju, ne zelimo da prekoracimo
                             if not potential_action in remove_from_available_actions_list:
                                 remove_from_available_actions_list.append(potential_action)
+                                #print("remove_from_available_actions_list", remove_from_available_actions_list)
                 else:
                     if (switch_index == current_open_switches[0] or switch_index == current_open_switches[1] or switch_index == current_open_switches[2]):
+                        #print("checking switch number ", switch_index)
+                        #print("used: ", self.used_switches[switch_index-1])
                         if self.used_switches[switch_index-1] == self.switching_operation_constraint:
                             if not potential_action in remove_from_available_actions_list:
                                 remove_from_available_actions_list.append(potential_action)
+                                #print("remove_from_available_actions_list", remove_from_available_actions_list)
+
+        #print("remove_from_available_actions_list", remove_from_available_actions_list)
+        #print("used switches list: ", self.used_switches)
+        #print("----------------------------------------------------------------\n\n")
+
+        #print("remove_from_available_actions_list", remove_from_available_actions_list)
+        #print("========================================================================\n\n")
 
         #print(action)
         #print('self.used_switches: ',self.used_switches)
         #print('remove_from_available_actions_list: ',remove_from_available_actions_list)
-        #for action_key in remove_from_available_actions_list:
-            #self.available_actions.pop(action_key)
+        for action_key in remove_from_available_actions_list:
+            self.available_actions.pop(action_key)
         #print('self.available_actions: ',self.available_actions)
         #print('====================================================================================================')
 
