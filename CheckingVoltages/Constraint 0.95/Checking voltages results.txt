@@ -1,0 +1,48 @@
+1. trenutak: 143
+
+2. trenutak: 135
+
+3. trenutak: 123
+
+4. trenutak: 102
+
+5. trenutak: 96
+
+6. trenutak: 117
+
+7. trenutak: 184
+
+8. trenutak: 184
+
+9. trenutak: 184
+
+10. trenutak: 169
+
+11. trenutak: 186
+
+12. trenutak: 186
+
+13. trenutak: 186
+
+14. trenutak: 186
+
+15. trenutak: 184
+
+16. trenutak: 186
+
+17. trenutak: 179
+
+18. trenutak: 183
+
+19. trenutak: 183
+
+20. trenutak: 181
+
+21. trenutak: 171
+
+22. trenutak: 155
+
+23. trenutak: 146
+
+24. trenutak: 143
+

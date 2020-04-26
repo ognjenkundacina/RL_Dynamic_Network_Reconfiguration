@@ -32,7 +32,7 @@ class Environment(gym.Env):
         self.switching_action_cost = 1.0
         self.base_power = 4000
         self.previous_action = 0
-        self.switching_operation_constraint = 2
+        self.switching_operation_constraint = 3
 
         #self.used_switches = []
         self.used_switches = [0 for i in range (14)]
@@ -980,25 +980,58 @@ class Environment(gym.Env):
 
     
 
-    def execution_time(self):
+    def checking_voltages(self):
 
+        busVoltages = []
+        numbOfCustomersWithBadVoltage = 0
+        swCombinationsWithBadVoltage = 0
         sw1, sw2, sw3 = self.radial_switch_combinations[0]
         k = 0
-        for i in range (528):
+        timestep = 0
+        for i in range (24):
 
-            self.network_manager.close_switch('Line.Sw'+str(sw1))
-            self.network_manager.close_switch('Line.Sw'+str(sw2))
-            self.network_manager.close_switch('Line.Sw'+str(sw3))
-            sw1, sw2, sw3 = self.radial_switch_combinations[k]
-            self.network_manager.open_switch('Line.Sw'+str(sw1))
-            self.network_manager.open_switch('Line.Sw'+str(sw2))
-            self.network_manager.open_switch('Line.Sw'+str(sw3))
+            k = 0
+            f = open(str(i + 1) + ". trenutak.txt", "a")
 
-            self.reading_from_load_file(0)
-            self.power_flow.calculate_power_flow()
-            k += 1
-            if (k == 185):
-                k = 0
+            for j in range (186):
+
+                f.write(str(j + 1) + ". kombinacija: ")
+                self.network_manager.close_switch('Line.Sw'+str(sw1))
+                self.network_manager.close_switch('Line.Sw'+str(sw2))
+                self.network_manager.close_switch('Line.Sw'+str(sw3))
+                sw1, sw2, sw3 = self.radial_switch_combinations[k]
+                self.network_manager.open_switch('Line.Sw'+str(sw1))
+                self.network_manager.open_switch('Line.Sw'+str(sw2))
+                self.network_manager.open_switch('Line.Sw'+str(sw3))
+
+                self.reading_from_load_file(timestep)
+                self.power_flow.calculate_power_flow()
+                busVoltages = self.power_flow.get_bus_voltages()
+                #print(busVoltages)
+
+                for z in range (26):
+                    if (busVoltages[z] < 0.95):
+                        numbOfCustomersWithBadVoltage += 1
+
+                if (numbOfCustomersWithBadVoltage > 0):
+                    swCombinationsWithBadVoltage += 1
+
+                f.write(json.dumps(numbOfCustomersWithBadVoltage))
+                f.write("\n")
+                numbOfCustomersWithBadVoltage = 0
+                k += 1
+
+            timestep += 3
+            f2 = open("Checking voltages results.txt", "a")
+            f2.write(str(i + 1) + ". trenutak: ")
+            f2.write(json.dumps(swCombinationsWithBadVoltage))
+            f2.write("\n\n")
+            f2.close()
+
+            f.write("Number of switch combinations with bad voltages: ")
+            f.write(json.dumps(swCombinationsWithBadVoltage))
+            f.close()
+            swCombinationsWithBadVoltage = 0
 
         
                         
