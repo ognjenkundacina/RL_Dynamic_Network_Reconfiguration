@@ -33,6 +33,10 @@ class Environment(gym.Env):
         self.base_power = 4000
         self.previous_action = 0
         self.switching_operation_constraint = 3
+        self.allow_changing_action = False
+        self.prvi = 0
+        self.drugi = 0
+        self.treci = 0
 
         #self.used_switches = []
         self.used_switches = [0 for i in range (14)]
@@ -46,6 +50,7 @@ class Environment(gym.Env):
     def _update_state(self, action):
         
         self._update_switch_statuses(action)
+
         self._update_available_actions(action) #todo implement
         self.power_flow.calculate_power_flow()
 
@@ -68,6 +73,7 @@ class Environment(gym.Env):
         #self.switching_operation_constraint
 
         remove_from_available_actions_list = []
+        #remove_from_available_actions_list_both_constraints = []
         #print("remove_from_available_actions_list", remove_from_available_actions_list)
         for potential_action in self.available_actions.keys():
             for switch_index in self.switch_indices:
@@ -78,6 +84,7 @@ class Environment(gym.Env):
                         if self.used_switches[switch_index-1] == self.switching_operation_constraint: #vec je na ogranicenju, ne zelimo da prekoracimo
                             if not potential_action in remove_from_available_actions_list:
                                 remove_from_available_actions_list.append(potential_action)
+                                #remove_from_available_actions_list_both_constraints.append(potential_action)
                                 #print("remove_from_available_actions_list", remove_from_available_actions_list)
                 else:
                     if (switch_index == current_open_switches[0] or switch_index == current_open_switches[1] or switch_index == current_open_switches[2]):
@@ -86,7 +93,10 @@ class Environment(gym.Env):
                         if self.used_switches[switch_index-1] == self.switching_operation_constraint:
                             if not potential_action in remove_from_available_actions_list:
                                 remove_from_available_actions_list.append(potential_action)
+                                #remove_from_available_actions_list_both_constraints.append(potential_action)
                                 #print("remove_from_available_actions_list", remove_from_available_actions_list)
+
+
 
         #print("remove_from_available_actions_list", remove_from_available_actions_list)
         #print("used switches list: ", self.used_switches)
@@ -100,10 +110,11 @@ class Environment(gym.Env):
         #print('remove_from_available_actions_list: ',remove_from_available_actions_list)
         for action_key in remove_from_available_actions_list:
             self.available_actions.pop(action_key)
+            #print(self.available_actions)
         #print('self.available_actions: ',self.available_actions)
         #print('====================================================================================================')
 
-    def _update_switch_statuses(self, action):
+    def _update_switch_statuses(self, action): 
 
         prev_action = self.radial_switch_combinations[self.previous_action]
         for switch_index in self.switch_indices:
@@ -121,6 +132,13 @@ class Environment(gym.Env):
     def step(self, action):
         self.timestep += 1
         #self.switch_operations_by_index[toogled_switch_index] += 1
+        if (self.timestep > 1 and self.allow_changing_action == False):
+            action = self.previous_action
+            self.allow_changing_action = True
+            
+        elif (self.allow_changing_action == True and action != self.previous_action):
+            self.allow_changing_action = False
+
         next_state = self._update_state(action)
 
         reward = self.calculate_reward(action)
@@ -130,7 +148,11 @@ class Environment(gym.Env):
         self.set_load_scaling_for_timestep()
 
         self.previous_action = action
-        return next_state, reward, done
+
+        if (self.timestep == 24):
+            self.allow_changing_action = False
+
+        return next_state, reward, done, action
 
     def calculate_reward(self, action):
         reward = 0
@@ -162,6 +184,7 @@ class Environment(gym.Env):
         self.timestep = 0
         self.network_manager = nm.ODSSNetworkManagement()
         self.previous_action = 0
+        self.allow_changing_action = False
 
         #self.used_switches.clear()
         for i in range (self.n_switches):
@@ -885,14 +908,14 @@ class Environment(gym.Env):
 
         switch_combinations = {
             0: [4, 12, 13],
-            1: [12, 13, 14],
-            2: [12, 13, 14],
-            3: [12, 13, 14],
-            4: [12, 13, 14],
-            5: [12, 13, 14],
-            6: [12, 13, 14],
-            7: [10, 12, 14],
-            8: [12, 13, 14],
+            1: [4, 12, 13],
+            2: [4, 12, 13],
+            3: [4, 12, 13],
+            4: [4, 12, 13],
+            5: [4, 12, 13],
+            6: [7, 10, 14],
+            7: [7, 10, 14],
+            8: [10, 12, 14],
             9: [12, 13, 14],
             10: [12, 13, 14],
             11: [12, 13, 14],
@@ -902,12 +925,12 @@ class Environment(gym.Env):
             15: [12, 13, 14],
             16: [4, 12, 13],
             17: [4, 12, 13],
-            18: [12, 13, 14],
+            18: [4, 12, 13],
             19: [4, 12, 13],
             20: [4, 12, 13],
             21: [4, 12, 13],
             22: [4, 12, 13],
-            23: [12, 13, 14]
+            23: [4, 12, 13]
         }
             
         self.closing_all_switches()
@@ -919,7 +942,7 @@ class Environment(gym.Env):
         sw2 = 13
         sw3 = 14
         k = 0
-        f = open("BE-Example3.txt", "a")
+        f = open("PedjaNeven.txt", "a")
 
         for i in range(24):
 
@@ -983,6 +1006,7 @@ class Environment(gym.Env):
     def checking_voltages(self):
 
         busVoltages = []
+        radial_combinations = [0 for l in range (186)]
         numbOfCustomersWithBadVoltage = 0
         swCombinationsWithBadVoltage = 0
         sw1, sw2, sw3 = self.radial_switch_combinations[0]
@@ -1010,11 +1034,12 @@ class Environment(gym.Env):
                 #print(busVoltages)
 
                 for z in range (26):
-                    if (busVoltages[z] < 0.95):
+                    if (busVoltages[z] < 0.92):
                         numbOfCustomersWithBadVoltage += 1
 
                 if (numbOfCustomersWithBadVoltage > 0):
                     swCombinationsWithBadVoltage += 1
+                    radial_combinations[j] += 1
 
                 f.write(json.dumps(numbOfCustomersWithBadVoltage))
                 f.write("\n")
@@ -1022,16 +1047,91 @@ class Environment(gym.Env):
                 k += 1
 
             timestep += 3
-            f2 = open("Checking voltages results.txt", "a")
+            f2 = open("Checking voltages results 0.92.txt", "a")
             f2.write(str(i + 1) + ". trenutak: ")
             f2.write(json.dumps(swCombinationsWithBadVoltage))
             f2.write("\n\n")
-            f2.close()
 
             f.write("Number of switch combinations with bad voltages: ")
             f.write(json.dumps(swCombinationsWithBadVoltage))
             f.close()
             swCombinationsWithBadVoltage = 0
+
+        counter = 0
+        f2.write("[")
+        for b in range (186):
+            if (radial_combinations[b] == 24):
+                f2.write(json.dumps(b))
+                counter += 1
+                f2.write(", ")
+        f2.write("]\n")
+        f2.write(json.dumps(counter))
+        f2.close()
+
+
+    def checking_voltages_for_explicit_configurations(self):
+
+        switch_combinations = {
+            0: [4, 12, 13],
+            1: [4, 12, 13],
+            2: [4, 12, 13],
+            3: [4, 12, 13],
+            4: [4, 12, 13],
+            5: [4, 12, 13],
+            6: [7, 10, 14],
+            7: [7, 10, 14],
+            8: [10, 12, 14],
+            9: [12, 13, 14],
+            10: [12, 13, 14],
+            11: [12, 13, 14],
+            12: [12, 13, 14],
+            13: [12, 13, 14],
+            14: [12, 13, 14],
+            15: [12, 13, 14],
+            16: [4, 12, 13],
+            17: [4, 12, 13],
+            18: [4, 12, 13],
+            19: [4, 12, 13],
+            20: [4, 12, 13],
+            21: [4, 12, 13],
+            22: [4, 12, 13],
+            23: [4, 12, 13]
+        }
+
+        sw1, sw2, sw3 = [12, 13, 14]
+        k = 0
+        numbOfCustomersWithBadVoltage = 0
+        timestep = 0
+
+        f = open("PedjaNeven_0.8.txt", "a")
+
+        for i in range (24):
+
+            f.write(str(i + 1) + ". trenutak: ")
+            self.network_manager.close_switch('Line.Sw'+str(sw1))
+            self.network_manager.close_switch('Line.Sw'+str(sw2))
+            self.network_manager.close_switch('Line.Sw'+str(sw3))
+            sw1, sw2, sw3 = self.radial_switch_combinations[k]
+            self.network_manager.open_switch('Line.Sw'+str(sw1))
+            self.network_manager.open_switch('Line.Sw'+str(sw2))
+            self.network_manager.open_switch('Line.Sw'+str(sw3))
+
+            self.reading_from_load_file(timestep)
+            self.power_flow.calculate_power_flow()
+            busVoltages = self.power_flow.get_bus_voltages()
+            #print(busVoltages)
+
+            for z in range (26):
+                if (busVoltages[z] < 0.8):
+                    numbOfCustomersWithBadVoltage += 1
+
+            timestep += 3
+            k += 1
+
+            f.write(json.dumps(numbOfCustomersWithBadVoltage))
+            f.write("\n")
+            numbOfCustomersWithBadVoltage = 0
+        f.close()
 
         
                         

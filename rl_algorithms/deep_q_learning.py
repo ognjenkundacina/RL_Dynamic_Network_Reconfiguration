@@ -108,7 +108,7 @@ class DeepQLearningAgent:
 
     def train(self, df_train, n_episodes):
         #self.policy_net.load_state_dict(torch.load("policy_net"))
-        self.epsilon = 0.99
+        self.epsilon = 0.2
         self.reward_moving_average = 0
 
         a = 0.99
@@ -129,11 +129,11 @@ class DeepQLearningAgent:
             #if i_episode == 500:
                 #self.epsilon = 0.2
 
-            if (i_episode < n_end):
-                self.epsilon = k * (i_episode * i_episode) - l * i_episode + a
+            #if (i_episode < n_end):
+                #self.epsilon = k * (i_episode * i_episode) - l * i_episode + a
             
-            if (i_episode == n_end):
-                self.epsilon = 0.2
+            #if (i_episode == n_end):
+                #self.epsilon = 0.2
 
             #if (i_episode == 3000):
                 #self.epsilon = 0.5
@@ -154,10 +154,10 @@ class DeepQLearningAgent:
             daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
             
             #x = random.choice((-1, 1))
-            for zz in range(72):
-                daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
-                if daily_consumption_percents_per_feeder[zz] < 0.0:
-                    daily_consumption_percents_per_feeder[zz] = 0
+            #for zz in range(72):
+                #daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
+                #if daily_consumption_percents_per_feeder[zz] < 0.0:
+                    #daily_consumption_percents_per_feeder[zz] = 0
 
             state = self.environment.reset(daily_consumption_percents_per_feeder)
             #print ('Initial losses: ', self.environment.power_flow.get_losses())
@@ -170,7 +170,7 @@ class DeepQLearningAgent:
                 #print('action', action)
                 if (action > self.n_actions):
                     print("agent.train: action > self.n_actions")
-                next_state, reward, done = self.environment.step(action)
+                next_state, reward, done, action = self.environment.step(action)
                 #print ('Current losses: ', self.environment.power_flow.get_losses())
                 total_episode_reward += reward
 
@@ -237,12 +237,13 @@ class DeepQLearningAgent:
 
             while not done:
                 action = self.get_action(state, epsilon = 0.0)
-                print("Open switches: ", radial_switch_combinations[action]) 
+                #print("Open switches: ", radial_switch_combinations[action]) 
                 
                 if (action > self.n_actions):
                     print ("Warning: agent.test: action > self.n_actions")
                 
-                next_state, reward, done = self.environment.step(action)
+                next_state, reward, done, action = self.environment.step(action)
+                print("Open switches: ", radial_switch_combinations[action]) 
                 print ('Current losses: ', self.environment.power_flow.get_losses())
                     
                 total_episode_reward += reward
