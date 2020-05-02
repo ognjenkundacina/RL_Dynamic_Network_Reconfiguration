@@ -25,6 +25,7 @@ class Environment(gym.Env):
         self.state_space_dims = len(self.power_flow.get_switches_apparent_power()) + 1
 
         self.radial_switch_combinations = radial_switch_combinations
+        self.radial_switch_combinations_reduced = radial_switch_combinations
 
         self.n_actions = len(self.radial_switch_combinations)
         self.n_consumers = self.network_manager.get_load_count()
@@ -34,9 +35,6 @@ class Environment(gym.Env):
         self.previous_action = 0
         self.switching_operation_constraint = 3
         self.allow_changing_action = False
-        self.prvi = 0
-        self.drugi = 0
-        self.treci = 0
 
         #self.used_switches = []
         self.used_switches = [0 for i in range (14)]
@@ -598,7 +596,7 @@ class Environment(gym.Env):
     
 
     def reading_from_load_file(self, k):
-        file = open("loads.txt", "r")
+        file = open("loads_minus_0.3.txt", "r")
         scaling_factors = [0.0 for i in range(self.n_consumers)]
         ceo_niz = file.readlines()
         ceo_niz = [float(z) for z in ceo_niz]
@@ -1019,7 +1017,7 @@ class Environment(gym.Env):
 
             for j in range (186):
 
-                f.write(str(j + 1) + ". kombinacija: ")
+                f.write(str(j) + ". kombinacija: ")
                 self.network_manager.close_switch('Line.Sw'+str(sw1))
                 self.network_manager.close_switch('Line.Sw'+str(sw2))
                 self.network_manager.close_switch('Line.Sw'+str(sw3))
@@ -1034,7 +1032,7 @@ class Environment(gym.Env):
                 #print(busVoltages)
 
                 for z in range (26):
-                    if (busVoltages[z] < 0.92):
+                    if (busVoltages[z] < 0.95):
                         numbOfCustomersWithBadVoltage += 1
 
                 if (numbOfCustomersWithBadVoltage > 0):
@@ -1047,7 +1045,7 @@ class Environment(gym.Env):
                 k += 1
 
             timestep += 3
-            f2 = open("Checking voltages results 0.92.txt", "a")
+            f2 = open("Checking voltages results new 0.95.txt", "a")
             f2.write(str(i + 1) + ". trenutak: ")
             f2.write(json.dumps(swCombinationsWithBadVoltage))
             f2.write("\n\n")
@@ -1060,13 +1058,44 @@ class Environment(gym.Env):
         counter = 0
         f2.write("[")
         for b in range (186):
-            if (radial_combinations[b] == 24):
+            if (radial_combinations[b] > 23):
                 f2.write(json.dumps(b))
                 counter += 1
                 f2.write(", ")
         f2.write("]\n")
         f2.write(json.dumps(counter))
         f2.close()
+
+        f3 = open("Radial_comb.txt", "w")
+        for a in range (186):
+            f3.write(str(a) + ". kombinacija: ")
+            f3.write(json.dumps(radial_combinations[a]))
+            f3.write("\n")
+        f3.close()
+
+    def creatingDataset(self):
+
+        f = open("loads.txt", "r")
+        loads = f.readlines()
+
+        loads = [float(z) for z in loads]
+
+        for i in range (72):
+            loads[i] -= 0.3
+            if (loads[i] < 0):
+                loads[i] = 0
+
+        f.close()
+
+        f1 = open("loads_minus_0.3.txt", "w")
+        
+        for j in range (72):
+            f1.write(json.dumps(loads[j]))
+            f1.write("\n")
+
+        f1.close()
+
+
 
 
     def checking_voltages_for_explicit_configurations(self):
