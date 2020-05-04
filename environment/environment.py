@@ -24,8 +24,8 @@ class Environment(gym.Env):
 
         self.state_space_dims = len(self.power_flow.get_switches_apparent_power()) + 1
 
-        self.radial_switch_combinations = radial_switch_combinations
-        self.radial_switch_combinations_reduced = radial_switch_combinations
+        self.radial_switch_combinations = radial_switch_combinations_reduced
+        self.radial_switch_combinations_reduced = radial_switch_combinations_reduced
 
         self.n_actions = len(self.radial_switch_combinations)
         self.n_consumers = self.network_manager.get_load_count()
@@ -33,7 +33,7 @@ class Environment(gym.Env):
         self.switching_action_cost = 1.0
         self.base_power = 4000
         self.previous_action = 0
-        self.switching_operation_constraint = 3
+        self.switching_operation_constraint = 2
         self.allow_changing_action = False
 
         #self.used_switches = []
@@ -130,12 +130,12 @@ class Environment(gym.Env):
     def step(self, action):
         self.timestep += 1
         #self.switch_operations_by_index[toogled_switch_index] += 1
-        if (self.timestep > 1 and self.allow_changing_action == False):
-            action = self.previous_action
-            self.allow_changing_action = True
+        #if (self.timestep > 1 and self.allow_changing_action == False):
+            #action = self.previous_action
+            #self.allow_changing_action = True
             
-        elif (self.allow_changing_action == True and action != self.previous_action):
-            self.allow_changing_action = False
+        #elif (self.allow_changing_action == True and action != self.previous_action):
+            #self.allow_changing_action = False
 
         next_state = self._update_state(action)
 
@@ -147,8 +147,8 @@ class Environment(gym.Env):
 
         self.previous_action = action
 
-        if (self.timestep == 24):
-            self.allow_changing_action = False
+        #if (self.timestep == 24):
+            #self.allow_changing_action = False
 
         return next_state, reward, done, action
 
@@ -182,7 +182,7 @@ class Environment(gym.Env):
         self.timestep = 0
         self.network_manager = nm.ODSSNetworkManagement()
         self.previous_action = 0
-        self.allow_changing_action = False
+        #self.allow_changing_action = False
 
         #self.used_switches.clear()
         for i in range (self.n_switches):
@@ -596,7 +596,7 @@ class Environment(gym.Env):
     
 
     def reading_from_load_file(self, k):
-        file = open("loads_minus_0.3.txt", "r")
+        file = open("firstEx.txt", "r")
         scaling_factors = [0.0 for i in range(self.n_consumers)]
         ceo_niz = file.readlines()
         ceo_niz = [float(z) for z in ceo_niz]
@@ -905,21 +905,21 @@ class Environment(gym.Env):
     def checking_results(self):
 
         switch_combinations = {
-            0: [4, 12, 13],
-            1: [4, 12, 13],
-            2: [4, 12, 13],
-            3: [4, 12, 13],
-            4: [4, 12, 13],
-            5: [4, 12, 13],
-            6: [7, 10, 14],
-            7: [7, 10, 14],
+            0: [12, 13, 14],
+            1: [12, 13, 14],
+            2: [12, 13, 14],
+            3: [12, 13, 14],
+            4: [12, 13, 14],
+            5: [12, 13, 14],
+            6: [10, 12, 14],
+            7: [10, 12, 14],
             8: [10, 12, 14],
-            9: [12, 13, 14],
-            10: [12, 13, 14],
-            11: [12, 13, 14],
-            12: [12, 13, 14],
-            13: [12, 13, 14],
-            14: [12, 13, 14],
+            9: [10, 12, 14],
+            10: [10, 12, 14],
+            11: [10, 12, 14],
+            12: [10, 12, 14],
+            13: [10, 12, 14],
+            14: [10, 12, 14],
             15: [12, 13, 14],
             16: [4, 12, 13],
             17: [4, 12, 13],
@@ -940,7 +940,7 @@ class Environment(gym.Env):
         sw2 = 13
         sw3 = 14
         k = 0
-        f = open("PedjaNeven.txt", "a")
+        f = open("FirstEx_2.txt", "a")
 
         for i in range(24):
 
@@ -1004,10 +1004,10 @@ class Environment(gym.Env):
     def checking_voltages(self):
 
         busVoltages = []
-        radial_combinations = [0 for l in range (186)]
+        radial_combinations = [0 for l in range (66)]
         numbOfCustomersWithBadVoltage = 0
         swCombinationsWithBadVoltage = 0
-        sw1, sw2, sw3 = self.radial_switch_combinations[0]
+        sw1, sw2, sw3 = self.radial_switch_combinations_reduced[0]
         k = 0
         timestep = 0
         for i in range (24):
@@ -1015,13 +1015,13 @@ class Environment(gym.Env):
             k = 0
             f = open(str(i + 1) + ". trenutak.txt", "a")
 
-            for j in range (186):
+            for j in range (66):
 
                 f.write(str(j) + ". kombinacija: ")
                 self.network_manager.close_switch('Line.Sw'+str(sw1))
                 self.network_manager.close_switch('Line.Sw'+str(sw2))
                 self.network_manager.close_switch('Line.Sw'+str(sw3))
-                sw1, sw2, sw3 = self.radial_switch_combinations[k]
+                sw1, sw2, sw3 = self.radial_switch_combinations_reduced[k]
                 self.network_manager.open_switch('Line.Sw'+str(sw1))
                 self.network_manager.open_switch('Line.Sw'+str(sw2))
                 self.network_manager.open_switch('Line.Sw'+str(sw3))
@@ -1057,7 +1057,7 @@ class Environment(gym.Env):
 
         counter = 0
         f2.write("[")
-        for b in range (186):
+        for b in range (66):
             if (radial_combinations[b] > 23):
                 f2.write(json.dumps(b))
                 counter += 1
@@ -1067,7 +1067,7 @@ class Environment(gym.Env):
         f2.close()
 
         f3 = open("Radial_comb.txt", "w")
-        for a in range (186):
+        for a in range (66):
             f3.write(str(a) + ". kombinacija: ")
             f3.write(json.dumps(radial_combinations[a]))
             f3.write("\n")
