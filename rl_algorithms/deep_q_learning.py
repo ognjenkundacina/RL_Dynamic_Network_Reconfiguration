@@ -108,17 +108,16 @@ class DeepQLearningAgent:
 
     def train(self, df_train, n_episodes):
         #self.policy_net.load_state_dict(torch.load("policy_net"))
-        self.epsilon = 0.2
+        self.epsilon = 0.99
         self.reward_moving_average = 0
 
         a = 0.99
-        b = 0.2
-        n = 100000
-        n_end = (int)(0.8 * n)
+        b = 0.1
+        n_end = (int)(0.8 * n_episodes)
         k = 1.234375E-10
         l = 0.00001975
         #print(n_end)
-        #delta = (a - b) / n_end
+        delta = (a - b) / n_end
         #print(delta)
         
         total_episode_rewards = []
@@ -135,11 +134,12 @@ class DeepQLearningAgent:
             #if (i_episode == n_end):
                 #self.epsilon = 0.2
 
-            #if (i_episode == 3000):
-                #self.epsilon = 0.5
+            if (i_episode < n_end):
+                self.epsilon -= delta
 
-            #if (i_episode == 6000):
-                #self.epsilon = 0.2
+            if (i_episode == n_end):
+                self.epsilon = 0.1
+
 
             if (i_episode % 2500 == 2499):
                 time.sleep(60)
@@ -193,6 +193,7 @@ class DeepQLearningAgent:
             #total_episode_rewards.append(total_episode_reward)
             total_episode_rewards.append(self.reward_moving_average)
 
+            #print ("self.epsilon: ", self.epsilon)
             if (i_episode % 100 == 0):
                 print ("total_episode_reward: ", total_episode_reward)
 
