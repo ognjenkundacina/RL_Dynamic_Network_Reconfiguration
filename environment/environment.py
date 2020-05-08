@@ -596,7 +596,7 @@ class Environment(gym.Env):
     
 
     def reading_from_load_file(self, k):
-        file = open("firstEx.txt", "r")
+        file = open("loads.txt", "r")
         scaling_factors = [0.0 for i in range(self.n_consumers)]
         ceo_niz = file.readlines()
         ceo_niz = [float(z) for z in ceo_niz]
@@ -1007,7 +1007,7 @@ class Environment(gym.Env):
         radial_combinations = [0 for l in range (66)]
         numbOfCustomersWithBadVoltage = 0
         swCombinationsWithBadVoltage = 0
-        sw1, sw2, sw3 = self.radial_switch_combinations_reduced[0]
+        sw1, sw2, sw3 = self.radial_switch_combinations[0]
         k = 0
         timestep = 0
         for i in range (24):
@@ -1021,7 +1021,7 @@ class Environment(gym.Env):
                 self.network_manager.close_switch('Line.Sw'+str(sw1))
                 self.network_manager.close_switch('Line.Sw'+str(sw2))
                 self.network_manager.close_switch('Line.Sw'+str(sw3))
-                sw1, sw2, sw3 = self.radial_switch_combinations_reduced[k]
+                sw1, sw2, sw3 = self.radial_switch_combinations[k]
                 self.network_manager.open_switch('Line.Sw'+str(sw1))
                 self.network_manager.open_switch('Line.Sw'+str(sw2))
                 self.network_manager.open_switch('Line.Sw'+str(sw3))
@@ -1066,7 +1066,7 @@ class Environment(gym.Env):
         f2.write(json.dumps(counter))
         f2.close()
 
-        f3 = open("Radial_comb.txt", "w")
+        f3 = open("Radial_comb2.txt", "w")
         for a in range (66):
             f3.write(str(a) + ". kombinacija: ")
             f3.write(json.dumps(radial_combinations[a]))

@@ -108,12 +108,13 @@ class DeepQLearningAgent:
 
     def train(self, df_train, n_episodes):
         #self.policy_net.load_state_dict(torch.load("policy_net"))
-        self.epsilon = 0.99
+        self.epsilon = 0.1
         self.reward_moving_average = 0
 
-        a = 0.99
-        b = 0.1
-        n_end = (int)(0.8 * n_episodes)
+        a = 0.1
+        b = 0.05
+        #n_end = (int)(0.8 * n_episodes)
+        n_end = 25000
         k = 1.234375E-10
         l = 0.00001975
         #print(n_end)
@@ -134,11 +135,17 @@ class DeepQLearningAgent:
             #if (i_episode == n_end):
                 #self.epsilon = 0.2
 
-            if (i_episode < n_end):
+            if (i_episode < 50000):
+                self.epsilon = 0.1
+
+            if (i_episode >= 50000 and i_episode < 75000):
                 self.epsilon -= delta
 
-            if (i_episode == n_end):
-                self.epsilon = 0.1
+            if (i_episode == 75000):
+                self.epsilon = 0.05
+
+            #if (i_episode == n_end):
+                #self.epsilon = 0.01
 
 
             if (i_episode % 2500 == 2499):
@@ -154,10 +161,10 @@ class DeepQLearningAgent:
             daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
             
             #x = random.choice((-1, 1))
-            #for zz in range(72):
-                #daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
-                #if daily_consumption_percents_per_feeder[zz] < 0.0:
-                    #daily_consumption_percents_per_feeder[zz] = 0
+            for zz in range(72):
+                daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
+                if daily_consumption_percents_per_feeder[zz] < 0.0:
+                    daily_consumption_percents_per_feeder[zz] = 0
 
             state = self.environment.reset(daily_consumption_percents_per_feeder)
             #print ('Initial losses: ', self.environment.power_flow.get_losses())
@@ -197,8 +204,11 @@ class DeepQLearningAgent:
             if (i_episode % 100 == 0):
                 print ("total_episode_reward: ", total_episode_reward)
 
-            if (i_episode % 1000 == 999):
-                torch.save(self.policy_net.state_dict(), "policy_net")
+            #if (i_episode % 1000 == 999):
+                #torch.save(self.policy_net.state_dict(), "policy_net")
+
+            if (i_episode % 10 == 0):
+                torch.save(self.policy_net.state_dict(), "policy folder/policy_net" + str(i_episode))
 
             if i_episode % self.target_update == 0:
                 self.target_net.load_state_dict(self.policy_net.state_dict())

@@ -32,6 +32,10 @@ def main():
     #print(environment.get_number_of_switch_manipulations([1, 5, 6], [12, 13, 14]))
     #environment.finding_optimal_states()
     #test_power_flow()
+    #environment.checking_voltages()
+    #environment.creatingDataset()
+    #environment.checking_voltages_for_explicit_configurations()
+    #environment.checking_results()
     
     #environment.find_all_radial_configurations()
     #environment.find_all_radial_configurations()
