@@ -14,6 +14,7 @@ class ODSSPowerFlow:
 
     def get_bus_voltages(self):
         busVoltages = {}
+        busVoltagesList = []
         for busName in dss.Circuit.AllBusNames():
             dss.Circuit.SetActiveBus(f"{busName}")
             #if (dss.Bus.kVBase() == 4.16/math.sqrt(3)):
@@ -25,7 +26,9 @@ class ODSSPowerFlow:
                     V = abs(complex(re, im))
                     V_for_mean.append(V)
             busVoltages.update( {busName : (sum(V_for_mean) / len(V_for_mean)) } )
-        return busVoltages
+            busVoltagesList.append(sum(V_for_mean) / len(V_for_mean))
+        #print(busVoltagesList)
+        return busVoltagesList
 
     def get_network_injected_p(self):
         return dss.Circuit.TotalPower()[0]
@@ -176,3 +179,113 @@ class ODSSPowerFlow:
             df.loc[index, 70] = 0.334
             df.loc[index, 71] = 0.221
         df.to_csv('data.csv')
+
+
+    def create_data_set_big_scheme(self):
+        n_consumers = dss.Loads.Count()
+
+        columns = [i for i in range(NUM_TIMESTEPS * 4)]
+        index = [i for i in range(2)]
+        df = pandas.DataFrame(index=index, columns=columns)
+        df = df.fillna(0)
+        for index, row in df.iterrows():
+            df.loc[index, 0] = 0.167
+            df.loc[index, 1] = 0.084
+            df.loc[index, 2] = 0.055
+            df.loc[index, 3] = 0.029
+            df.loc[index, 4] = 0.156
+            df.loc[index, 5] = 0.078
+            df.loc[index, 6] = 0.055
+            df.loc[index, 7] = 0.029
+            df.loc[index, 8] = 0.136
+            df.loc[index, 9] = 0.068
+            df.loc[index, 10] = 0.055
+            df.loc[index, 11] = 0.029
+            df.loc[index, 12] = 0.111
+            df.loc[index, 13] = 0.056
+            df.loc[index, 14] = 0.055
+            df.loc[index, 15] = 0.029
+            df.loc[index, 16] = 0.106
+            df.loc[index, 17] = 0.053
+            df.loc[index, 18] = 0.055
+            df.loc[index, 19] = 0.029
+            df.loc[index, 20] = 0.128
+            df.loc[index, 21] = 0.064
+            df.loc[index, 22] = 0.055
+            df.loc[index, 23] = 0.128
+            df.loc[index, 24] = 0.161
+            df.loc[index, 25] = 0.081
+            df.loc[index, 26] = 0.25
+            df.loc[index, 27] = 0.249
+            df.loc[index, 28] = 0.178
+            df.loc[index, 29] = 0.089
+            df.loc[index, 30] = 0.25
+            df.loc[index, 31] = 0.25
+            df.loc[index, 32] = 0.195
+            df.loc[index, 33] = 0.097
+            df.loc[index, 34] = 0.25
+            df.loc[index, 35] = 0.25
+            df.loc[index, 36] = 0.195
+            df.loc[index, 37] = 0.097
+            df.loc[index, 38] = 0.112
+            df.loc[index, 39] = 0.128
+            df.loc[index, 40] = 0.192
+            df.loc[index, 41] = 0.192
+            df.loc[index, 42] = 0.25
+            df.loc[index, 43] = 0.25
+            df.loc[index, 44] = 0.181
+            df.loc[index, 45] = 0.181
+            df.loc[index, 46] = 0.25
+            df.loc[index, 47] = 0.25
+            df.loc[index, 48] = 0.172
+            df.loc[index, 49] = 0.172
+            df.loc[index, 50] = 0.25
+            df.loc[index, 51] = 0.25
+            df.loc[index, 52] = 0.172
+            df.loc[index, 53] = 0.172
+            df.loc[index, 54] = 0.25
+            df.loc[index, 55] = 0.25
+            df.loc[index, 56] = 0.167
+            df.loc[index, 57] = 0.084
+            df.loc[index, 58] = 0.25
+            df.loc[index, 59] = 0.249
+            df.loc[index, 60] = 0.192
+            df.loc[index, 61] = 0.228
+            df.loc[index, 62] = 0.25
+            df.loc[index, 63] = 0.25
+            df.loc[index, 64] = 0.222
+            df.loc[index, 65] = 0.25
+            df.loc[index, 66] = 0.055
+            df.loc[index, 67] = 0.25
+            df.loc[index, 68] = 0.233
+            df.loc[index, 69] = 0.202
+            df.loc[index, 70] = 0.055
+            df.loc[index, 71] = 0.128
+            df.loc[index, 72] = 0.25
+            df.loc[index, 73] = 0.202
+            df.loc[index, 74] = 0.055
+            df.loc[index, 75] = 0.25
+            df.loc[index, 76] = 0.228
+            df.loc[index, 77] = 0.176
+            df.loc[index, 78] = 0.055
+            df.loc[index, 79] = 0.25
+            df.loc[index, 80] = 0.217
+            df.loc[index, 81] = 0.108
+            df.loc[index, 82] = 0.055
+            df.loc[index, 83] = 0.25
+            df.loc[index, 84] = 0.195
+            df.loc[index, 85] = 0.097
+            df.loc[index, 86] = 0.055
+            df.loc[index, 87] = 0.25
+            df.loc[index, 88] = 0.178
+            df.loc[index, 89] = 0.089
+            df.loc[index, 90] = 0.055
+            df.loc[index, 91] = 0.178
+            df.loc[index, 92] = 0.167
+            df.loc[index, 93] = 0.084
+            df.loc[index, 94] = 0.055
+            df.loc[index, 95] = 0.029
+
+        df.to_csv('data_big_scheme.csv')
+
+        

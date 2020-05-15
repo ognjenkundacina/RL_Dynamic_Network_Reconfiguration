@@ -40,13 +40,14 @@ class ReplayMemory(object):
 class DQN(nn.Module):
     def __init__(self, input_size, output_size):
         super(DQN, self).__init__()
-        self.fc1 = nn.Linear(input_size, 256)
-        self.fc2 = nn.Linear(256, 256)
-        self.fc3 = nn.Linear(256, 256)
-        self.fc3_bn = nn.BatchNorm1d(256)
-        self.fc4 = nn.Linear(256, 256)
+        self.fc1 = nn.Linear(input_size, 1024)
+        self.fc2 = nn.Linear(1024, 1024)
+        self.fc3 = nn.Linear(1024, 1024)
+        self.fc3_bn = nn.BatchNorm1d(1024)
+        self.fc4 = nn.Linear(1024, 1024)
         #self.fc5 = nn.Linear(64, 64)
-        self.fc6 = nn.Linear(256, output_size)
+        self.fc6 = nn.Linear(1024, output_size)
+        #print(output_size)
 
     def forward(self, x):
         x = F.relu(self.fc1(x))
@@ -108,17 +109,17 @@ class DeepQLearningAgent:
 
     def train(self, df_train, n_episodes):
         #self.policy_net.load_state_dict(torch.load("policy_net"))
-        self.epsilon = 0.1
+        self.epsilon = 0.99
         self.reward_moving_average = 0
 
-        a = 0.1
-        b = 0.05
-        #n_end = (int)(0.8 * n_episodes)
-        n_end = 25000
+        a = self.epsilon
+        b = 0.1
+        n_end = (int)(0.8 * n_episodes)
         k = 1.234375E-10
         l = 0.00001975
-        #print(n_end)
-        delta = (a - b) / n_end
+        print(n_end)
+        print(a)
+        #delta = (a - b) / n_end1
         #print(delta)
         
         total_episode_rewards = []
@@ -129,20 +130,20 @@ class DeepQLearningAgent:
             #if i_episode == 500:
                 #self.epsilon = 0.2
 
-            #if (i_episode < n_end):
-                #self.epsilon = k * (i_episode * i_episode) - l * i_episode + a
+            if (i_episode < n_end):
+                self.epsilon = k * (i_episode * i_episode) - l * i_episode + a
             
-            #if (i_episode == n_end):
-                #self.epsilon = 0.2
-
-            if (i_episode < 50000):
+            if (i_episode == n_end):
                 self.epsilon = 0.1
 
-            if (i_episode >= 50000 and i_episode < 75000):
-                self.epsilon -= delta
+            #if (i_episode < 50000):
+                #self.epsilon = 0.1
 
-            if (i_episode == 75000):
-                self.epsilon = 0.05
+            #if (i_episode < 10000):
+                #self.epsilon -= delta
+
+            #if (i_episode == 10000):
+                #self.epsilon = 0
 
             #if (i_episode == n_end):
                 #self.epsilon = 0.01
@@ -158,13 +159,17 @@ class DeepQLearningAgent:
 
             #daily_consumption_percents_per_feeder ima 72 clana. Za svaki od 24 trenutka idu 3 scaling faktora, za svaki od feedera
             #i to prva tri clana liste odgovaraju prvom trenutku, pa sljedeca tri drugom...
-            daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
+            #daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
+
+            #ispod za veliku semu
+            daily_consumption_percents_per_feeder = row_list[1 : 4*NUM_TIMESTEPS + 1]
             
             #x = random.choice((-1, 1))
-            for zz in range(72):
-                daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
-                if daily_consumption_percents_per_feeder[zz] < 0.0:
-                    daily_consumption_percents_per_feeder[zz] = 0
+            #96 zbog 4x24
+            #for zz in range(96):
+                #daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
+                #if daily_consumption_percents_per_feeder[zz] < 0.0:
+                    #daily_consumption_percents_per_feeder[zz] = 0
 
             state = self.environment.reset(daily_consumption_percents_per_feeder)
             #print ('Initial losses: ', self.environment.power_flow.get_losses())
@@ -177,7 +182,7 @@ class DeepQLearningAgent:
                 #print('action', action)
                 if (action > self.n_actions):
                     print("agent.train: action > self.n_actions")
-                next_state, reward, done, action = self.environment.step(action)
+                next_state, reward, done = self.environment.step(action)
                 #print ('Current losses: ', self.environment.power_flow.get_losses())
                 total_episode_reward += reward
 
@@ -237,7 +242,10 @@ class DeepQLearningAgent:
 
             #daily_consumption_percents_per_feeder ima 72 clana. Za svaki od 24 trenutka idu 3 scaling faktora, za svaki od feedera
             #i to prva tri clana liste odgovaraju prvom trenutku, pa sljedeca tri drugom...
-            daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
+            #daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
+
+            #ispod za veliku semu
+            daily_consumption_percents_per_feeder = row_list[1 : 4*NUM_TIMESTEPS + 1]
 
             state = self.environment.reset(daily_consumption_percents_per_feeder)
             #print ('Initial losses: ', self.environment.power_flow.get_losses())
@@ -253,8 +261,8 @@ class DeepQLearningAgent:
                 if (action > self.n_actions):
                     print ("Warning: agent.test: action > self.n_actions")
                 
-                next_state, reward, done, action = self.environment.step(action)
-                print("Open switches: ", radial_switch_combinations[action]) 
+                next_state, reward, done = self.environment.step(action)
+                print("Open switches: ", radial_switch_combinations_reduced_big_scheme[action]) 
                 print ('Current losses: ', self.environment.power_flow.get_losses())
                     
                 total_episode_reward += reward
