@@ -42,7 +42,7 @@ class DQN(nn.Module):
     def __init__(self, input_size, output_size):
         super(DQN, self).__init__()
         self.fc1 = nn.Linear(input_size, 1024)
-        self.fc2 = nn.Linear(1024)
+        self.fc2 = nn.Linear(1024, 1024)
         self.fc3 = nn.Linear(1024, 1024)
         self.fc3_bn = nn.BatchNorm1d(1024)
         self.fc4 = nn.Linear(1024, 1024)
