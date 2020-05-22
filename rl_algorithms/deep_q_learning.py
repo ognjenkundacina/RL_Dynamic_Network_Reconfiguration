@@ -3,6 +3,7 @@ from itertools import count
 import random
 import matplotlib.pyplot as plt
 import time
+import numpy as np
 
 import torch
 import torch.nn as nn
@@ -41,7 +42,7 @@ class DQN(nn.Module):
     def __init__(self, input_size, output_size):
         super(DQN, self).__init__()
         self.fc1 = nn.Linear(input_size, 1024)
-        self.fc2 = nn.Linear(1024, 1024)
+        self.fc2 = nn.Linear(1024)
         self.fc3 = nn.Linear(1024, 1024)
         self.fc3_bn = nn.BatchNorm1d(1024)
         self.fc4 = nn.Linear(1024, 1024)
@@ -71,6 +72,7 @@ class DeepQLearningAgent:
 
         self.state_space_dims = environment.state_space_dims
         self.n_actions = environment.n_actions
+        self.loss_list = []
 
         self.policy_net = DQN(self.state_space_dims, self.n_actions)
         self.target_net = DQN(self.state_space_dims, self.n_actions)
@@ -109,20 +111,27 @@ class DeepQLearningAgent:
 
     def train(self, df_train, n_episodes):
         #self.policy_net.load_state_dict(torch.load("policy_net"))
+        f_loss = open("loss_function.txt", "w")
+        f_ter = open("total_episode_reward.txt", "w")
+        f_mar = open("moving_average_reward.txt", "w")
+
         self.epsilon = 0.99
         self.reward_moving_average = 0
 
-        a = self.epsilon
-        b = 0.1
-        n_end = (int)(0.8 * n_episodes)
+        a = 0.99
+        b = 0.5
+        #n_end = (int)(0.8 * n_episodes)
         k = 1.234375E-10
         l = 0.00001975
-        print(n_end)
-        print(a)
-        #delta = (a - b) / n_end1
+        delta = (a - b) / 15000
         #print(delta)
         
-        total_episode_rewards = []
+        #total_episode_rewards1 = []
+        #total_episode_rewards2 = []
+
+        ter_list = []
+        mar_list = []
+        loss_list = []
         for i_episode in range(n_episodes):
             if (i_episode % 100 == 0):
                 print("=========Episode: ", i_episode)
@@ -130,24 +139,26 @@ class DeepQLearningAgent:
             #if i_episode == 500:
                 #self.epsilon = 0.2
 
-            if (i_episode < n_end):
-                self.epsilon = k * (i_episode * i_episode) - l * i_episode + a
+            #if (i_episode < n_end):
+                #self.epsilon = k * (i_episode * i_episode) - l * i_episode + a
             
-            if (i_episode == n_end):
-                self.epsilon = 0.1
-
-            #if (i_episode < 50000):
+            #if (i_episode == n_end):
                 #self.epsilon = 0.1
 
-            #if (i_episode < 10000):
-                #self.epsilon -= delta
+            if (i_episode < 15000):
+                self.epsilon -= delta
 
-            #if (i_episode == 10000):
+            if (i_episode == 15000):
+                self.epsilon = 0.5
+
+            if (i_episode == 22500):
+                self.epsilon = 0.2
+
+            #if (i_episode == 22500):
                 #self.epsilon = 0
 
             #if (i_episode == n_end):
                 #self.epsilon = 0.01
-
 
             if (i_episode % 2500 == 2499):
                 time.sleep(60)
@@ -166,7 +177,7 @@ class DeepQLearningAgent:
             
             #x = random.choice((-1, 1))
             #96 zbog 4x24
-            #for zz in range(96):
+            #for zz in range(72):
                 #daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
                 #if daily_consumption_percents_per_feeder[zz] < 0.0:
                     #daily_consumption_percents_per_feeder[zz] = 0
@@ -203,7 +214,10 @@ class DeepQLearningAgent:
             else:
                 self.reward_moving_average = 0.99 * self.reward_moving_average + 0.01 * total_episode_reward
             #total_episode_rewards.append(total_episode_reward)
-            total_episode_rewards.append(self.reward_moving_average)
+            ter_list.append(total_episode_reward)
+            mar_list.append(self.reward_moving_average)
+            #total_episode_rewards1.append(total_episode_reward)
+            #total_episode_rewards2.append(self.reward_moving_average)
 
             #print ("self.epsilon: ", self.epsilon)
             if (i_episode % 100 == 0):
@@ -212,7 +226,7 @@ class DeepQLearningAgent:
             #if (i_episode % 1000 == 999):
                 #torch.save(self.policy_net.state_dict(), "policy_net")
 
-            if (i_episode % 10 == 0):
+            if (i_episode % 100 == 0):
                 torch.save(self.policy_net.state_dict(), "policy folder/policy_net" + str(i_episode))
 
             if i_episode % self.target_update == 0:
@@ -222,11 +236,59 @@ class DeepQLearningAgent:
 
         torch.save(self.policy_net.state_dict(), "policy_net")
 
-        x_axis = [1 + j for j in range(len(total_episode_rewards))]
-        plt.plot(x_axis, total_episode_rewards)
+        #total_episode_reward
+        for i in range (len(ter_list)):
+            f_ter.write(str(ter_list[i]) + "\n")
+        f_ter.close()
+
+        #moving_average_reward
+        for i in range (len(mar_list)):
+            f_mar.write(str(mar_list[i]) + "\n")
+        f_mar.close()
+
+        ter = []
+        with open('total_episode_reward.txt') as f_ter:
+            for line in f_ter:
+                elems = line.strip()
+                ter.append(float(elems))
+
+        mar = []
+        with open('moving_average_reward.txt') as f_mar:
+            for line in f_mar:
+                elems = line.strip()
+                mar.append(float(elems))
+
+        x_axis = [1 + j for j in range(len(ter))]
+        plt.plot(x_axis, ter, color="lightblue")
+        plt.plot(x_axis, mar, color="blue")
         plt.xlabel('Episode number') 
-        plt.ylabel('Moving average reward') 
-        plt.savefig("total_episode_rewards_Gaus_kf.png")
+        plt.ylabel('Total reward') 
+        plt.savefig("total_rewards.png")
+        plt.show()
+
+        #loss
+        for i in range (len(self.loss_list)):
+            f_loss.write(str(self.loss_list[i]) + "\n")
+        f_loss.close()
+
+        loss = []
+        with open('loss_function.txt') as fr:
+            for line in fr:
+                elems = line.strip()
+                loss.append(float(elems))
+
+        #x_axis_loss = [1 + j for j in range(len(self.loss_list))]
+        #plt.plot(x_axis_loss, self.loss_list, color="red")
+        #plt.xlabel('Iteration') 
+        #plt.ylabel('DQN Loss') 
+        #plt.savefig("loss.png")
+        #plt.show()
+
+        x_axis_loss_txt = [1 + j for j in range(len(loss))]
+        plt.plot(x_axis_loss_txt, loss, color="red")
+        plt.xlabel('Iteration') 
+        plt.ylabel('Loss function') 
+        plt.savefig("loss_txt.png")
         plt.show()
 
 
@@ -262,6 +324,7 @@ class DeepQLearningAgent:
                     print ("Warning: agent.test: action > self.n_actions")
                 
                 next_state, reward, done = self.environment.step(action)
+                #print("Open switches: ", radial_switch_combinations[action])
                 print("Open switches: ", radial_switch_combinations_reduced_big_scheme[action]) 
                 print ('Current losses: ', self.environment.power_flow.get_losses())
                     
@@ -313,6 +376,8 @@ class DeepQLearningAgent:
 
         #Huber loss
         loss = F.smooth_l1_loss(state_action_values, expected_state_action_values)
+        loss_ = loss.detach().numpy()
+        self.loss_list.append(loss_)
 
         self.optimizer.zero_grad()
         loss.backward()

@@ -24,12 +24,12 @@ class Environment(gym.Env):
 
         self.state_space_dims = len(self.power_flow.get_switches_apparent_power()) + 1
 
+        #self.radial_switch_combinations = radial_switch_combinations
         #ipak je u config-u, ako hoces izmeni
         self.radial_switch_combinations = radial_switch_combinations_reduced_big_scheme
 
         self.n_actions = len(self.radial_switch_combinations)
         self.n_consumers = self.network_manager.get_load_count()
-        print(self.n_consumers)
         self.timestep = 0
         self.switching_action_cost = 1.0
         self.base_power = 4000
@@ -45,7 +45,6 @@ class Environment(gym.Env):
 
         self.switch_names = self.network_manager.get_all_switch_names()
         self.n_switches = len(self.network_manager.get_all_switch_names())
-        print(self.n_switches)
         # indeks prekidaca, pri cemo indeksiranje pocinje od 1
         #self.switch_indices = [i for i in range(1, self.n_switches + 1)]
 
@@ -57,7 +56,7 @@ class Environment(gym.Env):
     def _update_state(self, action):
         
         #self._update_switch_statuses(action)
-        #self._update_switch_statuses_big_scheme(action) # ovo nam ne treba kad nemamo ogranicenje Nsw
+        self._update_switch_statuses_big_scheme(action)
 
         #self._update_available_actions(action) #todo implement - ovo nam ne treba kad nemamo ogranicenje Nsw
         self.power_flow.calculate_power_flow()
@@ -174,31 +173,31 @@ class Environment(gym.Env):
 
     def _update_switch_statuses(self, action): 
 
-        prev_action = self.radial_switch_combinations[self.previous_action]
+        #prev_action = self.radial_switch_combinations[self.previous_action]
         for switch_index in self.switch_indices:
             if switch_index in self.radial_switch_combinations[action]:
                 self.network_manager.open_switch(self.switch_names_by_index[switch_index])
-                if (switch_index != prev_action[0] and switch_index != prev_action[1] and switch_index != prev_action[2]):
-                    self.used_switches[switch_index - 1] += 1
+                #if (switch_index != prev_action[0] and switch_index != prev_action[1] and switch_index != prev_action[2]):
+                    #self.used_switches[switch_index - 1] += 1
             else:
                 self.network_manager.close_switch(self.switch_names_by_index[switch_index])
-                if (switch_index == prev_action[0] or switch_index == prev_action[1] or switch_index == prev_action[2]):
-                    self.used_switches[switch_index - 1] += 1
+                #if (switch_index == prev_action[0] or switch_index == prev_action[1] or switch_index == prev_action[2]):
+                    #self.used_switches[switch_index - 1] += 1
         
         #print(prev_action)
 
     def _update_switch_statuses_big_scheme(self, action): 
 
-        prev_action = self.radial_switch_combinations[self.previous_action]
+        #prev_action = self.radial_switch_combinations[self.previous_action]
         for switch_index in self.switch_indices:
             if switch_index in self.radial_switch_combinations[action]:
                 self.network_manager.open_switch(self.switch_names_by_index[switch_index])
-                if (switch_index != prev_action[0] and switch_index != prev_action[1] and switch_index != prev_action[2] and switch_index != prev_action[3] and switch_index != prev_action[4] and switch_index != prev_action[5] and switch_index != prev_action[6]):
-                    self.used_switches[switch_index - 1] += 1
+                #if (switch_index != prev_action[0] and switch_index != prev_action[1] and switch_index != prev_action[2] and switch_index != prev_action[3] and switch_index != prev_action[4] and switch_index != prev_action[5] and switch_index != prev_action[6]):
+                    #self.used_switches[switch_index - 1] += 1
             else:
                 self.network_manager.close_switch(self.switch_names_by_index[switch_index])
-                if (switch_index == prev_action[0] or switch_index == prev_action[1] or switch_index == prev_action[2] or switch_index == prev_action[3] or switch_index == prev_action[4] or switch_index == prev_action[5] or switch_index == prev_action[6]):
-                    self.used_switches[switch_index - 1] += 1
+                #if (switch_index == prev_action[0] or switch_index == prev_action[1] or switch_index == prev_action[2] or switch_index == prev_action[3] or switch_index == prev_action[4] or switch_index == prev_action[5] or switch_index == prev_action[6]):
+                    #self.used_switches[switch_index - 1] += 1
         
         #print(prev_action)
     #action: 0..n_actions
@@ -260,6 +259,8 @@ class Environment(gym.Env):
 
         #ima 7 NOS-ova, dakle 7x2
         num_of_switch_manipulations = 14
+        #print(previous_action)
+        #print(action)
 
         if (previous_action[0] == action[0] or previous_action[0] == action[1] or previous_action[0] == action[2] or previous_action[0] == action[3] or previous_action[0] == action[4] or previous_action[0] == action[5] or previous_action[0] == action[6]):
             num_of_switch_manipulations = num_of_switch_manipulations - 2
@@ -282,6 +283,7 @@ class Environment(gym.Env):
         if (previous_action[6] == action[0] or previous_action[6] == action[1] or previous_action[6] == action[2] or previous_action[6] == action[3] or previous_action[6] == action[4] or previous_action[6] == action[5] or previous_action[6] == action[6]):
             num_of_switch_manipulations = num_of_switch_manipulations - 2
         
+        #print(num_of_switch_manipulations)
         return num_of_switch_manipulations
 
 
@@ -609,7 +611,7 @@ class Environment(gym.Env):
         self.network_manager.close_switch('Line.Sw1015')
         
     def finding_optimal_states(self):
-        self.closing_all_switches()
+        self.closing_all_switches_big_scheme()
         minMoneyLossesFinal = 0
         currentMoneyLosses = 0
         minLossesFinal = 0
@@ -621,111 +623,133 @@ class Environment(gym.Env):
         os1 = 0
         os2 = 0
         os3 = 0
-        os1, os2, os3 = self.radial_switch_combinations[0]
+        os4 = 0
+        os5 = 0
+        os6 = 0
+        os7 = 0
+        os1, os2, os3, os4, os5, os6, os7 = self.radial_switch_combinations[0]
         key = 0
         bestResults.setdefault(key, [])
         
         for v in range(24): 
-            file = open("testPrimer.txt", "r")
-            f2 = open("Optimalno stanje_gubici_novanova_potrosnja.txt", "a")
-            scaling_factors = [0.0 for i in range(11)]
+            file = open("new_loads_4_feeders.txt", "r")
+            f2 = open("Optimalno_stanje_velika_sema.txt", "a")
+            scaling_factors = [0.0 for i in range(1008)]
             ceo_niz = file.readlines()
             ceo_niz = [float(z) for z in ceo_niz]
-            scaling_factors[0] = ceo_niz[k] 
-            scaling_factors[1] = ceo_niz[k] 
-            scaling_factors[2] = ceo_niz[k] 
-            scaling_factors[3] = ceo_niz[k] 
-            scaling_factors[4] = ceo_niz[k+1] 
-            scaling_factors[5] = ceo_niz[k+1] 
-            scaling_factors[6] = ceo_niz[k+1] 
-            scaling_factors[7] = ceo_niz[k+2] 
-            scaling_factors[8] = ceo_niz[k+2] 
-            scaling_factors[9] = ceo_niz[k+2] 
-            scaling_factors[10] = ceo_niz[k+2]
+
+            for h in range (1008):
+                if (h < 252):
+                    scaling_factors[h] = ceo_niz[k] 
+                elif (h >= 252 and h < 504):
+                    scaling_factors[h] = ceo_niz[k+1] 
+                elif(h >= 504 and h < 756):
+                    scaling_factors[h] = ceo_niz[k+2] 
+                else:
+                    scaling_factors[h] = ceo_niz[k+3] 
             #print(scaling_factors)
             file.close()
             self.network_manager.set_load_scaling(scaling_factors)
 
-            f = open(str(s) + ".trenutak.txt", "a")
+            ff = open(str(s) + ".trenutak.txt", "a")
             for j in self.radial_switch_combinations:
-                a, b, c = self.radial_switch_combinations[j]
+                a, b, c, d, e, f, g = self.radial_switch_combinations[j]
 
-                if (a == 1 or b == 1 or c == 1):
-                    self.network_manager.open_switch('Line.Sw1')
+                if (a == 144 or b == 144 or c == 144 or d == 144 or e == 144 or f == 144 or g == 144):
+                    self.network_manager.open_switch('Line.Sw144')
 
-                if (a == 2 or b == 2 or c == 2):
-                    self.network_manager.open_switch('Line.Sw2')
-                                                                            
-                if (a == 3 or b == 3 or c == 3):
-                    self.network_manager.open_switch('Line.Sw3')
-                                                                            
-                if (a == 4 or b == 4 or c == 4):
-                    self.network_manager.open_switch('Line.Sw4')
-                                                                            
-                if (a == 5 or b == 5 or c == 5):
-                    self.network_manager.open_switch('Line.Sw5')
-                                                                            
-                if (a == 6 or b == 6 or c == 6):
-                    self.network_manager.open_switch('Line.Sw6')
-                                                                            
-                if (a == 7 or b == 7 or c == 7):
-                    self.network_manager.open_switch('Line.Sw7')
-                                                                                
-                if (a == 8 or b == 8 or c == 8):
-                    self.network_manager.open_switch('Line.Sw8')
-                                                                                
-                if (a == 9 or b == 9 or c == 9):
-                    self.network_manager.open_switch('Line.Sw9')
-                                                                                
-                if (a == 10 or b == 10 or c == 10):
-                    self.network_manager.open_switch('Line.Sw10')
-                                                                                
-                if (a == 11 or b == 11 or c == 11):
-                    self.network_manager.open_switch('Line.Sw11')
-                                                                                
-                if (a == 12 or b == 12 or c == 12):
-                    self.network_manager.open_switch('Line.Sw12')
-                                                                                
-                if (a == 13 or b == 13 or c == 13):
-                    self.network_manager.open_switch('Line.Sw13')
-                                                                            
-                if (a == 14 or b == 14 or c == 14):
-                    self.network_manager.open_switch('Line.Sw14')
+                if (a == 191 or b == 191 or c == 191 or d == 191 or e == 191 or f == 191 or g == 191):
+                    self.network_manager.open_switch('Line.Sw191')
 
+                if (a == 238 or b == 238 or c == 238 or d == 238 or e == 238 or f == 238 or g == 238):
+                    self.network_manager.open_switch('Line.Sw238')
+
+                if (a == 396 or b == 396 or c == 396 or d == 396 or e == 396 or f == 396 or g == 396):
+                    self.network_manager.open_switch('Line.Sw396')
+
+                if (a == 443 or b == 443 or c == 443 or d == 443 or e == 443 or f == 443 or g == 443):
+                    self.network_manager.open_switch('Line.Sw443')
+
+                if (a == 490 or b == 490 or c == 490 or d == 490 or e == 490 or f == 490 or g == 490):
+                    self.network_manager.open_switch('Line.Sw490')
+
+                if (a == 648 or b == 648 or c == 648 or d == 648 or e == 648 or f == 648 or g == 648):
+                    self.network_manager.open_switch('Line.Sw648')
+
+                if (a == 695 or b == 695 or c == 695 or d == 695 or e == 695 or f == 695 or g == 695):
+                    self.network_manager.open_switch('Line.Sw695')
+
+                if (a == 742 or b == 742 or c == 742 or d == 742 or e == 742 or f == 742 or g == 742):
+                    self.network_manager.open_switch('Line.Sw742')
+
+                if (a == 853 or b == 853 or c == 853 or d == 853 or e == 853 or f == 853 or g == 853):
+                    self.network_manager.open_switch('Line.Sw853')
+
+                if (a == 900 or b == 900 or c == 900 or d == 900 or e == 900 or f == 900 or g == 900):
+                    self.network_manager.open_switch('Line.Sw900')
+
+                if (a == 947 or b == 947 or c == 947 or d == 947 or e == 947 or f == 947 or g == 947):
+                    self.network_manager.open_switch('Line.Sw947')
+
+                if (a == 994 or b == 994 or c == 994 or d == 994 or e == 994 or f == 994 or g == 994):
+                    self.network_manager.open_switch('Line.Sw994')
+
+                if (a == 1009 or b == 1009 or c == 1009 or d == 1009 or e == 1009 or f == 1009 or g == 1009):
+                    self.network_manager.open_switch('Line.Sw1009')
+
+                if (a == 1010 or b == 1010 or c == 1010 or d == 1010 or e == 1010 or f == 1010 or g == 1010):
+                    self.network_manager.open_switch('Line.Sw1010')
+
+                if (a == 1011 or b == 1011 or c == 1011 or d == 1011 or e == 1011 or f == 1011 or g == 1011):
+                    self.network_manager.open_switch('Line.Sw1011')
+
+                if (a == 1012 or b == 1012 or c == 1012 or d == 1012 or e == 1012 or f == 1012 or g == 1012):
+                    self.network_manager.open_switch('Line.Sw1012')
+
+                if (a == 1013 or b == 1013 or c == 1013 or d == 1013 or e == 1013 or f == 1013 or g == 1013):
+                    self.network_manager.open_switch('Line.Sw1013')
+
+                if (a == 1014 or b == 1014 or c == 1014 or d == 1014 or e == 1014 or f == 1014 or g == 1014):
+                    self.network_manager.open_switch('Line.Sw1014')
+
+                if (a == 1015 or b == 1015 or c == 1015 or d == 1015 or e == 1015 or f == 1015 or g == 1015):
+                    self.network_manager.open_switch('Line.Sw1015')
+
+                
                 self.power_flow.calculate_power_flow()
                 #print(self.power_flow.get_losses())
-                currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([os1,os2,os3], [a, b, c])
+                currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations_big_scheme([os1,os2,os3,os4,os5,os6,os7], [a, b, c, d, e, f, g])
                 currentLosses = self.power_flow.get_losses()
                 #bestResults[key] = self.radial_switch_combinations[j]
                 if (j == 0):
                     minLossesFinal = self.power_flow.get_losses()
                     currentLosses = self.power_flow.get_losses()
-                    minMoneyLossesFinal = self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([os1,os2,os3], [a, b, c])
-                    currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations([os1,os2,os3], [a, b, c])
-                    bestResults[key] = [a, b, c]
+                    minMoneyLossesFinal = self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations_big_scheme([os1,os2,os3,os4,os5,os6,os7], [a, b, c, d, e, f, g])
+                    currentMoneyLosses = self.power_flow.get_losses() * 0.065625 + 1 * self.get_number_of_switch_manipulations_big_scheme([os1,os2,os3,os4,os5,os6,os7], [a, b, c, d, e, f, g])
+                    bestResults[key] = [a, b, c, d, e, f, g]
                     #os1, os2, os3 = a, b, c
 
                 if(currentMoneyLosses < minMoneyLossesFinal):
                     minMoneyLossesFinal = currentMoneyLosses
                     minLossesFinal = currentLosses
-                    bestResults[key] = [a, b, c]
+                    bestResults[key] = [a, b, c, d, e, f, g]
                     #os1, os2, os3 = a, b, c
 
                 #print(self.radial_switch_combinations[j])
-                f.write(json.dumps(currentLosses))
-                f.write(" kW")
-                f.write("\n")
-                f.write(json.dumps(currentMoneyLosses))
-                f.write(" $")
-                f.write("\n")
-                f.write(json.dumps(self.radial_switch_combinations[j]))
-                f.write("\n")
-                f.write("---------------------------------------------\n\n")
+                ff.write(json.dumps(currentLosses))
+                ff.write(" kW")
+                ff.write("\n")
+                ff.write(json.dumps(currentMoneyLosses))
+                ff.write(" $")
+                ff.write("\n")
+                ff.write(json.dumps(self.radial_switch_combinations[j]))
+                ff.write("\n")
+                ff.write("---------------------------------------------\n\n")
                     
-                self.closing_all_switches()
-                if(j == 185):
-                    os1, os2, os3 = bestResults[key]
-                    f.write("Minimum money losses for current step: ")
+                self.closing_all_switches_big_scheme()
+                if(j == 2554):
+                    os1, os2, os3, os4, os5, os6, os7 = bestResults[key]
+                    ff.write("Minimum money losses for current step: ")
                     f2.write(str(s) + ". trenutak: ")
                     f2.write(json.dumps(minLossesFinal))
                     f2.write(" kW, ")
@@ -740,9 +764,9 @@ class Environment(gym.Env):
                     f2.write(json.dumps(bestResults[key]))
                     f2.write("\n")
                     f2.write("\n")
-                    f.write(json.dumps(minLossesFinal))
-                    f.write(" $")
-                    f.write("\n")
+                    ff.write(json.dumps(minLossesFinal))
+                    ff.write(" $")
+                    ff.write("\n")
                     ukupno += minMoneyLossesFinal
                     
                     key += 1
@@ -750,12 +774,12 @@ class Environment(gym.Env):
                     
                     #f.write("Total load: ")
                     #f.write(json.dumps(aa))
-            f.close()
+            ff.close()
             a = 0
             b = 0
             c = 0
             s += 1
-            k += 3
+            k += 4
         f2.write(json.dumps(ukupno))
         f2.write(" $")
     
@@ -947,60 +971,66 @@ class Environment(gym.Env):
     def checking_results(self):
 
         switch_combinations = {
-            0: [12, 13, 14],
-            1: [12, 13, 14],
-            2: [12, 13, 14],
-            3: [12, 13, 14],
-            4: [12, 13, 14],
-            5: [7, 10, 14],
-            6: [7, 10, 14],
-            7: [7, 10, 14],
-            8: [7, 10, 14],
-            9: [7, 10, 14],
-            10: [12, 13, 14],
-            11: [12, 13, 14],
-            12: [12, 13, 14],
-            13: [12, 13, 14],
-            14: [12, 13, 14],
-            15: [12, 13, 14],
-            16: [4, 12, 13],
-            17: [4, 12, 13],
-            18: [4, 12, 13],
-            19: [4, 12, 13],
-            20: [4, 12, 13],
-            21: [4, 12, 13],
-            22: [11, 12, 13],
-            23: [11, 12, 13]
+            0: [191, 490, 695, 1009, 1011, 1012, 1014],
+            1: [191, 238, 490, 695, 1009, 1012, 1014],
+            2: [191, 238, 490, 695, 1009, 1012, 1014],
+            3: [191, 238, 490, 695, 1009, 1012, 1014],
+            4: [191, 238, 490, 695, 1009, 1012, 1014],
+            5: [191, 947, 1009, 1011, 1012, 1014, 1015],
+            6: [191, 1009, 1011, 1012, 1013, 1014, 1015],
+            7: [191, 1009, 1011, 1012, 1013, 1014, 1015],
+            8: [191, 1009, 1011, 1012, 1013, 1014, 1015],
+            9: [191, 238, 490, 1009, 1012, 1013, 1014],
+            10: [1009, 1010, 1011, 1012, 1013, 1014, 1015],
+            11: [1009, 1010, 1011, 1012, 1013, 1014, 1015],
+            12: [1009, 1010, 1011, 1012, 1013, 1014, 1015],
+            13: [1009, 1010, 1011, 1012, 1013, 1014, 1015],
+            14: [191, 1009, 1011, 1012, 1013, 1014, 1015],
+            15: [490, 1009, 1010, 1012, 1013, 1014, 1015],
+            16: [238, 490, 947, 994, 1009, 1010, 1012],
+            17: [238, 490, 947, 994, 1009, 1010, 1012],
+            18: [238, 490, 947, 994, 1009, 1010, 1012],
+            19: [238, 947, 994, 1009, 1010, 1012, 1015],
+            20: [238, 947, 994, 1009, 1010, 1012, 1015],
+            21: [238, 742, 947, 1009, 1010, 1012, 1014],
+            22: [238, 742, 947, 1009, 1010, 1012, 1014],
+            23: [238, 490, 695, 1009, 1010, 1012, 1014]
         }
             
-        self.closing_all_switches()
+        self.closing_all_switches_big_scheme()
         moneyLossesTotal = 0
         actionLossesTotal = 0
         totalLosses = 0
         totalMoneyLoss = 0
-        sw1 = 12
-        sw2 = 13
-        sw3 = 14
+        sw1, sw2, sw3, sw4, sw5, sw6, sw7 = [1009, 1010, 1011, 1012, 1013, 1014, 1015]
         k = 0
-        f = open("Rezultati_Nsw_2.txt", "a")
+        f = open("Rezultati_velika_sema.txt", "a")
 
         for i in range(24):
 
             self.network_manager.close_switch('Line.Sw'+str(sw1))
             self.network_manager.close_switch('Line.Sw'+str(sw2))
             self.network_manager.close_switch('Line.Sw'+str(sw3))
-            sw1, sw2, sw3 = switch_combinations[i]
+            self.network_manager.close_switch('Line.Sw'+str(sw4))
+            self.network_manager.close_switch('Line.Sw'+str(sw5))
+            self.network_manager.close_switch('Line.Sw'+str(sw6))
+            self.network_manager.close_switch('Line.Sw'+str(sw7))
+            sw1, sw2, sw3, sw4, sw5, sw6, sw7 = switch_combinations[i]
             self.network_manager.open_switch('Line.Sw'+str(sw1))
             self.network_manager.open_switch('Line.Sw'+str(sw2))
             self.network_manager.open_switch('Line.Sw'+str(sw3))
-            self.reading_from_load_file(k)
+            self.network_manager.open_switch('Line.Sw'+str(sw4))
+            self.network_manager.open_switch('Line.Sw'+str(sw5))
+            self.network_manager.open_switch('Line.Sw'+str(sw6))
+            self.network_manager.open_switch('Line.Sw'+str(sw7))
+            self.reading_from_load_file_big_scheme(k)
             self.power_flow.calculate_power_flow()
             losses = self.power_flow.get_losses()
             moneyLosses = self.power_flow.get_losses() * 0.065625
             if (i == 0):
-                actionLosses = 1 * self.get_number_of_switch_manipulations([12, 13, 14], switch_combinations[i])
+                actionLosses = 1 * self.get_number_of_switch_manipulations_big_scheme([1009, 1010, 1011, 1012, 1013, 1014, 1015], switch_combinations[i])
             else:
-                actionLosses = 1 * self.get_number_of_switch_manipulations(switch_combinations[i - 1], switch_combinations[i])
+                actionLosses = 1 * self.get_number_of_switch_manipulations_big_scheme(switch_combinations[i - 1], switch_combinations[i])
             moneyLossesTotal += moneyLosses
             actionLossesTotal += actionLosses
             totalLosses += losses
@@ -1018,12 +1048,20 @@ class Environment(gym.Env):
             f.write(json.dumps(sw2))
             f.write(", ")
             f.write(json.dumps(sw3))
+            f.write(", ")
+            f.write(json.dumps(sw4))
+            f.write(", ")
+            f.write(json.dumps(sw5))
+            f.write(", ")
+            f.write(json.dumps(sw6))
+            f.write(", ")
+            f.write(json.dumps(sw7))
             f.write("]")
             f.write("\n\n")
             losses = 0
             moneyLosses = 0
             actionLosses = 0
-            k += 3
+            k += 4
 
 
         f.write("Total losses: ")
@@ -1799,7 +1837,6 @@ class Environment(gym.Env):
 
         f1.close()
 
-        
 
 
 
