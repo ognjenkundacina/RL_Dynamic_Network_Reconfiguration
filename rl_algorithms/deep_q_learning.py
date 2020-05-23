@@ -111,19 +111,19 @@ class DeepQLearningAgent:
 
     def train(self, df_train, n_episodes):
         #self.policy_net.load_state_dict(torch.load("policy_net"))
-        f_loss = open("loss_function.txt", "w")
-        f_ter = open("total_episode_reward.txt", "w")
-        f_mar = open("moving_average_reward.txt", "w")
+        f_loss = open("loss_function1.txt", "w")
+        f_ter = open("total_episode_reward1.txt", "w")
+        f_mar = open("moving_average_reward1.txt", "w")
 
         self.epsilon = 0.99
         self.reward_moving_average = 0
 
         a = 0.99
-        b = 0.5
-        #n_end = (int)(0.8 * n_episodes)
+        b = 0.2
+        n_end = (int)(0.8 * n_episodes)
         k = 1.234375E-10
         l = 0.00001975
-        delta = (a - b) / 15000
+        delta = (a - b) / n_end
         #print(delta)
         
         #total_episode_rewards1 = []
@@ -145,17 +145,11 @@ class DeepQLearningAgent:
             #if (i_episode == n_end):
                 #self.epsilon = 0.1
 
-            if (i_episode < 15000):
+            if (i_episode < n_end):
                 self.epsilon -= delta
 
-            if (i_episode == 15000):
-                self.epsilon = 0.5
-
-            if (i_episode == 22500):
+            if (i_episode == n_end):
                 self.epsilon = 0.2
-
-            #if (i_episode == 22500):
-                #self.epsilon = 0
 
             #if (i_episode == n_end):
                 #self.epsilon = 0.01
@@ -247,13 +241,13 @@ class DeepQLearningAgent:
         f_mar.close()
 
         ter = []
-        with open('total_episode_reward.txt') as f_ter:
+        with open('total_episode_reward1.txt') as f_ter:
             for line in f_ter:
                 elems = line.strip()
                 ter.append(float(elems))
 
         mar = []
-        with open('moving_average_reward.txt') as f_mar:
+        with open('moving_average_reward1.txt') as f_mar:
             for line in f_mar:
                 elems = line.strip()
                 mar.append(float(elems))
@@ -272,7 +266,7 @@ class DeepQLearningAgent:
         f_loss.close()
 
         loss = []
-        with open('loss_function.txt') as fr:
+        with open('loss_function1.txt') as fr:
             for line in fr:
                 elems = line.strip()
                 loss.append(float(elems))
