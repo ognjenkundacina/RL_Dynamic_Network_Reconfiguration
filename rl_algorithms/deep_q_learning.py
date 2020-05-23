@@ -111,9 +111,9 @@ class DeepQLearningAgent:
 
     def train(self, df_train, n_episodes):
         #self.policy_net.load_state_dict(torch.load("policy_net"))
-        f_loss = open("loss_function1.txt", "w")
-        f_ter = open("total_episode_reward1.txt", "w")
-        f_mar = open("moving_average_reward1.txt", "w")
+        f_loss = open("loss_function.txt", "w")
+        f_ter = open("total_episode_reward.txt", "w")
+        f_mar = open("moving_average_reward.txt", "w")
 
         self.epsilon = 0.99
         self.reward_moving_average = 0
@@ -241,13 +241,13 @@ class DeepQLearningAgent:
         f_mar.close()
 
         ter = []
-        with open('total_episode_reward1.txt') as f_ter:
+        with open('total_episode_reward.txt') as f_ter:
             for line in f_ter:
                 elems = line.strip()
                 ter.append(float(elems))
 
         mar = []
-        with open('moving_average_reward1.txt') as f_mar:
+        with open('moving_average_reward.txt') as f_mar:
             for line in f_mar:
                 elems = line.strip()
                 mar.append(float(elems))
@@ -266,7 +266,7 @@ class DeepQLearningAgent:
         f_loss.close()
 
         loss = []
-        with open('loss_function1.txt') as fr:
+        with open('loss_function.txt') as fr:
             for line in fr:
                 elems = line.strip()
                 loss.append(float(elems))
