@@ -41,13 +41,13 @@ class ReplayMemory(object):
 class DQN(nn.Module):
     def __init__(self, input_size, output_size):
         super(DQN, self).__init__()
-        self.fc1 = nn.Linear(input_size, 1024)
-        self.fc2 = nn.Linear(1024, 1024)
-        self.fc3 = nn.Linear(1024, 1024)
-        self.fc3_bn = nn.BatchNorm1d(1024)
-        self.fc4 = nn.Linear(1024, 1024)
+        self.fc1 = nn.Linear(input_size, 256)
+        self.fc2 = nn.Linear(256, 256)
+        self.fc3 = nn.Linear(256, 256)
+        self.fc3_bn = nn.BatchNorm1d(256)
+        self.fc4 = nn.Linear(256, 256)
         #self.fc5 = nn.Linear(64, 64)
-        self.fc6 = nn.Linear(1024, output_size)
+        self.fc6 = nn.Linear(256, output_size)
         #print(output_size)
 
     def forward(self, x):
@@ -119,7 +119,7 @@ class DeepQLearningAgent:
         self.reward_moving_average = 0
 
         a = 0.99
-        b = 0.2
+        b = 0.1
         n_end = (int)(0.8 * n_episodes)
         k = 1.234375E-10
         l = 0.00001975
@@ -149,7 +149,10 @@ class DeepQLearningAgent:
                 self.epsilon -= delta
 
             if (i_episode == n_end):
-                self.epsilon = 0.2
+                self.epsilon = 0.1
+
+            #if (i_episode == 47000):
+                #self.epsilon = 0
 
             #if (i_episode == n_end):
                 #self.epsilon = 0.01
@@ -164,17 +167,17 @@ class DeepQLearningAgent:
 
             #daily_consumption_percents_per_feeder ima 72 clana. Za svaki od 24 trenutka idu 3 scaling faktora, za svaki od feedera
             #i to prva tri clana liste odgovaraju prvom trenutku, pa sljedeca tri drugom...
-            #daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
+            daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
 
             #ispod za veliku semu
-            daily_consumption_percents_per_feeder = row_list[1 : 4*NUM_TIMESTEPS + 1]
+            #daily_consumption_percents_per_feeder = row_list[1 : 4*NUM_TIMESTEPS + 1]
             
             #x = random.choice((-1, 1))
             #96 zbog 4x24
-            #for zz in range(72):
-                #daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
-                #if daily_consumption_percents_per_feeder[zz] < 0.0:
-                    #daily_consumption_percents_per_feeder[zz] = 0
+            for zz in range(72):
+                daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
+                if daily_consumption_percents_per_feeder[zz] < 0.0:
+                    daily_consumption_percents_per_feeder[zz] = 0
 
             state = self.environment.reset(daily_consumption_percents_per_feeder)
             #print ('Initial losses: ', self.environment.power_flow.get_losses())
@@ -204,7 +207,7 @@ class DeepQLearningAgent:
                 self.optimize_model()
             
             if (i_episode == 0):
-                self.reward_moving_average = total_episode_reward
+                self.reward_moving_average = -1.2
             else:
                 self.reward_moving_average = 0.99 * self.reward_moving_average + 0.01 * total_episode_reward
             #total_episode_rewards.append(total_episode_reward)
@@ -271,17 +274,10 @@ class DeepQLearningAgent:
                 elems = line.strip()
                 loss.append(float(elems))
 
-        #x_axis_loss = [1 + j for j in range(len(self.loss_list))]
-        #plt.plot(x_axis_loss, self.loss_list, color="red")
-        #plt.xlabel('Iteration') 
-        #plt.ylabel('DQN Loss') 
-        #plt.savefig("loss.png")
-        #plt.show()
-
         x_axis_loss_txt = [1 + j for j in range(len(loss))]
         plt.plot(x_axis_loss_txt, loss, color="red")
         plt.xlabel('Iteration') 
-        plt.ylabel('Loss function') 
+        plt.ylabel('DQN Loss') 
         plt.savefig("loss_txt.png")
         plt.show()
 
@@ -298,10 +294,10 @@ class DeepQLearningAgent:
 
             #daily_consumption_percents_per_feeder ima 72 clana. Za svaki od 24 trenutka idu 3 scaling faktora, za svaki od feedera
             #i to prva tri clana liste odgovaraju prvom trenutku, pa sljedeca tri drugom...
-            #daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
+            daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
 
             #ispod za veliku semu
-            daily_consumption_percents_per_feeder = row_list[1 : 4*NUM_TIMESTEPS + 1]
+            #daily_consumption_percents_per_feeder = row_list[1 : 4*NUM_TIMESTEPS + 1]
 
             state = self.environment.reset(daily_consumption_percents_per_feeder)
             #print ('Initial losses: ', self.environment.power_flow.get_losses())
@@ -318,8 +314,8 @@ class DeepQLearningAgent:
                     print ("Warning: agent.test: action > self.n_actions")
                 
                 next_state, reward, done = self.environment.step(action)
-                #print("Open switches: ", radial_switch_combinations[action])
-                print("Open switches: ", radial_switch_combinations_reduced_big_scheme[action]) 
+                print("Open switches: ", radial_switch_combinations[action])
+                #print("Open switches: ", radial_switch_combinations_reduced_big_scheme[action]) 
                 print ('Current losses: ', self.environment.power_flow.get_losses())
                     
                 total_episode_reward += reward
