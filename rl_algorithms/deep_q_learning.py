@@ -41,13 +41,13 @@ class ReplayMemory(object):
 class DQN(nn.Module):
     def __init__(self, input_size, output_size):
         super(DQN, self).__init__()
-        self.fc1 = nn.Linear(input_size, 256)
-        self.fc2 = nn.Linear(256, 256)
-        self.fc3 = nn.Linear(256, 256)
-        self.fc3_bn = nn.BatchNorm1d(256)
-        self.fc4 = nn.Linear(256, 256)
+        self.fc1 = nn.Linear(input_size, 1024)
+        self.fc2 = nn.Linear(1024, 1024)
+        self.fc3 = nn.Linear(1024, 1024)
+        self.fc3_bn = nn.BatchNorm1d(1024)
+        self.fc4 = nn.Linear(1024, 1024)
         #self.fc5 = nn.Linear(64, 64)
-        self.fc6 = nn.Linear(256, output_size)
+        self.fc6 = nn.Linear(1024, output_size)
         #print(output_size)
 
     def forward(self, x):
@@ -167,17 +167,17 @@ class DeepQLearningAgent:
 
             #daily_consumption_percents_per_feeder ima 72 clana. Za svaki od 24 trenutka idu 3 scaling faktora, za svaki od feedera
             #i to prva tri clana liste odgovaraju prvom trenutku, pa sljedeca tri drugom...
-            daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
+            #daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
 
             #ispod za veliku semu
-            #daily_consumption_percents_per_feeder = row_list[1 : 4*NUM_TIMESTEPS + 1]
+            daily_consumption_percents_per_feeder = row_list[1 : 4*NUM_TIMESTEPS + 1]
             
             #x = random.choice((-1, 1))
             #96 zbog 4x24
-            for zz in range(72):
-                daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
-                if daily_consumption_percents_per_feeder[zz] < 0.0:
-                    daily_consumption_percents_per_feeder[zz] = 0
+            #for zz in range(72):
+                #daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
+                #if daily_consumption_percents_per_feeder[zz] < 0.0:
+                    #daily_consumption_percents_per_feeder[zz] = 0
 
             state = self.environment.reset(daily_consumption_percents_per_feeder)
             #print ('Initial losses: ', self.environment.power_flow.get_losses())
@@ -243,43 +243,43 @@ class DeepQLearningAgent:
             f_mar.write(str(mar_list[i]) + "\n")
         f_mar.close()
 
-        ter = []
-        with open('total_episode_reward.txt') as f_ter:
-            for line in f_ter:
-                elems = line.strip()
-                ter.append(float(elems))
+        #ter = []
+        #with open('total_episode_reward.txt') as f_ter:
+            #for line in f_ter:
+                #elems = line.strip()
+                #ter.append(float(elems))
 
-        mar = []
-        with open('moving_average_reward.txt') as f_mar:
-            for line in f_mar:
-                elems = line.strip()
-                mar.append(float(elems))
+        #mar = []
+        #with open('moving_average_reward.txt') as f_mar:
+            #for line in f_mar:
+                #elems = line.strip()
+                #mar.append(float(elems))
 
-        x_axis = [1 + j for j in range(len(ter))]
-        plt.plot(x_axis, ter, color="lightblue")
-        plt.plot(x_axis, mar, color="blue")
-        plt.xlabel('Episode number') 
-        plt.ylabel('Total reward') 
-        plt.savefig("total_rewards.png")
-        plt.show()
+        #x_axis = [1 + j for j in range(len(ter))]
+        #plt.plot(x_axis, ter, color="lightblue")
+        #plt.plot(x_axis, mar, color="blue")
+        #plt.xlabel('Episode number') 
+        #plt.ylabel('Total reward') 
+        #plt.savefig("total_rewards.png")
+        #plt.show()
 
         #loss
         for i in range (len(self.loss_list)):
             f_loss.write(str(self.loss_list[i]) + "\n")
         f_loss.close()
 
-        loss = []
-        with open('loss_function.txt') as fr:
-            for line in fr:
-                elems = line.strip()
-                loss.append(float(elems))
+        #loss = []
+        #with open('loss_function.txt') as fr:
+            #for line in fr:
+                #elems = line.strip()
+                #loss.append(float(elems))
 
-        x_axis_loss_txt = [1 + j for j in range(len(loss))]
-        plt.plot(x_axis_loss_txt, loss, color="red")
-        plt.xlabel('Iteration') 
-        plt.ylabel('DQN Loss') 
-        plt.savefig("loss_txt.png")
-        plt.show()
+        #x_axis_loss_txt = [1 + j for j in range(len(loss))]
+        #plt.plot(x_axis_loss_txt, loss, color="red")
+        #plt.xlabel('Iteration') 
+        #plt.ylabel('DQN Loss') 
+        #plt.savefig("loss_txt.png")
+        #plt.show()
 
 
     def test(self, df_test):
@@ -294,10 +294,10 @@ class DeepQLearningAgent:
 
             #daily_consumption_percents_per_feeder ima 72 clana. Za svaki od 24 trenutka idu 3 scaling faktora, za svaki od feedera
             #i to prva tri clana liste odgovaraju prvom trenutku, pa sljedeca tri drugom...
-            daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
+            #daily_consumption_percents_per_feeder = row_list[1 : 3*NUM_TIMESTEPS + 1]
 
             #ispod za veliku semu
-            #daily_consumption_percents_per_feeder = row_list[1 : 4*NUM_TIMESTEPS + 1]
+            daily_consumption_percents_per_feeder = row_list[1 : 4*NUM_TIMESTEPS + 1]
 
             state = self.environment.reset(daily_consumption_percents_per_feeder)
             #print ('Initial losses: ', self.environment.power_flow.get_losses())
@@ -314,8 +314,8 @@ class DeepQLearningAgent:
                     print ("Warning: agent.test: action > self.n_actions")
                 
                 next_state, reward, done = self.environment.step(action)
-                print("Open switches: ", radial_switch_combinations[action])
-                #print("Open switches: ", radial_switch_combinations_reduced_big_scheme[action]) 
+                #print("Open switches: ", radial_switch_combinations[action])
+                print("Open switches: ", radial_switch_combinations_reduced_big_scheme[action]) 
                 print ('Current losses: ', self.environment.power_flow.get_losses())
                     
                 total_episode_reward += reward

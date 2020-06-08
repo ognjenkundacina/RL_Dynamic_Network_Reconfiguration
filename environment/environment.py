@@ -24,9 +24,9 @@ class Environment(gym.Env):
 
         self.state_space_dims = len(self.power_flow.get_switches_apparent_power()) + 1
 
-        self.radial_switch_combinations = radial_switch_combinations
+        #self.radial_switch_combinations = radial_switch_combinations
         #ipak je u config-u, ako hoces izmeni
-        #self.radial_switch_combinations = radial_switch_combinations_reduced_big_scheme
+        self.radial_switch_combinations = radial_switch_combinations_reduced_big_scheme
 
         self.n_actions = len(self.radial_switch_combinations)
         self.n_consumers = self.network_manager.get_load_count()
@@ -46,17 +46,17 @@ class Environment(gym.Env):
         self.switch_names = self.network_manager.get_all_switch_names()
         self.n_switches = len(self.network_manager.get_all_switch_names())
         # indeks prekidaca, pri cemo indeksiranje pocinje od 1
-        self.switch_indices = [i for i in range(1, self.n_switches + 1)]
+        #self.switch_indices = [i for i in range(1, self.n_switches + 1)]
 
         #ispod za veliku semu
-        #self.switch_indices = [1, 50, 97, 144, 191, 238, 253, 302, 349, 396, 443, 490, 505, 554, 601, 648, 695, 742, 757, 806, 853, 900, 947, 994, 1009, 1010, 1011, 1012, 1013, 1014, 1015]
+        self.switch_indices = [1, 50, 97, 144, 191, 238, 253, 302, 349, 396, 443, 490, 505, 554, 601, 648, 695, 742, 757, 806, 853, 900, 947, 994, 1009, 1010, 1011, 1012, 1013, 1014, 1015]
 
         self.switch_names_by_index = dict(zip(self.switch_indices, self.switch_names))
         
     def _update_state(self, action):
         
-        self._update_switch_statuses(action)
-        #self._update_switch_statuses_big_scheme(action)
+        #self._update_switch_statuses(action)
+        self._update_switch_statuses_big_scheme(action)
 
         #self._update_available_actions(action) #todo implement - ovo nam ne treba kad nemamo ogranicenje Nsw
         self.power_flow.calculate_power_flow()
@@ -231,10 +231,10 @@ class Environment(gym.Env):
         #self.power_flow.get_losses() daje gubitke u kW, pa odmah imamo i kWh
         reward -= self.power_flow.get_losses() * 0.065625
  
-        reward -= self.switching_action_cost * self.get_number_of_switch_manipulations(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
+        #reward -= self.switching_action_cost * self.get_number_of_switch_manipulations(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
 
         #ispod za veliku semu
-        #reward -= self.switching_action_cost * self.get_number_of_switch_manipulations_big_scheme(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
+        reward -= self.switching_action_cost * self.get_number_of_switch_manipulations_big_scheme(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
 
         #zbog numerickih pogodnost je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
         reward /= 1000.0
@@ -298,10 +298,10 @@ class Environment(gym.Env):
             #self.used_switches[i] = 0
 
         #self.consumption_percents_per_feeder je lista koja sadrzi 24 liste koje za trenutka sadrze 3 scaling faktora, po jedan za svaki od feedera
-        self.consumption_percents_per_feeder = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
+        #self.consumption_percents_per_feeder = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
 
         #za veliku semu ide ovo ispod
-        #self.consumption_percents_per_feeder_big_scheme = [daily_consumption_percents_per_feeder[i:i+4] for i in range(0, len(daily_consumption_percents_per_feeder), 4)]
+        self.consumption_percents_per_feeder_big_scheme = [daily_consumption_percents_per_feeder[i:i+4] for i in range(0, len(daily_consumption_percents_per_feeder), 4)]
 
         self.set_load_scaling_for_timestep()
         self.power_flow.calculate_power_flow()
@@ -355,12 +355,12 @@ class Environment(gym.Env):
         if (self.timestep > NUM_TIMESTEPS):  
             print('WARNING: environment.py; set_load_scaling_for_timestep; self.timestep greater than expected')
 
-        current_consumption_percents_per_feeder = self.consumption_percents_per_feeder[self.timestep]  
-        current_consumption_percents_per_node = self.distribute_feeder_consumptions(current_consumption_percents_per_feeder)
+        #current_consumption_percents_per_feeder = self.consumption_percents_per_feeder[self.timestep]  
+        #current_consumption_percents_per_node = self.distribute_feeder_consumptions(current_consumption_percents_per_feeder)
 
         #ispod za veliku semu
-        #current_consumption_percents_per_feeder = self.consumption_percents_per_feeder_big_scheme[self.timestep]
-        #current_consumption_percents_per_node = self.distribute_feeder_consumptions_big_scheme(current_consumption_percents_per_feeder)
+        current_consumption_percents_per_feeder = self.consumption_percents_per_feeder_big_scheme[self.timestep]
+        current_consumption_percents_per_node = self.distribute_feeder_consumptions_big_scheme(current_consumption_percents_per_feeder)
 
         self.network_manager.set_load_scaling(current_consumption_percents_per_node)
 
