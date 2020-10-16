@@ -10,6 +10,8 @@ from config import *
 import copy
 import json
 import matplotlib._color_data as mcd
+from matplotlib.ticker import ScalarFormatter
+import ast
 
 class Environment(gym.Env):
     
@@ -26,7 +28,10 @@ class Environment(gym.Env):
 
         #self.radial_switch_combinations = radial_switch_combinations
         #ipak je u config-u, ako hoces izmeni
-        self.radial_switch_combinations = radial_switch_combinations_reduced_big_scheme
+        #self.radial_switch_combinations = radial_switch_combinations_reduced_big_scheme
+
+        #ieee33
+        self.radial_switch_combinations = radial_switch_combinations_ieee33
 
         self.n_actions = len(self.radial_switch_combinations)
         self.n_consumers = self.network_manager.get_load_count()
@@ -45,18 +50,19 @@ class Environment(gym.Env):
 
         self.switch_names = self.network_manager.get_all_switch_names()
         self.n_switches = len(self.network_manager.get_all_switch_names())
-        # indeks prekidaca, pri cemo indeksiranje pocinje od 1
-        #self.switch_indices = [i for i in range(1, self.n_switches + 1)]
+        # indeks prekidaca, pri cemu indeksiranje pocinje od 1
+        self.switch_indices = [i for i in range(1, self.n_switches + 1)]
+        #print(self.switch_indices)
 
         #ispod za veliku semu
-        self.switch_indices = [1, 50, 97, 144, 191, 238, 253, 302, 349, 396, 443, 490, 505, 554, 601, 648, 695, 742, 757, 806, 853, 900, 947, 994, 1009, 1010, 1011, 1012, 1013, 1014, 1015]
+        #self.switch_indices = [1, 50, 97, 144, 191, 238, 253, 302, 349, 396, 443, 490, 505, 554, 601, 648, 695, 742, 757, 806, 853, 900, 947, 994, 1009, 1010, 1011, 1012, 1013, 1014, 1015]
 
         self.switch_names_by_index = dict(zip(self.switch_indices, self.switch_names))
         
     def _update_state(self, action):
         
-        #self._update_switch_statuses(action)
-        self._update_switch_statuses_big_scheme(action)
+        self._update_switch_statuses(action)
+        #self._update_switch_statuses_big_scheme(action)
 
         #self._update_available_actions(action) #todo implement - ovo nam ne treba kad nemamo ogranicenje Nsw
         self.power_flow.calculate_power_flow()
@@ -234,9 +240,12 @@ class Environment(gym.Env):
         #reward -= self.switching_action_cost * self.get_number_of_switch_manipulations(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
 
         #ispod za veliku semu
-        reward -= self.switching_action_cost * self.get_number_of_switch_manipulations_big_scheme(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
+        #reward -= self.switching_action_cost * self.get_number_of_switch_manipulations_big_scheme(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
 
-        #zbog numerickih pogodnost je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
+        #ieee33
+        reward -= self.switching_action_cost * self.get_number_of_switch_manipulations_ieee33(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
+
+        #zbog numerickih pogodnosti je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
         reward /= 1000.0
         return reward
 
@@ -250,6 +259,26 @@ class Environment(gym.Env):
             num_of_switch_manipulations = num_of_switch_manipulations - 2
 
         if (previous_action[2] == action[0] or previous_action[2] == action[1] or previous_action[2] == action[2]):
+            num_of_switch_manipulations = num_of_switch_manipulations - 2
+        
+        return num_of_switch_manipulations
+
+    def get_number_of_switch_manipulations_ieee33(self, previous_action, action):
+        num_of_switch_manipulations = 10
+
+        if (previous_action[0] == action[0] or previous_action[0] == action[1] or previous_action[0] == action[2] or previous_action[0] == action[3] or previous_action[0] == action[4]):
+            num_of_switch_manipulations = num_of_switch_manipulations - 2
+
+        if (previous_action[1] == action[0] or previous_action[1] == action[1] or previous_action[1] == action[2] or previous_action[1] == action[3] or previous_action[1] == action[4]):
+            num_of_switch_manipulations = num_of_switch_manipulations - 2
+
+        if (previous_action[2] == action[0] or previous_action[2] == action[1] or previous_action[2] == action[2] or previous_action[2] == action[3] or previous_action[2] == action[4]):
+            num_of_switch_manipulations = num_of_switch_manipulations - 2
+
+        if (previous_action[3] == action[0] or previous_action[3] == action[1] or previous_action[3] == action[2] or previous_action[3] == action[3] or previous_action[3] == action[4]):
+            num_of_switch_manipulations = num_of_switch_manipulations - 2
+
+        if (previous_action[4] == action[0] or previous_action[4] == action[1] or previous_action[4] == action[2] or previous_action[4] == action[3] or previous_action[4] == action[4]):
             num_of_switch_manipulations = num_of_switch_manipulations - 2
         
         return num_of_switch_manipulations
@@ -301,7 +330,10 @@ class Environment(gym.Env):
         #self.consumption_percents_per_feeder = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
 
         #za veliku semu ide ovo ispod
-        self.consumption_percents_per_feeder_big_scheme = [daily_consumption_percents_per_feeder[i:i+4] for i in range(0, len(daily_consumption_percents_per_feeder), 4)]
+        #self.consumption_percents_per_feeder_big_scheme = [daily_consumption_percents_per_feeder[i:i+4] for i in range(0, len(daily_consumption_percents_per_feeder), 4)]
+
+        #ieee33 sema
+        self.consumption_percents_per_feeder_ieee33 = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
 
         self.set_load_scaling_for_timestep()
         self.power_flow.calculate_power_flow()
@@ -333,6 +365,45 @@ class Environment(gym.Env):
         current_consumption_percents_per_node[9] = current_consumption_percents_per_feeder[2]
         current_consumption_percents_per_node[10] = current_consumption_percents_per_feeder[2]
         return current_consumption_percents_per_node
+    
+    def distribute_feeder_consumptions_ieee33(self, current_consumption_percents_per_feeder):
+        current_consumption_percents_per_node = [0.0 for i in range(self.n_consumers)]
+        #print(self.n_consumers)
+        current_consumption_percents_per_node[0] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[1] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[2] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[3] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[4] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[5] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[6] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[7] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[8] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[9] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[10] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[11] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[12] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[13] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[14] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[15] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[16] = current_consumption_percents_per_feeder[1]
+        current_consumption_percents_per_node[17] = current_consumption_percents_per_feeder[2]
+        current_consumption_percents_per_node[18] = current_consumption_percents_per_feeder[2]
+        current_consumption_percents_per_node[19] = current_consumption_percents_per_feeder[2]
+        current_consumption_percents_per_node[20] = current_consumption_percents_per_feeder[2]
+        current_consumption_percents_per_node[21] = current_consumption_percents_per_feeder[2]
+        current_consumption_percents_per_node[22] = current_consumption_percents_per_feeder[2]
+        current_consumption_percents_per_node[23] = current_consumption_percents_per_feeder[2]
+        current_consumption_percents_per_node[24] = current_consumption_percents_per_feeder[0]
+        current_consumption_percents_per_node[25] = current_consumption_percents_per_feeder[0]
+        current_consumption_percents_per_node[26] = current_consumption_percents_per_feeder[0]
+        current_consumption_percents_per_node[27] = current_consumption_percents_per_feeder[0]
+        current_consumption_percents_per_node[28] = current_consumption_percents_per_feeder[0]
+        current_consumption_percents_per_node[29] = current_consumption_percents_per_feeder[0]
+        current_consumption_percents_per_node[30] = current_consumption_percents_per_feeder[0]
+        current_consumption_percents_per_node[31] = current_consumption_percents_per_feeder[0]
+        #ima 32 potrosacka cvora, srednji fider skaliramo sa drugim dijagramom iz rada
+        #dva mala ogranka sa trecim, a poslednji ogranak sto ide od sredine centralnog fidera sa prvim
+        return current_consumption_percents_per_node
 
     def distribute_feeder_consumptions_big_scheme(self, current_consumption_percents_per_feeder):
         current_consumption_percents_per_node = [0.0 for i in range(self.n_consumers)]
@@ -359,8 +430,12 @@ class Environment(gym.Env):
         #current_consumption_percents_per_node = self.distribute_feeder_consumptions(current_consumption_percents_per_feeder)
 
         #ispod za veliku semu
-        current_consumption_percents_per_feeder = self.consumption_percents_per_feeder_big_scheme[self.timestep]
-        current_consumption_percents_per_node = self.distribute_feeder_consumptions_big_scheme(current_consumption_percents_per_feeder)
+        #current_consumption_percents_per_feeder = self.consumption_percents_per_feeder_big_scheme[self.timestep]
+        #current_consumption_percents_per_node = self.distribute_feeder_consumptions_big_scheme(current_consumption_percents_per_feeder)
+
+        #ieee33 sema
+        current_consumption_percents_per_feeder = self.consumption_percents_per_feeder_ieee33[self.timestep]
+        current_consumption_percents_per_node = self.distribute_feeder_consumptions_ieee33(current_consumption_percents_per_feeder)
 
         self.network_manager.set_load_scaling(current_consumption_percents_per_node)
 
@@ -576,6 +651,72 @@ class Environment(gym.Env):
         self.network_manager.close_switch('Line.Sw12')
         self.network_manager.close_switch('Line.Sw13')
         self.network_manager.close_switch('Line.Sw14')
+    
+    def closing_all_switches_ieee33(self):
+        self.network_manager.close_switch('Line.Sw1')
+        self.network_manager.close_switch('Line.Sw2')
+        self.network_manager.close_switch('Line.Sw3')
+        self.network_manager.close_switch('Line.Sw4')
+        self.network_manager.close_switch('Line.Sw5')
+        self.network_manager.close_switch('Line.Sw6')
+        self.network_manager.close_switch('Line.Sw7')
+        self.network_manager.close_switch('Line.Sw8')
+        self.network_manager.close_switch('Line.Sw9')
+        self.network_manager.close_switch('Line.Sw10')
+        self.network_manager.close_switch('Line.Sw11')
+        self.network_manager.close_switch('Line.Sw12')
+        self.network_manager.close_switch('Line.Sw13')
+        self.network_manager.close_switch('Line.Sw14')
+        self.network_manager.close_switch('Line.Sw15')
+        self.network_manager.close_switch('Line.Sw16')
+        self.network_manager.close_switch('Line.Sw17')
+        self.network_manager.close_switch('Line.Sw18')
+        self.network_manager.close_switch('Line.Sw19')
+        self.network_manager.close_switch('Line.Sw20')
+
+    def finding_radial_configurations_ieee33(self):
+        Dict = {}
+        file1 = open("radijalneKonfiguracije.txt", "r")
+        br = 0
+        while True: 
+            #count += 1
+            # Get next line from file 
+            line = file1.readline()
+            if not line: 
+                break
+            # if line is empty 
+            # end of file is reached
+            #print(line)
+            self.closing_all_switches_ieee33()
+            switch_list = ast.literal_eval(line)
+            #print(switch_list[0])
+            #print(switch_list[1])
+            #print(switch_list[2])
+            #print(switch_list[3])
+            #print(switch_list[4])
+            self.network_manager.open_switch('Line.Sw'+ str(switch_list[0]))
+            self.network_manager.open_switch('Line.Sw'+ str(switch_list[1]))
+            self.network_manager.open_switch('Line.Sw'+ str(switch_list[2]))
+            self.network_manager.open_switch('Line.Sw'+ str(switch_list[3]))
+            self.network_manager.open_switch('Line.Sw'+ str(switch_list[4]))
+            self.power_flow.calculate_power_flow()
+            if (self.network_manager.is_system_radial() and self.network_manager.are_all_cosumers_fed()):
+                key = br
+                Dict.setdefault(key, [])
+                Dict[key].append(switch_list[0])
+                Dict[key].append(switch_list[1])
+                Dict[key].append(switch_list[2])
+                Dict[key].append(switch_list[3])
+                Dict[key].append(switch_list[4])
+                #print(Dict[key])
+                br += 1
+
+        with open('all_radial_configurations.txt', 'w') as file:
+            #file.write(json.dumps(Dict))
+            for key, value in Dict.items():
+                file.write( str(key) + ': ' + str(value) + ',\n' )
+        file.close()
+        print(len(Dict))
 
     def closing_all_switches_big_scheme(self):
         self.network_manager.close_switch('Line.Sw1')
@@ -804,6 +945,48 @@ class Environment(gym.Env):
         file.close()
         self.network_manager.set_load_scaling(scaling_factors)
 
+    def reading_from_load_file_ieee33(self, k):
+        file = open("loads.txt", "r")
+        scaling_factors = [0.0 for i in range(self.n_consumers)]
+        #print(self.n_consumers)
+        ceo_niz = file.readlines()
+        ceo_niz = [float(z) for z in ceo_niz]
+        scaling_factors[0] = ceo_niz[k+1]
+        scaling_factors[1] = ceo_niz[k+1]
+        scaling_factors[2] = ceo_niz[k+1]
+        scaling_factors[3] = ceo_niz[k+1]
+        scaling_factors[4] = ceo_niz[k+1]
+        scaling_factors[5] = ceo_niz[k+1]
+        scaling_factors[6] = ceo_niz[k+1]
+        scaling_factors[7] = ceo_niz[k+1]
+        scaling_factors[8] = ceo_niz[k+1]
+        scaling_factors[9] = ceo_niz[k+1]
+        scaling_factors[10] = ceo_niz[k+1]
+        scaling_factors[11] = ceo_niz[k+1]
+        scaling_factors[12] = ceo_niz[k+1]
+        scaling_factors[13] = ceo_niz[k+1]
+        scaling_factors[14] = ceo_niz[k+1]
+        scaling_factors[15] = ceo_niz[k+1]
+        scaling_factors[16] = ceo_niz[k+1]
+        scaling_factors[17] = ceo_niz[k+2]
+        scaling_factors[18] = ceo_niz[k+2]
+        scaling_factors[19] = ceo_niz[k+2]
+        scaling_factors[20] = ceo_niz[k+2]
+        scaling_factors[21] = ceo_niz[k+2]
+        scaling_factors[22] = ceo_niz[k+2]
+        scaling_factors[23] = ceo_niz[k+2]
+        scaling_factors[24] = ceo_niz[k]
+        scaling_factors[25] = ceo_niz[k]
+        scaling_factors[26] = ceo_niz[k]
+        scaling_factors[27] = ceo_niz[k]
+        scaling_factors[28] = ceo_niz[k]
+        scaling_factors[29] = ceo_niz[k]
+        scaling_factors[30] = ceo_niz[k]
+        scaling_factors[31] = ceo_niz[k]
+        #print(scaling_factors)
+        file.close()
+        self.network_manager.set_load_scaling(scaling_factors)
+
     def reading_from_load_file_big_scheme(self, k):
         file = open("new_loads_4_feeders.txt", "r")
         scaling_factors = [0.0 for i in range(self.n_consumers)]
@@ -833,204 +1016,144 @@ class Environment(gym.Env):
 
     def crtanje_krivih(self):
 
-        fig, axs = plt.subplots(3)
-        axs[1].set(ylabel='Load [MW]')
-        axs[2].set(xlabel='Hour [h]')
+        fig, axs = plt.subplots(1)
+        axs.set(ylabel='Opterećenje [MW]')
+        axs.set(xlabel='Sat [h]')
 
-        fig.suptitle('Dayly curves for consumers on feeders')
-        f = open("DaylyCurve1.txt", "r")
+        fig.suptitle('Dnevne krive opterećenja za potrošače na izvodu 3')
+        f = open("DaylyCurve3_original.txt", "r")
         ceo_niz1 = f.readlines()
-        ceo_niz1g = f.readlines()
-        ceo_niz1d = f.readlines()
-
+        #ceo_niz1g = f.readlines()
+        #ceo_niz1d = f.readlines()
         ceo_niz1 = [float(z1) for z1 in ceo_niz1]
-
         x_axis = [1 + j for j in range(24)]
         y_axis1 = ceo_niz1
-        axs[0].plot(x_axis, y_axis1, color = 'blue', label = 'Feeder 1')
-        axs[0].axis([1, 24 , 0, 1.4])
-        axs[0].legend(loc = 'upper left')
+        axs.plot(x_axis, y_axis1, color = 'darkgreen')
+
+        f1 = open("DaylyCurve3_t1.txt", "r")
+        ceo_niz1_t1 = f1.readlines()
+        ceo_niz1_t1 = [float(z1) for z1 in ceo_niz1_t1]
+        y_axis1_t1 = ceo_niz1_t1
+        axs.plot(x_axis, y_axis1_t1, color = 'lime')
+
+        f2 = open("DaylyCurve3_t2.txt", "r")
+        ceo_niz1_t2 = f2.readlines()
+        ceo_niz1_t2 = [float(z1) for z1 in ceo_niz1_t2]
+        y_axis1_t2 = ceo_niz1_t2
+        axs.plot(x_axis, y_axis1_t2, color = 'springgreen')
+
+        axs.plot(x_axis, y_axis1, color = 'darkgreen', label = 'Test primer 1')
+        axs.plot(x_axis, y_axis1_t1, color = 'lime', label = 'Test primer 2')
+        axs.plot(x_axis, y_axis1_t2, color = 'springgreen', label = 'Test primer 3')
+        axs.axis([1, 24 , 0, 1.4])
+        axs.legend(loc = 'upper left')
         #plt.axis([1, 24 , 0, 1.4])
-        axs[0].set_xticks([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]) 
-        axs[0].set_yticks([0, 0.2, 0.4, 0.6, 0.8 , 1.0, 1.2, 1.4])
+        axs.set_xticks([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]) 
+        axs.set_yticks([0, 0.2, 0.4, 0.6, 0.8 , 1.0, 1.2, 1.4])
         #line_1, = plt.plot(x_axis, y_axis1, label = 'Feeder1', color = 'darkblue')
         
+
+        f3 = open("DaylyCurve3_original.txt", "r")
+        ceo_niz1_o = f3.readlines()
+        ceo_niz1g_o = f3.readlines()
+        ceo_niz1d_o = f3.readlines()
+
+        ceo_niz1_o = [float(z1) for z1 in ceo_niz1_o]
         for j1 in range (24):
-            ceo_niz1[j1] += 0.3
-        y_axis1g = ceo_niz1
-        axs[0].plot(x_axis, y_axis1g, '--', color = 'lightblue')
+            ceo_niz1_o[j1] += 0.3
+        y_axis1g = ceo_niz1_o
+        axs.plot(x_axis, y_axis1g, '--', color = 'lightgreen')
         #line_1g, = plt.plot(x_axis, y_axis1g, '--', color = 'lightblue')
 
         for j2 in range (24):
-            ceo_niz1[j2] -= 0.6
-            if (ceo_niz1[j2] < 0):
-                ceo_niz1[j2] = 0
+            ceo_niz1_o[j2] -= 0.6
+            if (ceo_niz1_o[j2] < 0):
+                ceo_niz1_o[j2] = 0
 
-        y_axis1d = ceo_niz1
-        axs[0].plot(x_axis, y_axis1d, '--', color = 'lightblue')
+        y_axis1d = ceo_niz1_o
+        axs.plot(x_axis, y_axis1d, '--', color = 'lightgreen')
         #line_1d, = plt.plot(x_axis, y_axis1d, '--', color = 'lightblue')
+        f1.close()
+        f2.close()
+        f3.close()
         f.close()
-        axs[0].grid(True)
+        axs.grid(True)
         #axs[0].xticks(x_axis)
 
         ##################################################################
-        f = open("DaylyCurve2.txt", "r")
-        ceo_niz2 = f.readlines()
-        ceo_niz2g = f.readlines()
-        ceo_niz2d = f.readlines()
-
-        ceo_niz2 = [float(z2) for z2 in ceo_niz2]
-
-        #x_axis = [1 + j for j in range(24)]
-        y_axis2 = ceo_niz2
-        axs[1].plot(x_axis, y_axis2, color = 'magenta', label = 'Feeder 2')
-        axs[1].legend(loc = 'upper left')
-        axs[1].axis([1, 24 , 0, 1.4])
-        axs[1].set_xticks([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]) 
-        axs[1].set_yticks([0, 0.2, 0.4, 0.6, 0.8 , 1.0, 1.2, 1.4])
-        #line_2, = plt.plot(x_axis, y_axis2, label = 'Feeder2', color = 'magenta')
-        
-        for j3 in range (24):
-            ceo_niz2[j3] += 0.3
-        y_axis2g = ceo_niz2
-        axs[1].plot(x_axis, y_axis2g, '--', color = 'lightpink')
-        #line_2g, = plt.plot(x_axis, y_axis2g, '--', color = 'lightpink')
-
-        for j4 in range (24):
-            ceo_niz2[j4] -= 0.6
-            if (ceo_niz2[j4] < 0):
-                ceo_niz2[j4] = 0
-
-        y_axis2d = ceo_niz2
-        axs[1].plot(x_axis, y_axis2d, '--', color = 'lightpink')
-        #line_2d, = plt.plot(x_axis, y_axis2d, '--', color = 'lightpink')
-        f.close()
-        axs[1].grid(True)
-        #axs[0].xticks(np.arange(1, 25, 1))
-        #plt.yticks(np.arange(0, 1.4, 0.2))
-        #axs[1].xticks(x_axis)
-
-        ##################################################################
-        f = open("DaylyCurve3.txt", "r")
-        ceo_niz3 = f.readlines()
-        ceo_niz3g = f.readlines()
-        ceo_niz3d = f.readlines()
-
-        ceo_niz3 = [float(z3) for z3 in ceo_niz3]
-
-        #x_axis = [1 + j for j in range(24)]
-        y_axis3 = ceo_niz3
-        axs[2].plot(x_axis, y_axis3, color = 'darkgreen', label = 'Feeder 3')
-        axs[2].legend(loc = 'upper left')
-        axs[2].axis([1, 24 , 0, 1.4])
-        axs[2].set_xticks([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]) 
-        axs[2].set_yticks([0, 0.2, 0.4, 0.6, 0.8 , 1.0, 1.2, 1.4])
-        #line_3, = plt.plot(x_axis, y_axis3, label = 'Feeder3', color = 'darkgreen')
-        
-        for j5 in range (24):
-            ceo_niz3[j5] += 0.3
-        y_axis3g = ceo_niz3
-        axs[2].plot(x_axis, y_axis3g, '--', color = 'lightgreen')
-        #line_3g, = plt.plot(x_axis, y_axis3g, '--', color = 'lightgreen')
-
-        for j6 in range (24):
-            ceo_niz3[j6] -= 0.6
-            if (ceo_niz3[j6] < 0):
-                ceo_niz3[j6] = 0
-
-        y_axis3d = ceo_niz3
-        axs[2].plot(x_axis, y_axis3d, '--', color = 'lightgreen')
-        #line_3d, = plt.plot(x_axis, y_axis3d, '--', color = 'lightgreen')
-        f.close()
-        axs[2].grid(True)
-        #axs[2].xticks(x_axis)
-        
-        #####################################################################
-        
-        
-        
-        
-        
-        
-        
-
-        
-        
-        
-        #####################################################################
-        #plt.legend(handles = [axs])
-        #plt.grid(True)
-        #plt.xticks(x_axis)
-        
-        #plt.title('Dayly curves for consumers on feeders')
-        #plt.xlabel('Hour [h]') 
-        #plt.ylabel('Load [MW]') 
-        plt.savefig("daylycurve_vertical.png")
+        plt.savefig("fider3.png")
         plt.show()
 
     def checking_results(self):
 
         switch_combinations = {
-            0: [191, 490, 695, 1009, 1011, 1012, 1014],
-            1: [191, 238, 490, 695, 1009, 1012, 1014],
-            2: [191, 238, 490, 695, 1009, 1012, 1014],
-            3: [191, 238, 490, 695, 1009, 1012, 1014],
-            4: [191, 238, 490, 695, 1009, 1012, 1014],
-            5: [191, 947, 1009, 1011, 1012, 1014, 1015],
-            6: [191, 1009, 1011, 1012, 1013, 1014, 1015],
-            7: [191, 1009, 1011, 1012, 1013, 1014, 1015],
-            8: [191, 1009, 1011, 1012, 1013, 1014, 1015],
-            9: [191, 238, 490, 1009, 1012, 1013, 1014],
-            10: [1009, 1010, 1011, 1012, 1013, 1014, 1015],
-            11: [1009, 1010, 1011, 1012, 1013, 1014, 1015],
-            12: [1009, 1010, 1011, 1012, 1013, 1014, 1015],
-            13: [1009, 1010, 1011, 1012, 1013, 1014, 1015],
-            14: [191, 1009, 1011, 1012, 1013, 1014, 1015],
-            15: [490, 1009, 1010, 1012, 1013, 1014, 1015],
-            16: [238, 490, 947, 994, 1009, 1010, 1012],
-            17: [238, 490, 947, 994, 1009, 1010, 1012],
-            18: [238, 490, 947, 994, 1009, 1010, 1012],
-            19: [238, 947, 994, 1009, 1010, 1012, 1015],
-            20: [238, 947, 994, 1009, 1010, 1012, 1015],
-            21: [238, 742, 947, 1009, 1010, 1012, 1014],
-            22: [238, 742, 947, 1009, 1010, 1012, 1014],
-            23: [238, 490, 695, 1009, 1010, 1012, 1014]
+            0: [12, 13, 14],
+            1: [12, 13, 14],
+            2: [12, 13, 14],
+            3: [12, 13, 14],
+            4: [12, 13, 14],
+            5: [12, 13, 14],
+            6: [12, 13, 14],
+            7: [12, 13, 14],
+            8: [12, 13, 14],
+            9: [12, 13, 14],
+            10: [12, 13, 14],
+            11: [12, 13, 14],
+            12: [12, 13, 14],
+            13: [12, 13, 14],
+            14: [12, 13, 14],
+            15: [12, 13, 14],
+            16: [12, 13, 14],
+            17: [12, 13, 14],
+            18: [12, 13, 14],
+            19: [12, 13, 14],
+            20: [12, 13, 14],
+            21: [12, 13, 14],
+            22: [12, 13, 14],
+            23: [12, 13, 14]
         }
             
-        self.closing_all_switches_big_scheme()
+        self.closing_all_switches()
+        #self.closing_all_switches_big_scheme()
         moneyLossesTotal = 0
         actionLossesTotal = 0
         totalLosses = 0
         totalMoneyLoss = 0
-        sw1, sw2, sw3, sw4, sw5, sw6, sw7 = [1009, 1010, 1011, 1012, 1013, 1014, 1015]
+
+        sw1, sw2, sw3 = [12, 13, 14]
+        #sw1, sw2, sw3, sw4, sw5, sw6, sw7 = [1009, 1010, 1011, 1012, 1013, 1014, 1015]
         k = 0
-        f = open("Rezultati_velika_sema.txt", "a")
+        f = open("BezManipulacija_originalniPrimer.txt", "a")
 
         for i in range(24):
 
             self.network_manager.close_switch('Line.Sw'+str(sw1))
             self.network_manager.close_switch('Line.Sw'+str(sw2))
             self.network_manager.close_switch('Line.Sw'+str(sw3))
-            self.network_manager.close_switch('Line.Sw'+str(sw4))
-            self.network_manager.close_switch('Line.Sw'+str(sw5))
-            self.network_manager.close_switch('Line.Sw'+str(sw6))
-            self.network_manager.close_switch('Line.Sw'+str(sw7))
-            sw1, sw2, sw3, sw4, sw5, sw6, sw7 = switch_combinations[i]
+            #self.network_manager.close_switch('Line.Sw'+str(sw4))
+            #self.network_manager.close_switch('Line.Sw'+str(sw5))
+            #self.network_manager.close_switch('Line.Sw'+str(sw6))
+            #self.network_manager.close_switch('Line.Sw'+str(sw7))
+            #sw1, sw2, sw3, sw4, sw5, sw6, sw7 = switch_combinations[i]
+            sw1, sw2, sw3 = switch_combinations[i]
             self.network_manager.open_switch('Line.Sw'+str(sw1))
             self.network_manager.open_switch('Line.Sw'+str(sw2))
             self.network_manager.open_switch('Line.Sw'+str(sw3))
-            self.network_manager.open_switch('Line.Sw'+str(sw4))
-            self.network_manager.open_switch('Line.Sw'+str(sw5))
-            self.network_manager.open_switch('Line.Sw'+str(sw6))
-            self.network_manager.open_switch('Line.Sw'+str(sw7))
-            self.reading_from_load_file_big_scheme(k)
+            #self.network_manager.open_switch('Line.Sw'+str(sw4))
+            #self.network_manager.open_switch('Line.Sw'+str(sw5))
+            #self.network_manager.open_switch('Line.Sw'+str(sw6))
+            #self.network_manager.open_switch('Line.Sw'+str(sw7))
+            #self.reading_from_load_file_big_scheme(k)
+            self.reading_from_load_file(k)
             self.power_flow.calculate_power_flow()
             losses = self.power_flow.get_losses()
             moneyLosses = self.power_flow.get_losses() * 0.065625
             if (i == 0):
-                actionLosses = 1 * self.get_number_of_switch_manipulations_big_scheme([1009, 1010, 1011, 1012, 1013, 1014, 1015], switch_combinations[i])
+                #actionLosses = 1 * self.get_number_of_switch_manipulations_big_scheme([1009, 1010, 1011, 1012, 1013, 1014, 1015], switch_combinations[i])
+                actionLosses = 1 * self.get_number_of_switch_manipulations([12, 13, 14], switch_combinations[i])
             else:
-                actionLosses = 1 * self.get_number_of_switch_manipulations_big_scheme(switch_combinations[i - 1], switch_combinations[i])
+                #actionLosses = 1 * self.get_number_of_switch_manipulations_big_scheme(switch_combinations[i - 1], switch_combinations[i])
+                actionLosses = 1 * self.get_number_of_switch_manipulations(switch_combinations[i - 1], switch_combinations[i])
             moneyLossesTotal += moneyLosses
             actionLossesTotal += actionLosses
             totalLosses += losses
@@ -1048,20 +1171,21 @@ class Environment(gym.Env):
             f.write(json.dumps(sw2))
             f.write(", ")
             f.write(json.dumps(sw3))
-            f.write(", ")
-            f.write(json.dumps(sw4))
-            f.write(", ")
-            f.write(json.dumps(sw5))
-            f.write(", ")
-            f.write(json.dumps(sw6))
-            f.write(", ")
-            f.write(json.dumps(sw7))
+            #f.write(", ")
+            #f.write(json.dumps(sw4))
+            #f.write(", ")
+            #f.write(json.dumps(sw5))
+            #f.write(", ")
+            #f.write(json.dumps(sw6))
+            #f.write(", ")
+            #f.write(json.dumps(sw7))
             f.write("]")
             f.write("\n\n")
             losses = 0
             moneyLosses = 0
             actionLosses = 0
-            k += 4
+            #k += 4
+            k += 3
 
 
         f.write("Total losses: ")
@@ -1084,10 +1208,10 @@ class Environment(gym.Env):
     def checking_voltages(self):
 
         busVoltages = []
-        radial_combinations = [0 for l in range (66)]
+        radial_combinations = [0 for l in range (1321)]
         numbOfCustomersWithBadVoltage = 0
         swCombinationsWithBadVoltage = 0
-        sw1, sw2, sw3 = self.radial_switch_combinations[0]
+        sw1, sw2, sw3, sw4, sw5 = self.radial_switch_combinations[0]
         k = 0
         timestep = 0
         for i in range (24):
@@ -1095,23 +1219,27 @@ class Environment(gym.Env):
             k = 0
             f = open(str(i + 1) + ". trenutak.txt", "a")
 
-            for j in range (66):
+            for j in range (1321):
 
                 f.write(str(j) + ". kombinacija: ")
                 self.network_manager.close_switch('Line.Sw'+str(sw1))
                 self.network_manager.close_switch('Line.Sw'+str(sw2))
                 self.network_manager.close_switch('Line.Sw'+str(sw3))
-                sw1, sw2, sw3 = self.radial_switch_combinations[k]
+                self.network_manager.close_switch('Line.Sw'+str(sw4))
+                self.network_manager.close_switch('Line.Sw'+str(sw5))
+                sw1, sw2, sw3, sw4, sw5 = self.radial_switch_combinations[k]
                 self.network_manager.open_switch('Line.Sw'+str(sw1))
                 self.network_manager.open_switch('Line.Sw'+str(sw2))
                 self.network_manager.open_switch('Line.Sw'+str(sw3))
+                self.network_manager.open_switch('Line.Sw'+str(sw4))
+                self.network_manager.open_switch('Line.Sw'+str(sw5))
 
-                self.reading_from_load_file(timestep)
+                self.reading_from_load_file_ieee33(timestep)
                 self.power_flow.calculate_power_flow()
                 busVoltages = self.power_flow.get_bus_voltages()
                 #print(busVoltages)
 
-                for z in range (26):
+                for z in range (53):
                     if (busVoltages[z] < 0.95):
                         numbOfCustomersWithBadVoltage += 1
 
@@ -1125,7 +1253,7 @@ class Environment(gym.Env):
                 k += 1
 
             timestep += 3
-            f2 = open("Checking voltages results new 0.95.txt", "a")
+            f2 = open("Checking voltage results ieee33 0.95.txt", "a")
             f2.write(str(i + 1) + ". trenutak: ")
             f2.write(json.dumps(swCombinationsWithBadVoltage))
             f2.write("\n\n")
@@ -1137,7 +1265,7 @@ class Environment(gym.Env):
 
         counter = 0
         f2.write("[")
-        for b in range (66):
+        for b in range (1321):
             if (radial_combinations[b] > 23):
                 f2.write(json.dumps(b))
                 counter += 1
@@ -1146,8 +1274,8 @@ class Environment(gym.Env):
         f2.write(json.dumps(counter))
         f2.close()
 
-        f3 = open("Radial_comb2.txt", "w")
-        for a in range (66):
+        f3 = open("Radial_comb_reduced_ieee33.txt", "w")
+        for a in range (1321):
             f3.write(str(a) + ". kombinacija: ")
             f3.write(json.dumps(radial_combinations[a]))
             f3.write("\n")
@@ -1727,12 +1855,13 @@ class Environment(gym.Env):
     def checking_voltages_big_scheme(self):
 
         radial_switch_combinations = {}
-        f6 = open("radial_switch_combinations.txt", "r")
-        radial_switch_combinations = json.loads(f6.read())
-        f6.close()
+        #f6 = open("radial_switch_combinations.txt", "r")
+        #radial_switch_combinations = json.loads(f6.read())
+        radial_switch_combinations = radial_switch_combinations_reduced_big_scheme
+        #f6.close()
 
         busVoltages = []
-        radial_combinations = [0 for l in range (3567)]
+        radial_combinations = [0 for l in range (2555)]
         numbOfCustomersWithBadVoltage = 0
         swCombinationsWithBadVoltage = 0
         sw1, sw2, sw3, sw4, sw5, sw6, sw7 = [1009, 1010, 1011, 1012, 1013, 1014, 1015]
@@ -1768,7 +1897,7 @@ class Environment(gym.Env):
                 #print(busVoltages)
 
                 for z in range (1040):
-                    if (busVoltages[z] < 0.85):
+                    if (busVoltages[z] < 0.95):
                         numbOfCustomersWithBadVoltage += 1
                         break
 
@@ -1782,7 +1911,7 @@ class Environment(gym.Env):
                 k += 1
 
             timestep += 4
-            #f2 = open("Checking voltages results big scheme.txt", "a")
+            
             #f2.write(str(i + 1) + ". trenutak: ")
             #f2.write(json.dumps(swCombinationsWithBadVoltage))
             #f2.write("\n\n")
@@ -1793,32 +1922,33 @@ class Environment(gym.Env):
             swCombinationsWithBadVoltage = 0
 
         counter = 0
-        #f2.write("[")
-        #for b in range (3567):
-            #if (radial_combinations[b] > 23):
-                #f2.write(json.dumps(b))
-                #counter += 1
-                #f2.write(", ")
-        #f2.write("]\n")
-        #f2.write(json.dumps(counter))
-        #f2.close()
+        f2 = open("Checking voltages results big scheme_viseOd21.txt", "a")
+        f2.write("[")
+        for b in range (2555):
+            if (radial_combinations[b] > 21):
+                f2.write(json.dumps(b))
+                counter += 1
+                f2.write(", ")
+        f2.write("]\n")
+        f2.write(json.dumps(counter))
+        f2.close()
 
-        f3 = open("Radial_comb2_85.txt", "w")
-        for a in range (3567):
-            f3.write(str(a) + ": [")
-            f3.write(json.dumps(radial_combinations[a]))
-            f3.write("],\n")
-        f3.close()
+        #f3 = open("Radial_comb_reduced_big_scheme_95_23.txt", "w")
+        #for a in range (2555):
+            #f3.write(str(a) + ": [")
+            #f3.write(json.dumps(radial_combinations[a]))
+            #f3.write("],\n")
+        #f3.close()
 
     def redukovanje_broja_kombinacija_velika_sema(self):
 
         brojac = 0
         my_list = []
         radial_comb_reduced = {}
-        f = open("sw_comb.txt", "r")
+        f = open("Checking voltage results ieee33 0.95.txt", "r")
         my_list = json.loads(f.read())
         f.close()
-        for i in range (1012):
+        for i in range (1739):
             brojac += 1
             self.radial_switch_combinations.pop(my_list[i])
 
@@ -1826,7 +1956,7 @@ class Environment(gym.Env):
 
         j = 0
         radial_switch_combinations = {}
-        f1 = open("sw_comb_reduced.txt", "w")
+        f1 = open("sw_comb_reduced_ieee33.txt", "w")
         for key in self.radial_switch_combinations:
             radial_switch_combinations[j] = self.radial_switch_combinations[key]
             f1.write(json.dumps(j))
@@ -1838,7 +1968,190 @@ class Environment(gym.Env):
         f1.close()
 
 
+    def crtanje(self):
+
+        ter = []
+        with open('total_episode_reward.txt') as f_ter:
+            for line in f_ter:
+                elems = line.strip()
+                ter.append(float(elems))
+
+        mar = []
+        with open('moving_average_reward.txt') as f_mar:
+            for line in f_mar:
+                elems = line.strip()
+                mar.append(float(elems))
+
+        x_axis = [1 + j for j in range(len(ter))]
+        plt.plot(x_axis, ter, color="lightblue")
+        plt.plot(x_axis, mar, color="blue")
+        plt.xlabel('Episode number') 
+        plt.ylabel('Total reward') 
+        plt.savefig("total_rewards.png")
+        plt.show()
+
+        #loss
+        #for i in range (len(self.loss_list)):
+            #f_loss.write(str(self.loss_list[i]) + "\n")
+        #f_loss.close()
+
+        loss = []
+        with open('loss_function.txt') as fr:
+            for line in fr:
+                elems = line.strip()
+                loss.append(float(elems))
+
+        x_axis_loss_txt = [1 + j for j in range(len(loss))]
+        plt.plot(x_axis_loss_txt, loss, color="red")
+        plt.xlabel('Iteration') 
+        plt.ylabel('DQN Loss') 
+        plt.savefig("loss_txt.png")
+        plt.show()
+
+
+    def crtanje_loss_reward_vertical(self):
+
+        loss_usrednjeno = 0
+        loss_krajnje = [0 for p in range(60000)]
+        k = 0
+
+        fig, axs = plt.subplots(2)
+        axs[0].set(ylabel='Funkcija greške')
+        axs[0].set(xlabel=('Broj epizode ' + r'$(\times 10^3$)'))
+        #axs[0].set(xlabel='Episode number')
+        axs[1].set(ylabel='Nagrada')
+        axs[1].set(xlabel=('Broj epizode ' + r'$(\times 10^3$)'))
+        #axs[1].set(xlabel='Episode number')
+
+        loss = []
+        with open('loss_function.txt') as fr:
+            for line in fr:
+                elems = line.strip()
+                loss.append(float(elems))
+
+        print(len(loss))
+
+        for i in range (1439873):
+            if((i+1)%24 != 0):
+                loss_usrednjeno += loss[i]
+            else:
+                loss_krajnje[k] = loss_usrednjeno/24
+                loss_usrednjeno = 0
+                k += 1
+
+        print(k)
+
+        xfmt = ScalarFormatter()
+        xfmt.set_powerlimits((3,3))
+
+        x_axis = [1 + j for j in range(60000)]
+        y_axis1 = loss_krajnje
+        axs[0].plot(x_axis, y_axis1, color = 'red')
+        axs[0].axis([0, 60000, 0, 0.025])
+        axs[0].xaxis.set_major_formatter(xfmt)
+        #plt.setp(axs[0].get_xticklabels(), visible=False)
+        #axs[0].xaxis.set_major_formatter(xfmt)
+        #axs[0].ticklabel_format(axis='x', style='sci', useMathText = None)
+        #axs[0].legend(loc = 'upper left')
+        #plt.axis([1, 24 , 0, 1.4])
+        #axs[0].set_xticks([10000, 20000, 30000, 40000, 50000, 60000])
+        axs[0].xaxis.major.formatter._useMathText = True
+        axs[0].set_yticks([0, 0.005, 0.010, 0.015, 0.020, 0.025])
+        axs[0].plot(x_axis, y_axis1, color = 'red')
+        axs[0].grid(True)
+
+        ter = []
+        with open('total_episode_reward.txt') as f_ter:
+            for line in f_ter:
+                elems = line.strip()
+                ter.append(float(elems))
+
+        mar = []
+        with open('moving_average_reward.txt') as f_mar:
+            for line in f_mar:
+                elems = line.strip()
+                mar.append(float(elems))
+
+        y_axis2 = ter
+        y_axis3 = mar
+        axs[1].plot(x_axis, y_axis2, color = 'lightblue')
+        axs[1].axis([0, 60000 , -1.6, 0])
+        #axs[1].legend(loc = 'upper left')
+        axs[1].plot(x_axis, y_axis3, color = 'blue')
+        axs[1].axis([0, 60000 , -1.6, 0])
+        #axs[1].legend(loc = 'upper left')
+        #plt.axis([1, 24 , 0, 1.4])
+        #axs[1].set_xticks([0, 10000, 20000, 30000, 40000, 50000, 60000])
+        
+        axs[1].xaxis.set_major_formatter(xfmt)
+        axs[1].ticklabel_format(axis='x', style='sci', useMathText = None)
+        axs[1].set_yticks([-1.6, -1.2, -0.8, -0.4, 0])
+        #axs[1].set_yticks([-1.6, -1.2, -0.8, -0.4, 0])
+        
+        #axs[1].set_yticks([-1.6, -1.4, -1.2, -1.0, -0.8, -0.6, -0.4, -0.2, 0])
+        axs[1].plot(x_axis, y_axis2, color = 'lightblue')
+        axs[1].plot(x_axis, y_axis3, color = 'blue')
+        axs[1].grid(True)
+        
+        ####################################################################
+        plt.savefig("rewards_vertical.png")
+        plt.show()
 
 
 
+    def ukupno_opterecenje(self):
 
+        load = 0
+        f1 = open("DaylyCurve1.txt", "r")
+        loads1 = f1.readlines()
+        loads1 = [float(z) for z in loads1]
+        loads1 = [float(z1) for z1 in loads1]
+        f1.close()
+
+        f2 = open("DaylyCurve2.txt", "r")
+        loads2 = f2.readlines()
+        loads2 = [float(z) for z in loads2]
+        loads2 = [float(z1) for z1 in loads2]
+        f2.close()
+
+        f3 = open("DaylyCurve3.txt", "r")
+        loads3 = f3.readlines()
+        loads3 = [float(z) for z in loads3]
+        loads3 = [float(z1) for z1 in loads3]
+        f3.close()
+
+        f4 = open("Opterecenja_primer2.txt", "w")
+        for i in range (24):
+            load = 4 * loads1[i] + 3 * loads2[i] + 4 * loads3[i]
+            load *= 1000
+            f4.write(json.dumps(load))
+            f4.write(" kW\n")
+            load = 0
+
+
+    def statusi_prekidaca(self):
+
+        fig, axs = plt.subplots(2)
+        axs[0].set(ylabel='Statusi prekidača')
+        axs[0].set(xlabel='Sat [h] ')
+        #axs[0].set(xlabel='Episode number')
+        axs[1].set(ylabel='Statusi prekidača')
+        axs[1].set(xlabel='Sat [h]')
+
+        x_axis = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+        y_axis0 = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+        y_axis1 = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+        axs[0].plot(x_axis, y_axis0, color = 'red')
+        axs[0].axis([0, 24, 0, 1.1])
+        axs[0].set_xticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24])
+        axs[0].set_yticks([0, 1])
+        axs[0].grid(True)
+
+        axs[1].plot(x_axis, y_axis1, color = 'blue')
+        axs[1].axis([0, 24, 0, 1.1])
+        axs[1].set_xticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24])
+        axs[1].set_yticks([0, 1])
+        axs[1].grid(True)
+
+        plt.savefig("statusi_prekidaca.png")
+        plt.show()

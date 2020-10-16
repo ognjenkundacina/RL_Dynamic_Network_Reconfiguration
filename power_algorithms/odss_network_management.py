@@ -3,7 +3,7 @@ from opendssdirect.utils import Iterator
 
 class ODSSNetworkManagement:
     def __init__(self):
-        dss.run_command('Redirect power_algorithms/VelikaSema.dss')
+        dss.run_command('Redirect power_algorithms/ieee33_scheme.dss')
         self.nominal_load_kW = {}
         self.nominal_load_kVAr = {}
         self.__save_nominal_load_powers() #remember nominal load values so that load scaling feature can use them
@@ -108,6 +108,8 @@ class ODSSNetworkManagement:
             dss.Loads.Name(loadName())
             dss.Loads.kW(self.nominal_load_kW[loadName()] * scaling_factors[index])
             dss.Loads.kvar(self.nominal_load_kVAr[loadName()] * scaling_factors[index])
+            #print(self.nominal_load_kW[loadName()])
+            #print(self.nominal_load_kVAr[loadName()])
             index = index + 1
             
     def get_load_count(self):

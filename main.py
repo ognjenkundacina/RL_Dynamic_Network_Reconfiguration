@@ -29,21 +29,19 @@ def main():
 
     #environment should'n have the entire dataset as an input parameter, but train and test methods
     environment = Environment()
-    #environment.checking_results()
-    #environment.finding_optimal_states()
-    #print(environment.get_number_of_switch_manipulations([1, 5, 6], [12, 13, 14]))
 
     print('=====================agent=====================')
     agent = DeepQLearningAgent(environment)
 
     for i in range (1):
-        n_episodes = 100000
+        n_episodes = 60000
         print('agent training started')
         t1 = time.time()
         agent.train(df_train, n_episodes)
+        agent.test(df_test)
         t2 = time.time()
         print ('agent training finished in', t2-t1)
-        agent.test(df_test)
+        
     
 if __name__ == '__main__':
     main()

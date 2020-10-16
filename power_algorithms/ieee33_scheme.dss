@@ -1,0 +1,116 @@
+Clear 
+Set DefaultBaseFrequency=50
+New circuit.NRsema basekV=12.66 pu=1.0 angle=0 frequency=50 phases=3 bus1=Bus_1
+
+New linecode.AB nphases = 3
+
+
+! LINE DEFINITIONS
+
+New Line.1 Phases=3 Bus1=Bus_1 Bus2=Bus_2 R1=0.0922 X1=0.0477 Length=1 units=km
+New Line.2 Phases=3 Bus1=Bus_34 Bus2=Bus_3 R1=0.493 X1=0.2511 Length=1 units=km
+New Line.3 Phases=3 Bus1=Bus_3 Bus2=Bus_4 R1=0.366 X1=0.1864 Length=1 units=km
+New Line.4 Phases=3 Bus1=Bus_35 Bus2=Bus_5 R1=0.3811 X1=0.1941 Length=1 units=km
+New Line.5 Phases=3 Bus1=Bus_5 Bus2=Bus_6 R1=0.819 X1=0.707 Length=1 units=km
+New Line.6 Phases=3 Bus1=Bus_36 Bus2=Bus_7 R1=0.1872 X1=0.6188 Length=1 units=km
+New Line.7 Phases=3 Bus1=Bus_7 Bus2=Bus_8 R1=1.7114 X1=1.2351 Length=1 units=km
+New Line.8 Phases=3 Bus1=Bus_37 Bus2=Bus_9 R1=1.03 X1=0.74 Length=1 units=km
+New Line.9 Phases=3 Bus1=Bus_9 Bus2=Bus_10 R1=1.04 X1=0.74 Length=1 units=km
+New Line.10 Phases=3 Bus1=Bus_38 Bus2=Bus_11 R1=0.1966 X1=0.065 Length=1 units=km
+New Line.11 Phases=3 Bus1=Bus_11 Bus2=Bus_12 R1=0.3744 X1=0.1238 Length=1 units=km
+New Line.12 Phases=3 Bus1=Bus_39 Bus2=Bus_13 R1=1.468 X1=1.155 Length=1 units=km
+New Line.13 Phases=3 Bus1=Bus_13 Bus2=Bus_14 R1=0.5416 X1=0.7129 Length=1 units=km
+New Line.14 Phases=3 Bus1=Bus_40 Bus2=Bus_15 R1=0.591 X1=0.526 Length=1 units=km
+New Line.15 Phases=3 Bus1=Bus_15 Bus2=Bus_16 R1=0.7463 X1=0.545 Length=1 units=km
+New Line.16 Phases=3 Bus1=Bus_41 Bus2=Bus_17 R1=1.289 X1=1.721 Length=1 units=km
+New Line.17 Phases=3 Bus1=Bus_17 Bus2=Bus_18 R1=0.732 X1=0.574 Length=1 units=km
+New Line.18 Phases=3 Bus1=Bus_2 Bus2=Bus_19 R1=0.164 X1=0.1565 Length=1 units=km
+New Line.19 Phases=3 Bus1=Bus_42 Bus2=Bus_20 R1=1.5042 X1=1.3554 Length=1 units=km
+New Line.20 Phases=3 Bus1=Bus_20 Bus2=Bus_21 R1=0.4095 X1=0.4784 Length=1 units=km
+New Line.21 Phases=3 Bus1=Bus_43 Bus2=Bus_22 R1=0.7089 X1=0.9373 Length=1 units=km
+New Line.22 Phases=3 Bus1=Bus_3 Bus2=Bus_23 R1=0.4512 X1=0.3083 Length=1 units=km
+New Line.23 Phases=3 Bus1=Bus_44 Bus2=Bus_24 R1=0.898 X1=0.7091 Length=1 units=km
+New Line.24 Phases=3 Bus1=Bus_24 Bus2=Bus_25 R1=0.896 X1=0.7011 Length=1 units=km
+New Line.25 Phases=3 Bus1=Bus_45 Bus2=Bus_26 R1=0.203 X1=0.1034 Length=1 units=km
+New Line.26 Phases=3 Bus1=Bus_26 Bus2=Bus_27 R1=0.2842 X1=0.1447 Length=1 units=km
+New Line.27 Phases=3 Bus1=Bus_46 Bus2=Bus_28 R1=1.059 X1=0.9337 Length=1 units=km
+New Line.28 Phases=3 Bus1=Bus_28 Bus2=Bus_29 R1=0.8042 X1=0.7006 Length=1 units=km
+New Line.29 Phases=3 Bus1=Bus_47 Bus2=Bus_30 R1=0.5075 X1=0.2585 Length=1 units=km
+New Line.30 Phases=3 Bus1=Bus_30 Bus2=Bus_31 R1=0.9744 X1=0.963 Length=1 units=km
+New Line.31 Phases=3 Bus1=Bus_48 Bus2=Bus_32 R1=0.3105 X1=0.3619 Length=1 units=km
+New Line.32 Phases=3 Bus1=Bus_32 Bus2=Bus_33 R1=0.341 X1=0.5302 Length=1 units=km
+
+New Line.33 Phases=3 Bus1=Bus_49 Bus2=Bus_8 R1=2 X1=2 Length=1 units=km
+New Line.34 Phases=3 Bus1=Bus_50 Bus2=Bus_15 R1=2 X1=2 Length=1 units=km
+New Line.35 Phases=3 Bus1=Bus_51 Bus2=Bus_12 R1=2 X1=2 Length=1 units=km
+New Line.36 Phases=3 Bus1=Bus_52 Bus2=Bus_18 R1=0.5 X1=0.5 Length=1 units=km
+New Line.37 Phases=3 Bus1=Bus_53 Bus2=Bus_29 R1=0.5 X1=0.5 Length=1 units=km
+
+! LOAD DEFINITIONS
+
+New Load.2 Bus1=Bus_2 Phases=3 conn=wye Model=1 kW=100 kvar=60 kv=12.66 
+New Load.3 Bus1=Bus_3 Phases=3 conn=wye Model=1 kW=90 kvar=40 kv=12.66 
+New Load.4 Bus1=Bus_4 Phases=3 conn=wye Model=1 kW=120 kvar=80 kv=12.66 
+New Load.5 Bus1=Bus_5 Phases=3 conn=wye Model=1 kW=60 kvar=30 kv=12.66 
+New Load.6 Bus1=Bus_6 Phases=3 conn=wye Model=1 kW=60 kvar=20 kv=12.66 
+New Load.7 Bus1=Bus_7 Phases=3 conn=wye Model=1 kW=200 kvar=100 kv=12.66 
+New Load.8 Bus1=Bus_8 Phases=3 conn=wye Model=1 kW=200 kvar=100 kv=12.66 
+New Load.9 Bus1=Bus_9 Phases=3 conn=wye Model=1 kW=60 kvar=20 kv=12.66
+New Load.10 Bus1=Bus_10 Phases=3 conn=wye Model=1 kW=60 kvar=20 kv=12.66 
+New Load.11 Bus1=Bus_11 Phases=3 conn=wye Model=1 kW=45 kvar=30 kv=12.66 
+New Load.12 Bus1=Bus_12 Phases=3 conn=wye Model=1 kW=60 kvar=35 kv=12.66 
+New Load.13 Bus1=Bus_13 Phases=3 conn=wye Model=1 kW=60 kvar=35 kv=12.66 
+New Load.14 Bus1=Bus_14 Phases=3 conn=wye Model=1 kW=120 kvar=80 kv=12.66 
+New Load.15 Bus1=Bus_15 Phases=3 conn=wye Model=1 kW=60 kvar=10 kv=12.66 
+New Load.16 Bus1=Bus_16 Phases=3 conn=wye Model=1 kW=60 kvar=20 kv=12.66 
+New Load.17 Bus1=Bus_17 Phases=3 conn=wye Model=1 kW=60 kvar=20 kv=12.66 
+New Load.18 Bus1=Bus_18 Phases=3 conn=wye Model=1 kW=90 kvar=40 kv=12.66 
+New Load.19 Bus1=Bus_19 Phases=3 conn=wye Model=1 kW=90 kvar=40 kv=12.66 
+New Load.20 Bus1=Bus_20 Phases=3 conn=wye Model=1 kW=90 kvar=40 kv=12.66 
+New Load.21 Bus1=Bus_21 Phases=3 conn=wye Model=1 kW=90 kvar=40 kv=12.66 
+New Load.22 Bus1=Bus_22 Phases=3 conn=wye Model=1 kW=90 kvar=40 kv=12.66 
+New Load.23 Bus1=Bus_23 Phases=3 conn=wye Model=1 kW=90 kvar=50 kv=12.66 
+New Load.24 Bus1=Bus_24 Phases=3 conn=wye Model=1 kW=420 kvar=200 kv=12.66 
+New Load.25 Bus1=Bus_25 Phases=3 conn=wye Model=1 kW=420 kvar=200 kv=12.66 
+New Load.26 Bus1=Bus_26 Phases=3 conn=wye Model=1 kW=60 kvar=25 kv=12.66 
+New Load.27 Bus1=Bus_27 Phases=3 conn=wye Model=1 kW=60 kvar=25 kv=12.66 
+New Load.28 Bus1=Bus_28 Phases=3 conn=wye Model=1 kW=60 kvar=20 kv=12.66 
+New Load.29 Bus1=Bus_29 Phases=3 conn=wye Model=1 kW=120 kvar=70 kv=12.66 
+New Load.30 Bus1=Bus_30 Phases=3 conn=wye Model=1 kW=200 kvar=600 kv=12.66 
+New Load.31 Bus1=Bus_31 Phases=3 conn=wye Model=1 kW=150 kvar=70 kv=12.66 
+New Load.32 Bus1=Bus_32 Phases=3 conn=wye Model=1 kW=210 kvar=100 kv=12.66 
+New Load.33 Bus1=Bus_33 Phases=3 conn=wye Model=1 kW=60 kvar=40 kv=12.66
+
+! NORMALLY CLOSED SWITCHES
+
+New Line.Sw1    phases=3  Bus1=Bus_2   Bus2=Bus_34    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw2    phases=3  Bus1=Bus_4   Bus2=Bus_35    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw3    phases=3  Bus1=Bus_6   Bus2=Bus_36    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw4    phases=3  Bus1=Bus_8   Bus2=Bus_37    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw5    phases=3  Bus1=Bus_10   Bus2=Bus_38    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw6    phases=3  Bus1=Bus_12   Bus2=Bus_39    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw7    phases=3  Bus1=Bus_14   Bus2=Bus_40    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw8    phases=3  Bus1=Bus_16   Bus2=Bus_41    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw9    phases=3  Bus1=Bus_19   Bus2=Bus_42    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw10    phases=3  Bus1=Bus_21   Bus2=Bus_43    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw11    phases=3  Bus1=Bus_23   Bus2=Bus_44    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw12    phases=3  Bus1=Bus_6   Bus2=Bus_45    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw13    phases=3  Bus1=Bus_27   Bus2=Bus_46    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw14    phases=3  Bus1=Bus_29   Bus2=Bus_47    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw15    phases=3  Bus1=Bus_31   Bus2=Bus_48    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+
+! NORMALLY OPENED SWITCHES
+
+New Line.Sw16    phases=3  Bus1=Bus_21   Bus2=Bus_49    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw17    phases=3  Bus1=Bus_9   Bus2=Bus_50    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw18    phases=3  Bus1=Bus_22   Bus2=Bus_51    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw19    phases=3  Bus1=Bus_33   Bus2=Bus_52    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+New Line.Sw20    phases=3  Bus1=Bus_25   Bus2=Bus_53    switch=yes r1=1e-3 r0=1e-3 x1=0 x0=0 c1=0 c0=0 Length=0.001 units=km
+open Line.Sw16 terminal=2
+open Line.Sw17 terminal=2
+open Line.Sw18 terminal=2
+open Line.Sw19 terminal=2
+open Line.Sw20 terminal=2
+
+Set VoltageBases = [12.66]    ! ARRAY OF VOLTAGES IN KV
+calc voltageBases
