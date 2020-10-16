@@ -38,10 +38,9 @@ def main():
         print('agent training started')
         t1 = time.time()
         agent.train(df_train, n_episodes)
-        agent.test(df_test)
         t2 = time.time()
         print ('agent training finished in', t2-t1)
-        
+        agent.test(df_test)
     
 if __name__ == '__main__':
     main()
