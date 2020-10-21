@@ -110,7 +110,7 @@ class DeepQLearningAgent:
             #print('Random action: ', action)
             return action
 
-    def train(self, df_train, n_episodes):
+    def train(self, df_train, n_episodes, df_test):
         #self.policy_net.load_state_dict(torch.load("policy_net"))
         f_loss = open("loss_function.txt", "w")
         f_ter = open("total_episode_reward.txt", "w")
@@ -224,11 +224,14 @@ class DeepQLearningAgent:
             #if (i_episode % 1000 == 999):
                 #torch.save(self.policy_net.state_dict(), "policy_net")
 
-            if (i_episode % 100 == 0):
+            if (i_episode % 10 == 0):
                 torch.save(self.policy_net.state_dict(), "policy folder/policy_net" + str(i_episode))
 
             if i_episode % self.target_update == 0:
                 self.target_net.load_state_dict(self.policy_net.state_dict())
+
+            if (i_episode % 10 == 0 and i_episode != 0):
+                self.test(df_test, i_episode, n_episodes)
 
             #print("=====================================")
 
@@ -283,10 +286,16 @@ class DeepQLearningAgent:
         #plt.show()
 
 
-    def test(self, df_test):
-        total_episode_reward_list = [] 
+    def test(self, df_test, i_episode, n_episodes):
+        f1 = open("total_episode_reward_new.txt", "a")
+        f2 = open("moving_average_reward_new.txt", "a")
+        total_episode_reward_list = []
+        #moving_average_reward_list = []
 
-        self.policy_net.load_state_dict(torch.load("policy_net"))
+        if (i_episode != n_episodes):
+            self.policy_net.load_state_dict(torch.load("policy folder/policy_net" + str(i_episode)))
+        else:
+            self.policy_net.load_state_dict(torch.load("policy_net"))
         self.policy_net.eval()
 
         for index, row in df_test.iterrows():
@@ -316,16 +325,29 @@ class DeepQLearningAgent:
                 
                 next_state, reward, done = self.environment.step(action)
                 #print("Open switches: ", radial_switch_combinations[action])
-                print("Open switches: ", radial_switch_combinations_ieee33[action])
-                #print("Open switches: ", radial_switch_combinations_reduced_big_scheme[action]) 
-                print ('Current losses: ', self.environment.power_flow.get_losses())
+                #print("Open switches: ", radial_switch_combinations_reduced_big_scheme[action])
+                if(i_episode == n_episodes):
+                    print("Open switches: ", radial_switch_combinations_ieee33[action])
+                    print ('Current losses: ', self.environment.power_flow.get_losses())
                     
                 total_episode_reward += reward
                 state = torch.tensor([next_state], dtype=torch.float)
 
-            total_episode_reward_list.append(total_episode_reward)
+            self.reward_moving_average = 0.9 * self.reward_moving_average + 0.1 * total_episode_reward
 
-        print ("Test set reward ", sum(total_episode_reward_list))
+            total_episode_reward_list.append(total_episode_reward)
+            #moving_average_reward_list.append(self.reward_moving_average)
+
+        f1.write(str(total_episode_reward) + "\n")
+        print(total_episode_reward)
+        f1.close()
+
+        f2.write(str(self.reward_moving_average) + "\n")
+        f2.close()
+
+        if(i_episode == n_episodes):
+            print ("Test set reward ", sum(total_episode_reward_list))
+
 
     def optimize_model(self):
         if len(self.memory) < self.batch_size:
