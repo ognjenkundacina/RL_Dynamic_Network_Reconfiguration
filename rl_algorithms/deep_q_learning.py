@@ -41,14 +41,14 @@ class ReplayMemory(object):
 class DQN(nn.Module):
     def __init__(self, input_size, output_size):
         super(DQN, self).__init__()
-        self.fc1 = nn.Linear(input_size, 512)
+        self.fc1 = nn.Linear(input_size, 256)
         #print(input_size)
-        self.fc2 = nn.Linear(512, 512)
-        self.fc3 = nn.Linear(512, 512)
-        self.fc3_bn = nn.BatchNorm1d(512)
-        self.fc4 = nn.Linear(512, 512)
+        self.fc2 = nn.Linear(256, 256)
+        self.fc3 = nn.Linear(256, 256)
+        self.fc3_bn = nn.BatchNorm1d(256)
+        self.fc4 = nn.Linear(256, 256)
         #self.fc5 = nn.Linear(64, 64)
-        self.fc6 = nn.Linear(512, output_size)
+        self.fc6 = nn.Linear(256, output_size)
         #print(output_size)
 
     def forward(self, x):
@@ -175,10 +175,10 @@ class DeepQLearningAgent:
             
             #x = random.choice((-1, 1))
             #96 zbog 4x24
-            #for zz in range(72):
-                #daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
-                #if daily_consumption_percents_per_feeder[zz] < 0.0:
-                    #daily_consumption_percents_per_feeder[zz] = 0
+            for zz in range(72):
+                daily_consumption_percents_per_feeder[zz] += (-0.6) * random.random() + 0.3  #dodaje random broj u opsegu [-0.15, 0.15]
+                if daily_consumption_percents_per_feeder[zz] < 0.0:
+                    daily_consumption_percents_per_feeder[zz] = 0
 
             state = self.environment.reset(daily_consumption_percents_per_feeder)
             #print ('Initial losses: ', self.environment.power_flow.get_losses())
@@ -324,10 +324,10 @@ class DeepQLearningAgent:
                     print ("Warning: agent.test: action > self.n_actions")
                 
                 next_state, reward, done = self.environment.step(action)
-                #print("Open switches: ", radial_switch_combinations[action])
-                #print("Open switches: ", radial_switch_combinations_reduced_big_scheme[action])
                 if(i_episode == n_episodes):
-                    print("Open switches: ", radial_switch_combinations_ieee33[action])
+                    print("Open switches: ", radial_switch_combinations[action])
+                    #print("Open switches: ", radial_switch_combinations_reduced_big_scheme[action])
+                    #print("Open switches: ", radial_switch_combinations_ieee33[action])  
                     print ('Current losses: ', self.environment.power_flow.get_losses())
                     
                 total_episode_reward += reward
@@ -339,7 +339,6 @@ class DeepQLearningAgent:
             #moving_average_reward_list.append(self.reward_moving_average)
 
         f1.write(str(total_episode_reward) + "\n")
-        print(total_episode_reward)
         f1.close()
 
         f2.write(str(self.reward_moving_average) + "\n")

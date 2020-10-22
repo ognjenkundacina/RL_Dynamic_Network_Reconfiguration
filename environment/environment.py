@@ -26,12 +26,12 @@ class Environment(gym.Env):
 
         self.state_space_dims = len(self.power_flow.get_switches_apparent_power()) + 1
 
-        #self.radial_switch_combinations = radial_switch_combinations
+        self.radial_switch_combinations = radial_switch_combinations
         #ipak je u config-u, ako hoces izmeni
         #self.radial_switch_combinations = radial_switch_combinations_reduced_big_scheme
 
         #ieee33
-        self.radial_switch_combinations = radial_switch_combinations_ieee33
+        #self.radial_switch_combinations = radial_switch_combinations_ieee33
 
         self.n_actions = len(self.radial_switch_combinations)
         self.n_consumers = self.network_manager.get_load_count()
@@ -237,13 +237,13 @@ class Environment(gym.Env):
         #self.power_flow.get_losses() daje gubitke u kW, pa odmah imamo i kWh
         reward -= self.power_flow.get_losses() * 0.065625
  
-        #reward -= self.switching_action_cost * self.get_number_of_switch_manipulations(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
+        reward -= self.switching_action_cost * self.get_number_of_switch_manipulations(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
 
         #ispod za veliku semu
         #reward -= self.switching_action_cost * self.get_number_of_switch_manipulations_big_scheme(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
 
         #ieee33
-        reward -= self.switching_action_cost * self.get_number_of_switch_manipulations_ieee33(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
+        #reward -= self.switching_action_cost * self.get_number_of_switch_manipulations_ieee33(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
 
         #zbog numerickih pogodnosti je potrebno skalirati nagradu tako da moduo total episode reward bude oko 1.0
         reward /= 1000.0
@@ -327,13 +327,13 @@ class Environment(gym.Env):
             #self.used_switches[i] = 0
 
         #self.consumption_percents_per_feeder je lista koja sadrzi 24 liste koje za trenutka sadrze 3 scaling faktora, po jedan za svaki od feedera
-        #self.consumption_percents_per_feeder = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
+        self.consumption_percents_per_feeder = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
 
         #za veliku semu ide ovo ispod
         #self.consumption_percents_per_feeder_big_scheme = [daily_consumption_percents_per_feeder[i:i+4] for i in range(0, len(daily_consumption_percents_per_feeder), 4)]
 
         #ieee33 sema
-        self.consumption_percents_per_feeder_ieee33 = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
+        #self.consumption_percents_per_feeder_ieee33 = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
 
         self.set_load_scaling_for_timestep()
         self.power_flow.calculate_power_flow()
@@ -426,16 +426,16 @@ class Environment(gym.Env):
         if (self.timestep > NUM_TIMESTEPS):  
             print('WARNING: environment.py; set_load_scaling_for_timestep; self.timestep greater than expected')
 
-        #current_consumption_percents_per_feeder = self.consumption_percents_per_feeder[self.timestep]  
-        #current_consumption_percents_per_node = self.distribute_feeder_consumptions(current_consumption_percents_per_feeder)
+        current_consumption_percents_per_feeder = self.consumption_percents_per_feeder[self.timestep]  
+        current_consumption_percents_per_node = self.distribute_feeder_consumptions(current_consumption_percents_per_feeder)
 
         #ispod za veliku semu
         #current_consumption_percents_per_feeder = self.consumption_percents_per_feeder_big_scheme[self.timestep]
         #current_consumption_percents_per_node = self.distribute_feeder_consumptions_big_scheme(current_consumption_percents_per_feeder)
 
         #ieee33 sema
-        current_consumption_percents_per_feeder = self.consumption_percents_per_feeder_ieee33[self.timestep]
-        current_consumption_percents_per_node = self.distribute_feeder_consumptions_ieee33(current_consumption_percents_per_feeder)
+        #current_consumption_percents_per_feeder = self.consumption_percents_per_feeder_ieee33[self.timestep]
+        #current_consumption_percents_per_node = self.distribute_feeder_consumptions_ieee33(current_consumption_percents_per_feeder)
 
         self.network_manager.set_load_scaling(current_consumption_percents_per_node)
 
@@ -2012,7 +2012,7 @@ class Environment(gym.Env):
     def crtanje_loss_reward_vertical(self):
 
         loss_usrednjeno = 0
-        loss_krajnje = [0 for p in range(60000)]
+        loss_krajnje = [0 for p in range(10000)]
         k = 0
 
         fig, axs = plt.subplots(2)
@@ -2031,7 +2031,7 @@ class Environment(gym.Env):
 
         print(len(loss))
 
-        for i in range (1439873):
+        for i in range (239873):
             if((i+1)%24 != 0):
                 loss_usrednjeno += loss[i]
             else:
@@ -2044,10 +2044,10 @@ class Environment(gym.Env):
         xfmt = ScalarFormatter()
         xfmt.set_powerlimits((3,3))
 
-        x_axis = [1 + j for j in range(60000)]
+        x_axis = [1 + j for j in range(10000)]
         y_axis1 = loss_krajnje
         axs[0].plot(x_axis, y_axis1, color = 'red')
-        axs[0].axis([0, 60000, 0, 0.025])
+        axs[0].axis([0, 10000, 0, 0.025])
         axs[0].xaxis.set_major_formatter(xfmt)
         #plt.setp(axs[0].get_xticklabels(), visible=False)
         #axs[0].xaxis.set_major_formatter(xfmt)
@@ -2075,17 +2075,17 @@ class Environment(gym.Env):
         y_axis2 = ter
         y_axis3 = mar
         axs[1].plot(x_axis, y_axis2, color = 'lightblue')
-        axs[1].axis([0, 60000 , -1.6, 0])
+        axs[1].axis([0, 10000 , -0.3, 0])
         #axs[1].legend(loc = 'upper left')
         axs[1].plot(x_axis, y_axis3, color = 'blue')
-        axs[1].axis([0, 60000 , -1.6, 0])
+        axs[1].axis([0, 10000 , -0.3, 0])
         #axs[1].legend(loc = 'upper left')
         #plt.axis([1, 24 , 0, 1.4])
         #axs[1].set_xticks([0, 10000, 20000, 30000, 40000, 50000, 60000])
         
         axs[1].xaxis.set_major_formatter(xfmt)
         axs[1].ticklabel_format(axis='x', style='sci', useMathText = None)
-        axs[1].set_yticks([-1.6, -1.2, -0.8, -0.4, 0])
+        axs[1].set_yticks([-0.3, -0.25, -0.2, -0.15, -0.1, -0.05, 0])
         #axs[1].set_yticks([-1.6, -1.2, -0.8, -0.4, 0])
         
         #axs[1].set_yticks([-1.6, -1.4, -1.2, -1.0, -0.8, -0.6, -0.4, -0.2, 0])

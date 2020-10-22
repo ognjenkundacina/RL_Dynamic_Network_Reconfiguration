@@ -63,3 +63,4 @@ open Line.Sw13 terminal=2
 open Line.Sw14 terminal=2
 
 Set VoltageBases = [11.547]    ! ARRAY OF VOLTAGES IN KV
+calc voltageBases
