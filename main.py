@@ -35,13 +35,13 @@ def main():
     agent = DeepQLearningAgent(environment)
 
     for i in range (1):
-        n_episodes = 1000
+        n_episodes = 60000
         print('agent training started')
         t1 = time.time()
         agent.train(df_train, n_episodes, df_test)
         t2 = time.time()
         print ('agent training finished in', t2-t1)
-        agent.test(df_test, 0, n_episodes)
+        agent.test(df_test, n_episodes, n_episodes)
     
 if __name__ == '__main__':
     main()
