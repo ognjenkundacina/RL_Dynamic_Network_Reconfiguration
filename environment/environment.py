@@ -26,9 +26,9 @@ class Environment(gym.Env):
 
         self.state_space_dims = len(self.power_flow.get_switches_apparent_power()) + 1
 
-        self.radial_switch_combinations = radial_switch_combinations
+        #self.radial_switch_combinations = radial_switch_combinations
         #ipak je u config-u, ako hoces izmeni
-        #self.radial_switch_combinations = radial_switch_combinations_reduced_big_scheme
+        self.radial_switch_combinations = radial_switch_combinations_reduced_big_scheme
 
         #ieee33
         #self.radial_switch_combinations = radial_switch_combinations_ieee33
@@ -51,18 +51,18 @@ class Environment(gym.Env):
         self.switch_names = self.network_manager.get_all_switch_names()
         self.n_switches = len(self.network_manager.get_all_switch_names())
         # indeks prekidaca, pri cemu indeksiranje pocinje od 1
-        self.switch_indices = [i for i in range(1, self.n_switches + 1)]
+        #self.switch_indices = [i for i in range(1, self.n_switches + 1)]
         #print(self.switch_indices)
 
         #ispod za veliku semu
-        #self.switch_indices = [1, 50, 97, 144, 191, 238, 253, 302, 349, 396, 443, 490, 505, 554, 601, 648, 695, 742, 757, 806, 853, 900, 947, 994, 1009, 1010, 1011, 1012, 1013, 1014, 1015]
+        self.switch_indices = [1, 50, 97, 144, 191, 238, 253, 302, 349, 396, 443, 490, 505, 554, 601, 648, 695, 742, 757, 806, 853, 900, 947, 994, 1009, 1010, 1011, 1012, 1013, 1014, 1015]
 
         self.switch_names_by_index = dict(zip(self.switch_indices, self.switch_names))
         
     def _update_state(self, action):
         
-        self._update_switch_statuses(action)
-        #self._update_switch_statuses_big_scheme(action)
+        #self._update_switch_statuses(action)
+        self._update_switch_statuses_big_scheme(action)
 
         #self._update_available_actions(action) #todo implement - ovo nam ne treba kad nemamo ogranicenje Nsw
         self.power_flow.calculate_power_flow()
@@ -237,10 +237,10 @@ class Environment(gym.Env):
         #self.power_flow.get_losses() daje gubitke u kW, pa odmah imamo i kWh
         reward -= self.power_flow.get_losses() * 0.065625
  
-        reward -= self.switching_action_cost * self.get_number_of_switch_manipulations(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
+        #reward -= self.switching_action_cost * self.get_number_of_switch_manipulations(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
 
         #ispod za veliku semu
-        #reward -= self.switching_action_cost * self.get_number_of_switch_manipulations_big_scheme(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
+        reward -= self.switching_action_cost * self.get_number_of_switch_manipulations_big_scheme(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
 
         #ieee33
         #reward -= self.switching_action_cost * self.get_number_of_switch_manipulations_ieee33(self.radial_switch_combinations[self.previous_action], self.radial_switch_combinations[action])
@@ -327,10 +327,10 @@ class Environment(gym.Env):
             #self.used_switches[i] = 0
 
         #self.consumption_percents_per_feeder je lista koja sadrzi 24 liste koje za trenutka sadrze 3 scaling faktora, po jedan za svaki od feedera
-        self.consumption_percents_per_feeder = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
+        #self.consumption_percents_per_feeder = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
 
         #za veliku semu ide ovo ispod
-        #self.consumption_percents_per_feeder_big_scheme = [daily_consumption_percents_per_feeder[i:i+4] for i in range(0, len(daily_consumption_percents_per_feeder), 4)]
+        self.consumption_percents_per_feeder_big_scheme = [daily_consumption_percents_per_feeder[i:i+4] for i in range(0, len(daily_consumption_percents_per_feeder), 4)]
 
         #ieee33 sema
         #self.consumption_percents_per_feeder_ieee33 = [daily_consumption_percents_per_feeder[i:i+3] for i in range(0, len(daily_consumption_percents_per_feeder), 3)]
@@ -426,12 +426,12 @@ class Environment(gym.Env):
         if (self.timestep > NUM_TIMESTEPS):  
             print('WARNING: environment.py; set_load_scaling_for_timestep; self.timestep greater than expected')
 
-        current_consumption_percents_per_feeder = self.consumption_percents_per_feeder[self.timestep]  
-        current_consumption_percents_per_node = self.distribute_feeder_consumptions(current_consumption_percents_per_feeder)
+        #current_consumption_percents_per_feeder = self.consumption_percents_per_feeder[self.timestep]  
+        #current_consumption_percents_per_node = self.distribute_feeder_consumptions(current_consumption_percents_per_feeder)
 
         #ispod za veliku semu
-        #current_consumption_percents_per_feeder = self.consumption_percents_per_feeder_big_scheme[self.timestep]
-        #current_consumption_percents_per_node = self.distribute_feeder_consumptions_big_scheme(current_consumption_percents_per_feeder)
+        current_consumption_percents_per_feeder = self.consumption_percents_per_feeder_big_scheme[self.timestep]
+        current_consumption_percents_per_node = self.distribute_feeder_consumptions_big_scheme(current_consumption_percents_per_feeder)
 
         #ieee33 sema
         #current_consumption_percents_per_feeder = self.consumption_percents_per_feeder_ieee33[self.timestep]
@@ -1208,65 +1208,71 @@ class Environment(gym.Env):
     def checking_voltages(self):
 
         busVoltages = []
-        radial_combinations = [0 for l in range (1321)]
+        radial_combinations = [0 for l in range (2555)]
         numbOfCustomersWithBadVoltage = 0
         swCombinationsWithBadVoltage = 0
-        sw1, sw2, sw3, sw4, sw5 = self.radial_switch_combinations[0]
+        sw1, sw2, sw3, sw4, sw5, sw6, sw7 = self.radial_switch_combinations[0]
         k = 0
         timestep = 0
         for i in range (24):
 
             k = 0
-            f = open(str(i + 1) + ". trenutak.txt", "a")
+            #f = open(str(i + 1) + ". trenutak.txt", "a")
 
-            for j in range (1321):
+            for j in range (2555):
 
-                f.write(str(j) + ". kombinacija: ")
+                #f.write(str(j) + ". kombinacija: ")
                 self.network_manager.close_switch('Line.Sw'+str(sw1))
                 self.network_manager.close_switch('Line.Sw'+str(sw2))
                 self.network_manager.close_switch('Line.Sw'+str(sw3))
                 self.network_manager.close_switch('Line.Sw'+str(sw4))
                 self.network_manager.close_switch('Line.Sw'+str(sw5))
-                sw1, sw2, sw3, sw4, sw5 = self.radial_switch_combinations[k]
+                self.network_manager.close_switch('Line.Sw'+str(sw6))
+                self.network_manager.close_switch('Line.Sw'+str(sw7))
+                sw1, sw2, sw3, sw4, sw5, sw6, sw7 = self.radial_switch_combinations[k]
                 self.network_manager.open_switch('Line.Sw'+str(sw1))
                 self.network_manager.open_switch('Line.Sw'+str(sw2))
                 self.network_manager.open_switch('Line.Sw'+str(sw3))
                 self.network_manager.open_switch('Line.Sw'+str(sw4))
                 self.network_manager.open_switch('Line.Sw'+str(sw5))
+                self.network_manager.open_switch('Line.Sw'+str(sw6))
+                self.network_manager.open_switch('Line.Sw'+str(sw7))
 
-                self.reading_from_load_file_ieee33(timestep)
+                self.reading_from_load_file_big_scheme(timestep)
                 self.power_flow.calculate_power_flow()
                 busVoltages = self.power_flow.get_bus_voltages()
                 #print(busVoltages)
 
-                for z in range (53):
+                for z in range (1040):
                     if (busVoltages[z] < 0.95):
                         numbOfCustomersWithBadVoltage += 1
+                        break
 
                 if (numbOfCustomersWithBadVoltage > 0):
                     swCombinationsWithBadVoltage += 1
                     radial_combinations[j] += 1
 
-                f.write(json.dumps(numbOfCustomersWithBadVoltage))
-                f.write("\n")
+                #f.write(json.dumps(numbOfCustomersWithBadVoltage))
+                #f.write("\n")
                 numbOfCustomersWithBadVoltage = 0
                 k += 1
 
-            timestep += 3
-            f2 = open("Checking voltage results ieee33 0.95.txt", "a")
-            f2.write(str(i + 1) + ". trenutak: ")
-            f2.write(json.dumps(swCombinationsWithBadVoltage))
-            f2.write("\n\n")
+            timestep += 4
+            
+            #f2.write(str(i + 1) + ". trenutak: ")
+            #f2.write(json.dumps(swCombinationsWithBadVoltage))
+            #f2.write("\n\n")
 
-            f.write("Number of switch combinations with bad voltages: ")
-            f.write(json.dumps(swCombinationsWithBadVoltage))
-            f.close()
+            #f.write("Number of switch combinations with bad voltages: ")
+            #f.write(json.dumps(swCombinationsWithBadVoltage))
+            #f.close()
             swCombinationsWithBadVoltage = 0
 
+        f2 = open("Checking voltage results big scheme 0.95_17.txt", "a")
         counter = 0
         f2.write("[")
-        for b in range (1321):
-            if (radial_combinations[b] > 23):
+        for b in range (2555):
+            if (radial_combinations[b] > 17):
                 f2.write(json.dumps(b))
                 counter += 1
                 f2.write(", ")
@@ -1274,12 +1280,12 @@ class Environment(gym.Env):
         f2.write(json.dumps(counter))
         f2.close()
 
-        f3 = open("Radial_comb_reduced_ieee33.txt", "w")
-        for a in range (1321):
-            f3.write(str(a) + ". kombinacija: ")
-            f3.write(json.dumps(radial_combinations[a]))
-            f3.write("\n")
-        f3.close()
+        #f3 = open("Radial_comb_reduced_big_scheme.txt", "w")
+        #for a in range (2555):
+            #f3.write(str(a) + ". kombinacija: ")
+            #f3.write(json.dumps(radial_combinations[a]))
+            #f3.write("\n")
+        #f3.close()
 
     def creatingDataset(self):
 
@@ -1971,18 +1977,26 @@ class Environment(gym.Env):
     def crtanje(self):
 
         ter = []
-        with open('total_episode_reward.txt') as f_ter:
+        rma = 0
+        with open('total_episode_reward_new.txt') as f_ter:
             for line in f_ter:
                 elems = line.strip()
                 ter.append(float(elems))
+        mar = [0 for i in range(0, len(ter))]
+        
+        #with open('moving_average_reward_new.txt') as f_mar:
+            #for line in f_mar:
+                #elems = line.strip()
+                #mar.append(float(elems))
+        for a in range(len(ter)):
+            if (a == 0):
+                mar[a] = -0.35
+                rma = -0.35
+            else:
+                rma = 0.99 * rma + 0.01 * ter[a]
+                mar[a] = rma
 
-        mar = []
-        with open('moving_average_reward.txt') as f_mar:
-            for line in f_mar:
-                elems = line.strip()
-                mar.append(float(elems))
-
-        x_axis = [1 + j for j in range(len(ter))]
+        x_axis = [1 + j*10 for j in range(len(ter))]
         plt.plot(x_axis, ter, color="lightblue")
         plt.plot(x_axis, mar, color="blue")
         plt.xlabel('Episode number') 
