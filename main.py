@@ -30,6 +30,7 @@ def main():
     #environment should'n have the entire dataset as an input parameter, but train and test methods
     environment = Environment()
     #environment.crtanje_loss_reward_vertical()
+    #environment.crtanje()
 
     print('=====================agent=====================')
     agent = DeepQLearningAgent(environment)
